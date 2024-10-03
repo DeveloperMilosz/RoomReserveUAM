@@ -1,0 +1,56 @@
+x-base-app-conf: &base_app_conf # env_file: .env
+  env_file: .env
+  stdin_open: true
+  tty: true
+  restart: always
+
+services:
+  django_app:
+    <<: *base_app_conf
+    image: django_app:latest
+    container_name: django_app
+    command: python manage.py runserver 0.0.0.0:8000
+    restart: always
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    ports:
+      - "8000:8000"
+    volumes:
+      - "./app:/src/app"
+    depends_on:
+      - db
+      - django-migrations
+
+  # Apply Django migrations
+  django-migrations:
+    <<: *base_app_conf
+    image: django_app:latest
+    container_name: django-migrations
+    command: python manage.py migrate
+    restart: no
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    volumes:
+      - "./app:/src/app"
+    depends_on:
+      - db
+
+  db:
+    image: postgres:17.0-alpine
+    command: ["postgres", "-c", "log_statement=all", "-c", "log_destination=stderr"]
+    container_name: db
+    restart: always
+    environment:
+      - POSTGRES_DB=mydatabase
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - django_app_db:/var/lib/postgresql/data
+
+volumes:
+  django_app_db:
+  elasticsearch_data:
