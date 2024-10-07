@@ -32,3 +32,6 @@ migrate:
 
 migrations:
 	docker exec -it django_app python manage.py makemigrations
+
+createsuperuser:
+	docker exec -it django_app python manage.py createsuperuser

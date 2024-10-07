@@ -1,5 +1,5 @@
 Django==4.2.7
 psycopg2-binary==2.9.9
 
-#Authentication
+# Authentication
 django-allauth==65.0.2

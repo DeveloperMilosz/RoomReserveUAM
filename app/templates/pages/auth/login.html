@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block content %}
+<form method="post" action="{% url 'account_login' %}">
+  {% csrf_token %}
+  <div>
+    <label for="id_login">Email:</label>
+    <input
+      id="id_login"
+      type="email"
+      name="login"
+      placeholder="Email address"
+      autocomplete="email"
+      maxlength="320"
+      required
+    >
+  </div>
+  <div>
+    <label for="id_password">Password:</label>
+    <input
+      id="id_password"
+      type="password"
+      name="password"
+      placeholder="Password"
+      autocomplete="current-password"
+      required
+    >
+  </div>
+  <div>
+    <label for="id_remember">Remember Me:</label>
+    <input type="checkbox" name="remember" id="id_remember" />
+  </div>
+  <button type="submit">Sign In</button>
+
+  {% if form.errors %}
+    {% for key, errors in form.errors.items %}
+      {% for error in errors %}
+        <p>
+          {{ error }}
+        </p>
+      {% endfor %}
+    {% endfor %}
+  {% endif %}
+</form>
+{% endblock content %}
