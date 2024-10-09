@@ -1,5 +1,74 @@
 {% extends "base.html" %}
-
 {% block content %}
-Content
+
+
+<form method="post" action="{% url 'account_signup' %}">
+  {% csrf_token %}
+  <p>
+    Already have an account? Then please
+    <a href="{% url 'account_login' %}">sign in</a>.
+  </p>
+  <p>
+    <label for="id_email">Email:</label>
+    <input
+      type="email"
+      name="email"
+      placeholder="Email address"
+      autocomplete="email"
+      maxlength="254"
+      required=""
+      id="id_email"
+    />
+
+    <span class="helptext">
+        {% if form.errors.email %}
+            {% for error in form.errors.email %}
+                {{ error}}
+            {% endfor %}
+        {% endif %}
+    </span>
+  </p>
+  <p>
+    <label for="id_password1">Password:</label>
+    <input
+      type="password"
+      name="password1"
+      placeholder="Password"
+      autocomplete="new-password"
+      required=""
+      id="id_password1"
+    />
+
+    <span class="helptext">
+        {% if form.errors.password1 %}
+            {% for error in form.errors.password1 %}
+                {{error }}
+            {% endfor %}
+        {% endif %}
+    </span>
+  </p>
+  <ul>
+    <li>
+      Your password can’t be too similar to your other personal information.
+    </li>
+    <li>Your password must contain at least 8 characters.</li>
+    <li>Your password can’t be a commonly used password.</li>
+    <li>Your password can’t be entirely numeric.</li>
+  </ul>
+
+  <p></p>
+
+  <p>
+    <label for="id_password2">Password (again):</label>
+    <input
+      type="password"
+      name="password2"
+      placeholder="Password (again)"
+      autocomplete="new-password"
+      required=""
+      id="id_password2"
+    />
+  </p>
+  <button type="submit">Sign Up</button>
+</form>
 {% endblock content %}
