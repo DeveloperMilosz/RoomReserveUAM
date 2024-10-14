@@ -3,3 +3,6 @@ psycopg2-binary==2.9.9
 
 # Authentication
 django-allauth==65.0.2
+
+
+django-htmx==1.19.0
