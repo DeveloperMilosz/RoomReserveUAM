@@ -1,12 +1,17 @@
 {% extends "base.html" %}
 {% block content %}
+{% load static %}
 
 
-<h1>Verify Your Email Address</h1>
-<p>
-  We have sent an email to you for verification. Follow the link provided to
-  finalize the signup process. If you do not see the verification email in your
-  main inbox, check your spam folder. Please contact us if you do not receive
-  the verification email within a few minutes.
-</p>
+<div class="form-container">
+
+  <img src="{% static 'img/logo_pl.png' %}" id="logo" alt="logo UAM" aria-hidden="true">
+  
+  <h1>Zweryfikuj swój adres e-mail</h1>
+  <p>
+    Wysłaliśmy do Ciebie e-mail w celu weryfikacji. Skorzystaj z podanego linku, aby zakończyć proces rejestracji. 
+    Jeśli nie widzisz wiadomości w swojej głównej skrzynce odbiorczej, sprawdź folder ze spamem. 
+    Skontaktuj się z nami, jeśli nie otrzymasz e-maila weryfikacyjnego w ciągu kilku minut.
+  </p>
+</div>
 {% endblock content %}

@@ -1,5 +1,16 @@
 {% extends "base.html" %}
-
 {% block content %}
-Content
+{% load static %}
+
+<div class="form-container">
+
+    <img src="{% static 'img/logo_pl.png' %}" id="logo" alt="logo UAM" aria-hidden="true">
+    
+    <h1>Zweryfikuj swój nowy adres e-mail</h1>
+    <p>
+      Wysłaliśmy do Ciebie e-mail w celu weryfikacji. Skorzystaj z podanego linku, aby zakończyć proces rejestracji. 
+      Jeśli nie widzisz wiadomości w swojej głównej skrzynce odbiorczej, sprawdź folder ze spamem. 
+      Skontaktuj się z nami, jeśli nie otrzymasz e-maila weryfikacyjnego w ciągu kilku minut.
+    </p>
+  </div>
 {% endblock content %}

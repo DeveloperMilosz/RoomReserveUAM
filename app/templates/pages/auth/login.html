@@ -1,39 +1,39 @@
 {% extends "base.html" %}
 {% block content %}
+{% load static %}
 
-
+<div class="form-container">
+  <img src="{% static 'img/logo_pl.png' %}" id="logo" alt="logo UAM" aria-hidden="true">
+  <div class="form-form">
 <form method="post" action="{% url 'account_login' %}">
   {% csrf_token %}
-  <p>
-    If you have not created an account yet, then please <a href="{% url 'account_signup' %}">sign up</a> first.
-</p>
-  <div>
-    <label for="id_login">Email:</label>
+  <div class="input-box"> 
     <input
       id="id_login"
       type="email"
       name="login"
-      placeholder="Email address"
+      placeholder="Adres e-mail"
       autocomplete="email"
       required
     >
   </div>
-  <div>
-    <label for="id_password">Password:</label>
+  <div class="input-box">
     <input
       id="id_password"
       type="password"
       name="password"
-      placeholder="Password"
+      placeholder="Hasło"
       autocomplete="current-password"
       required
     >
   </div>
-  <div>
-    <label for="id_remember">Remember Me:</label>
+  <button type="submit" class="form-button">Zaloguj się</button>
+  <div class="remember-me">
+    <label for="id_remember">Zapamiętaj mnie:</label>
     <input type="checkbox" name="remember" id="id_remember" />
   </div>
-  <button type="submit">Sign In</button>
+  <a href="{% url 'account_signup' %}">Zarejestruj się</a> 
+  <a href="{% url 'account_reset_password' %}">Reset hasła</a> 
 
   {% if form.errors %}
     {% for key, errors in form.errors.items %}
@@ -45,4 +45,6 @@
     {% endfor %}
   {% endif %}
 </form>
+</div>
+</div>
 {% endblock content %}

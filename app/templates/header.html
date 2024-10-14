@@ -1,8 +1,37 @@
-<div class="header">
-  <div class="container">
-      <div class="row">
-          <div class="col-md-12">
-              <h1>My Blog</h1>
-          </div>
-      </div>
+<header class="header">
+  {% if user.is_authenticated %}
+  <div class="header-container logged">
+    <nav>
+      <ul>
+          <li><a href="{% url 'home' %}">System rezerwacji UAM</a></li>
+          <li><a href="{% url 'home' %}">Wyszukiwanie</a></li>
+          
+          <li>
+              <a href="{% url 'home' %}">Rezerwacja</a>
+              <ul class="submenu">
+                  <li><a href="{% url 'home' %}">Złóż wniosek o wydarzenie</a></li>
+                  <li><a href="{% url 'home' %}">Złóż wniosek o spotkanie</a></li>
+              </ul>
+          </li>
+          
+          <li>
+              <a href="{% url 'home' %}">Profil</a>
+              <ul class="submenu">
+                <li><a href="{% url 'home' %}">Mój profil</a></li>
+                <li><a href="{% url 'home' %}">Moje rezerwacje</a></li>
+                <li><a href="{% url 'home' %}">Mój kalendarz</a></li>
+                <li><a href="{% url 'account_logout' %}">Wyloguj się</a></li>
+              </ul>
+          </li>
+      </ul>
+  </nav>
   </div>
+  {% else %}
+  <div class="header-container">
+    <div class="left">
+      <a href="{% url 'account_login' %}">System rezerwacji UAM</a>
+    </div>
+    <div class="right">&nbsp</div>
+  </div>
+  {% endif %}
+</header>

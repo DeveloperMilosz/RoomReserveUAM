@@ -1,6 +1,37 @@
 {% extends "base.html" %}
 
 
-{% block main %}
-  <h1>Welcome to the home page!</h1>
-{% endblock main %}
+{% block content %}
+<div class="calendar-buttons">
+  <button id="prev-week" class="form-button">Poprzedni tydzień</button>
+  <button id="today" class="form-button">Dzisiaj</button>
+  <button id="next-week" class="form-button">Następny tydzień</button>
+
+</div>
+
+<table id="calendar" class="calendar">
+  <thead>
+    <tr>
+      <th>Godzina</th> <!-- Kolumna z godzinami -->
+      <!-- Kolumny dni tygodnia -->
+    </tr>
+  </thead>
+  <tbody>
+    <!-- Siatka godzin i dni tygodnia -->
+  </tbody>
+</table>
+
+
+<!-- Formularz do dodawania wydarzeń -->
+<div id="event-form" class="form-form" style="display:none;">
+  <h3>Dodaj Wydarzenie</h3>
+  <label for="event-title">Tytuł:</label>
+  <input type="text" id="event-title" placeholder="Wpisz nazwę wydarzenia"><br><br>
+  <label for="event-start-time">Godzina rozpoczęcia (np. 10:30):</label>
+  <input type="time" id="event-start-time" step="1" min="06:00" max="21:59"><br><br>
+  <label for="event-end-time">Godzina zakończenia (np. 12:45):</label>
+  <input type="time" id="event-end-time" step="1" min="06:00" max="21:59"><br><br>
+  <button id="save-event" class="form-button">Zapisz wydarzenie</button>
+  <button id="cancel-event" class="form-button">Anuluj</button>
+</div>
+{% endblock content %}

@@ -1,5 +1,15 @@
 {% extends "base.html" %}
 
 {% block content %}
-Content
+{% load static %}
+
+<div class="form-container">
+
+    <img src="{% static 'img/logo_pl.png' %}" id="logo" alt="logo UAM" aria-hidden="true">
+    
+    <h1>Nie udało się zweryfikować Twojego adresu e-mail</h1>
+    <p>
+      Weryfikacja nie poszła pomyślnie. Spróbuj ponownie, jeżeli błąd dalej będzie się pokazywać zapraszamy do skontaktowania się z nami.
+    </p>
+  </div>
 {% endblock content %}
