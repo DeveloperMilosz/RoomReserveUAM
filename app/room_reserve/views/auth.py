@@ -7,6 +7,7 @@ from allauth.account.views import PasswordResetFromKeyDoneView as AllauthPasswor
 from allauth.account.views import PasswordResetFromKeyView as AllauthPasswordResetFromKeyView
 from allauth.account.views import PasswordResetView as AllauthPasswordResetView
 from allauth.account.views import SignupView as AllauthSignupView
+from allauth.account.views import PasswordChangeView as AllauthPasswordChangeView
 
 
 class LoginView(AllauthLoginView):
@@ -35,6 +36,9 @@ class ConfirmEmailView(AllauthConfirmEmailView):
 class PasswordResetView(AllauthPasswordResetView):
     template_name = "pages/auth/reset_password/reset_password.html"
 
+class PasswordChangeView(AllauthPasswordChangeView):
+    template_name = "pages/auth/reset_password/password_change.html"
+
 
 class PasswordResetFromKeyView(AllauthPasswordResetFromKeyView):
     template_name = "pages/auth/reset_password/password_reset_from_key.html"
@@ -58,3 +62,4 @@ password_reset = PasswordResetView.as_view()
 password_reset_from_key = PasswordResetFromKeyView.as_view()
 password_reset_done = PasswordResetDoneView.as_view()
 password_reset_from_key_done = PasswordResetFromKeyDoneView.as_view()
+password_change = PasswordChangeView.as_view()
