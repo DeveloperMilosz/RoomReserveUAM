@@ -4,7 +4,7 @@ FROM python:3.12.6-slim
 RUN apt update && apt install -y libpq-dev python3-dev gcc postgresql-common
 
 # Install requirements
-ARG REQUIREMENTS_FILE=base.txt
+ARG REQUIREMENTS_FILE=dev.txt
 ADD requirements/${REQUIREMENTS_FILE} requirements.txt
 RUN pip install pip --upgrade && pip install -r requirements.txt
 
