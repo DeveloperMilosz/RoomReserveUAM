@@ -6,3 +6,5 @@ django-allauth==65.0.2
 
 
 django-htmx==1.19.0
+
+httpx==0.27.2

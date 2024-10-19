@@ -4,12 +4,18 @@
 #
 #    pip-compile requirements/dev.in
 #
+anyio==4.6.2.post1
+    # via httpx
 asgiref==3.8.1
     # via
     #   django
     #   django-htmx
 asttokens==2.4.1
     # via stack-data
+certifi==2024.8.30
+    # via
+    #   httpcore
+    #   httpx
 decorator==5.1.1
     # via
     #   ipdb
@@ -31,6 +37,16 @@ django-htmx==1.19.0
     # via -r requirements/base.in
 executing==2.1.0
     # via stack-data
+h11==0.14.0
+    # via httpcore
+httpcore==1.0.6
+    # via httpx
+httpx==0.27.2
+    # via -r requirements/base.in
+idna==3.10
+    # via
+    #   anyio
+    #   httpx
 iniconfig==2.0.0
     # via pytest
 ipdb==0.13.13
@@ -65,6 +81,10 @@ pytest==7.4.3
     # via -r requirements/dev.in
 six==1.16.0
     # via asttokens
+sniffio==1.3.1
+    # via
+    #   anyio
+    #   httpx
 sqlparse==0.5.1
     # via
     #   django
