@@ -1,37 +1,31 @@
 {% extends "base.html" %}
-
+{% load static %}
 
 {% block content %}
-<div class="calendar-buttons">
-  <button id="prev-week" class="form-button">Poprzedni tydzień</button>
-  <button id="today" class="form-button">Dzisiaj</button>
-  <button id="next-week" class="form-button">Następny tydzień</button>
-
+<div class="calendar-navigation">
+  <button id="toggleView" class="form-button">Zmień widok</button>
+  <div class="navigation-arrows">
+      <button id="prev">◄</button>
+      <span id="dateRange"></span>
+      <button id="next">►</button>
+  </div>
 </div>
 
-<table id="calendar" class="calendar">
-  <thead>
-    <tr>
-      <th>Godzina</th> <!-- Kolumna z godzinami -->
-      <!-- Kolumny dni tygodnia -->
-    </tr>
-  </thead>
-  <tbody>
-    <!-- Siatka godzin i dni tygodnia -->
-  </tbody>
-</table>
+    <!-- Wiersz z dniami tygodnia -->
+    {% comment %} <div class="weekdays">
+        <div>Poniedziałek</div>
+        <div>Wtorek</div>
+        <div>Środa</div>
+        <div>Czwartek</div>
+        <div>Piątek</div>
+        <div>Sobota</div>
+        <div>Niedziela</div>
+    </div> {% endcomment %}
+
+    <div id="calendar" class="monthly"></div>
 
 
-<!-- Formularz do dodawania wydarzeń -->
-<div id="event-form" class="form-form" style="display:none;">
-  <h3>Dodaj Wydarzenie</h3>
-  <label for="event-title">Tytuł:</label>
-  <input type="text" id="event-title" placeholder="Wpisz nazwę wydarzenia"><br><br>
-  <label for="event-start-time">Godzina rozpoczęcia (np. 10:30):</label>
-  <input type="time" id="event-start-time" step="1" min="06:00" max="21:59"><br><br>
-  <label for="event-end-time">Godzina zakończenia (np. 12:45):</label>
-  <input type="time" id="event-end-time" step="1" min="06:00" max="21:59"><br><br>
-  <button id="save-event" class="form-button">Zapisz wydarzenie</button>
-  <button id="cancel-event" class="form-button">Anuluj</button>
-</div>
+<script src="{% static 'js/homepage_calendar.js' %}"></script>
+
+
 {% endblock content %}

@@ -3,6 +3,8 @@ from django.urls import re_path
 
 from room_reserve.views import home as home_views
 from room_reserve.views import auth as auth_views
+from room_reserve.views import calendar as calendar_views
+
 
 urlpatterns = [
     # Home
@@ -48,4 +50,10 @@ urlpatterns = [
         auth_views.password_reset_from_key_done,
         name="account_reset_password_from_key_done",
     ),
+    path(
+        'get-meetings/', 
+        calendar_views.get_meetings, 
+        name='get_meetings'
+        ),
+
 ]

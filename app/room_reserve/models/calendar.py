@@ -24,3 +24,15 @@ class Room(models.Model):
 
     def __str__(self):
         return f"Room {self.room_number}"
+
+class Meeting(models.Model):
+    start_time = models.DateTimeField()
+    end_time = models.DateTimeField()
+    name_pl = models.CharField(max_length=255)
+    name_en = models.CharField(max_length=255)
+    room = models.ForeignKey(Room, on_delete=models.CASCADE)
+# opis, prowadzacy, liczba osob, color
+
+
+    def __str__(self):
+        return f"{self.name_pl} ({self.start_time} - {self.end_time})"

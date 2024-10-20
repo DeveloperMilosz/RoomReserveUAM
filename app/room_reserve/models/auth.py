@@ -16,3 +16,5 @@ class User(AbstractUser):
         null=False,
         blank=False,
     )
+
+    # usos_user_id
