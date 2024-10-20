@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+
+<div class="form-container">
+    <img src="{% static 'img/logo_pl.png' %}" id="logo" alt="logo UAM" aria-hidden="true">
+
+    <h1>Złóż wniosek o wydarzenie</h1>
+    <p>Wprowadź szczegóły wydarzenia poniżej, aby złożyć wniosek o nowe wydarzenie.</p>
+
+    <div class="form-form">
+        <form method="post">
+            {% csrf_token %}
+            
+            <div class="input-box">
+                <input type="text" name="name_pl" placeholder="Nazwa wydarzenia (PL)" maxlength="255" required id="id_name_pl">
+            </div>
+            <div class="input-box">
+                <input type="text" name="name_en" placeholder="Nazwa wydarzenia (EN)" maxlength="255" required id="id_name_en">
+            </div>
+            <div class="input-box">
+                <input type="datetime-local" name="start_time" placeholder="Data rozpoczęcia" required id="id_start_time">
+            </div>
+            <div class="input-box">
+                <input type="datetime-local" name="end_time" placeholder="Data zakończenia" required id="id_end_time">
+            </div>
+            <div class="input-box">
+                <select name="room" required id="id_room">
+                    {% for room in rooms %}
+                        <option value="{{ room.id }}">{{ room.room_number }} ({{ room.building_name }})</option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <button type="submit" class="form-button">Dodaj wydarzenie</button>
+        </form>
+    </div>
+</div>
+
+{% endblock content %}

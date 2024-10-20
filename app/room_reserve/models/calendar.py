@@ -31,8 +31,10 @@ class Meeting(models.Model):
     name_pl = models.CharField(max_length=255)
     name_en = models.CharField(max_length=255)
     room = models.ForeignKey(Room, on_delete=models.CASCADE)
-# opis, prowadzacy, liczba osob, color
+# opis, prowadzacy, liczba osob, color, event_id
 
 
     def __str__(self):
         return f"{self.name_pl} ({self.start_time} - {self.end_time})"
+    
+    

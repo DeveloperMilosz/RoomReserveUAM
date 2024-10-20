@@ -2,17 +2,18 @@
 {% load static %}
 
 {% block content %}
-<div class="calendar-navigation">
+<div class="calendar-menu">
   <button id="toggleView" class="form-button">Zmień widok</button>
-  <div class="navigation-arrows">
-      <button id="prev">◄</button>
+  <span class="calendar-title">Twój kalendarz</span>
+  <div class="calendar-navigation">
+      <button id="arrow-left"></button>
       <span id="dateRange"></span>
-      <button id="next">►</button>
+      <button id="arrow-right"></button>
   </div>
 </div>
 
     <!-- Wiersz z dniami tygodnia -->
-    {% comment %} <div class="weekdays">
+    <div class="weekdays">
         <div>Poniedziałek</div>
         <div>Wtorek</div>
         <div>Środa</div>
@@ -20,7 +21,7 @@
         <div>Piątek</div>
         <div>Sobota</div>
         <div>Niedziela</div>
-    </div> {% endcomment %}
+    </div>
 
     <div id="calendar" class="monthly"></div>
 

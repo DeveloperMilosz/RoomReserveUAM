@@ -55,5 +55,5 @@ urlpatterns = [
         calendar_views.get_meetings, 
         name='get_meetings'
         ),
-
+path('new-meeting/', calendar_views.new_meeting, name='new-meeting'),
 ]
