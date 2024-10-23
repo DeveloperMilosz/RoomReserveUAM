@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+
+<div class="meeting-detail">
+    <p><strong>ID spotkania:</strong> {{ meeting.id }}</p>
+    <p><strong>Nazwa spotkania:</strong> {{ meeting.title }}</p>
+    <p><strong>Czas rozpoczęcia:</strong> {{ meeting.start_time }}</p>
+    <p><strong>Czas zakończenia:</strong> {{ meeting.end_time }}</p>
+    <p><strong>Opis:</strong> {{ meeting.description }}</p>
+    <p><strong>Pokój:</strong> {{ meeting.room.name }}</p>
+</div>
+
+{% endblock content %}

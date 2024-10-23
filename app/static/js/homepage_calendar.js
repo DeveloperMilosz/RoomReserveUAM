@@ -139,10 +139,13 @@ function displayMeetingsInWeek(meetings) {
 
             // Dodaj spotkanie do odpowiedniego dnia
             dayMeetings[dayIndex].push({
+
+                id: meeting.id, // Zakładamy, że spotkanie ma unikalne ID
                 start_time: startDate,
                 end_time: endDate,
                 title: meeting.title,
             });
+            console.log(meeting)
         }
     });
 
@@ -166,9 +169,10 @@ function displayMeetingsInWeek(meetings) {
                 const overlapCount = overlappingMeetings.length;
                 const meetingWidth = 100 / overlapCount; // Szerokość w procentach
 
-                const eventEl = document.createElement('div');
+                const eventEl = document.createElement('a');
+                eventEl.href="/meeting/"+meeting.id;
                 eventEl.classList.add('event', 'weekly');
-                eventEl.textContent = meeting.title;
+                eventEl.textContent = meeting.id + " " + meeting.title;
 
                 const position = timeToPosition(meeting.start_time, meeting.end_time);
                 eventEl.style.position = "absolute"; // Pozycjonowanie absolutne

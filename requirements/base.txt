@@ -23,6 +23,8 @@ django==4.2.7
     #   django-htmx
 django-allauth==65.0.2
     # via -r requirements/base.in
+django-colorfield==0.11.0
+    # via -r requirements/base.in
 django-htmx==1.19.0
     # via -r requirements/base.in
 h11==0.14.0
@@ -35,6 +37,8 @@ idna==3.10
     # via
     #   anyio
     #   httpx
+pillow==11.0.0
+    # via django-colorfield
 psycopg2-binary==2.9.9
     # via -r requirements/base.in
 pydantic==2.9.2

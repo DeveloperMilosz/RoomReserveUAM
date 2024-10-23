@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+from colorfield.fields import ColorField
 
 
 class Room(models.Model):
@@ -48,6 +49,7 @@ class Meeting(models.Model):
     description = models.CharField(max_length=255, null=True, blank=True)
     lecturers = models.ManyToManyField(Lecturers, verbose_name=_("Lecturers"), blank=True)
     capacity = models.IntegerField(_("meeting capacity"), null=True, blank=True)
+    color = ColorField(default='#FF0000')
     created_at = models.DateTimeField(_("created at"), auto_now_add=True, null=True, blank=True)
     modified_at = models.DateTimeField(_("modified at"), auto_now=True)
     is_updated = models.BooleanField(_("is updated"), default=True)

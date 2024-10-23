@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     # Custom apps
     "room_reserve",
     "django_htmx",
+    "colorfield",
 ]
 
 MIDDLEWARE = [
