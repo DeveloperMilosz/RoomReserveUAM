@@ -3,12 +3,15 @@
 {% load static %}
 
 <div class="meeting-detail">
-    <p><strong>ID spotkania:</strong> {{ meeting.id }}</p>
-    <p><strong>Nazwa spotkania:</strong> {{ meeting.title }}</p>
-    <p><strong>Czas rozpoczęcia:</strong> {{ meeting.start_time }}</p>
-    <p><strong>Czas zakończenia:</strong> {{ meeting.end_time }}</p>
-    <p><strong>Opis:</strong> {{ meeting.description }}</p>
-    <p><strong>Pokój:</strong> {{ meeting.room.name }}</p>
+    <img src="{% static 'img/logo_pl.png' %}" id="logo" alt="logo UAM" aria-hidden="true">
+    <div class="row"><p><strong>Nazwa spotkania:</strong> <br>{{ meeting.name_pl }}</p>
+    <p><strong>Meeting name:</strong> <br>{{ meeting.name_en }}</p></div>
+    <p><strong>Prowadzacy:</strong> <br>{{ meeting.lecturers }}</p>
+    <div class="row"><p><strong>Czas rozpoczęcia:</strong> <br>{{ meeting.start_time }}</p>
+    <p><strong>Czas zakończenia:</strong> <br>{{ meeting.end_time }}</p></div>
+    <p><strong>Opis:</strong> <br>{{ meeting.description }}</p>
+    <p><strong>Pokój:</strong> <br>{{ meeting.room }}</p>
+    <p><strong>Liczba miejsc:</strong> <br>{{ meeting.capacity }}</p>
 </div>
 
 {% endblock content %}

@@ -430,3 +430,25 @@ form>a{
   border-radius: 10px;
   border: 1px solid white;
 }
+
+.meeting-detail {
+  width: 40rem;
+  max-width: 100%;
+  border-radius: 8px;
+  margin: 2rem auto;
+  border: 1px solid #dadce0;
+  padding: 8px;
+  padding-left: 24px;
+  padding-right: 24px;
+  text-align: left;
+}
+
+.row
+{
+  display: flex;
+  justify-content: space-between;
+}
+.row>p
+{
+  width: 50%;
+}

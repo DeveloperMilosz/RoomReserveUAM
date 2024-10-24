@@ -172,7 +172,7 @@ function displayMeetingsInWeek(meetings) {
                 const eventEl = document.createElement('a');
                 eventEl.href="/meeting/"+meeting.id;
                 eventEl.classList.add('event', 'weekly');
-                eventEl.textContent = meeting.id + " " + meeting.title;
+                eventEl.textContent = meeting.title;
 
                 const position = timeToPosition(meeting.start_time, meeting.end_time);
                 eventEl.style.position = "absolute"; // Pozycjonowanie absolutne
@@ -265,7 +265,9 @@ function displayMeetingsInMonth(meetings) {
                 // Sprawdź, czy już istnieje `div` dla wydarzeń, jeśli nie, to go stwórz
                 let eventsContainer = dayEl.querySelector('.events');
                 if (!eventsContainer) {
-                    eventsContainer = document.createElement('div');
+                    // eventsContainer = document.createElement('div');
+                    eventsContainer = document.createElement('a');
+                    eventsContainer.href="/meeting/"+meeting.id;
                     eventsContainer.classList.add('events');
                     dayEl.appendChild(eventsContainer);
                 }
