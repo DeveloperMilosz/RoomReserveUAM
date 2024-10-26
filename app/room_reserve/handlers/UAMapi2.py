@@ -1,8 +1,15 @@
-from pydantic import BaseModel
-import httpx
+import requests
+from requests_oauthlib import OAuth1
+
+# Twoje dane uwierzytelniające
+consumer_key = "N7AhjH9YPUVKN6ft3zfU"
+consumer_secret = "29Xd3aDwKGePMaVrXvpdWCq2y274dauwf7xX2rBy"
+
+# Tworzymy obiekt OAuth1
+auth = OAuth1(consumer_key, consumer_secret)
 
 USOS_API_BASE_URL = "https://usosapps.amu.edu.pl"
-USOS_API_ROOM = "/services/geo/room"
+USOS_API_ROOM = "/services/tt/room"
 
 # Lista room_id
 room_ids = [
@@ -32,29 +39,13 @@ room_ids = [
     2704,
     2777,
 ]
-import httpx
-from pydantic import BaseModel
-
-USOS_API_BASE_URL = "https://usosapps.amu.edu.pl"
-USOS_API_ROOM = "/services/geo/room"
-
-data = {"room_id": str(2488), "format": "json"}
-r = httpx.post(USOS_API_BASE_URL + USOS_API_ROOM, data=data)
-data = r.json()
 
 
-class BuildingNameIn(BaseModel):
-    pl: str
-    en: str
+def get_room_data(room_id):
+    params = {"room_id": str(room_id), "format": "json"}
+    r = requests.post(USOS_API_BASE_URL + USOS_API_ROOM, params=params, auth=auth)
+    return r.text
 
-
-class RoomDataIn(BaseModel):
-    id: int
-    number: str
-    building_id: int
-    building_name: BuildingNameIn
-
-
-for RoomDataIn in data:
-    model = RoomDataIn(**data)
-    print(model)
+for room_id in room_ids:
+    room_data = get_room_data(room_id)
+    print(f"Room ID: {room_id}, Data: {room_data}")
