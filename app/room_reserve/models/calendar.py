@@ -2,7 +2,6 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 from colorfield.fields import ColorField
 
-
 class Room(models.Model):
     room_number = models.CharField(_("room number"), max_length=30)
     building_id = models.IntegerField(_("building id"))
@@ -30,7 +29,6 @@ class Lecturers(models.Model):
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
 
-
 class Meeting(models.Model):
     MEETING = "meeting"
     CLASS_GROUP = "classgroup"
@@ -50,6 +48,7 @@ class Meeting(models.Model):
     lecturers = models.ManyToManyField(Lecturers, verbose_name=_("Lecturers"), blank=True)
     capacity = models.IntegerField(_("meeting capacity"), null=True, blank=True)
     color = ColorField(default='#FF0000')
+    event = models.ForeignKey('Event', verbose_name=_("Event"), on_delete=models.CASCADE, related_name="meetings", null=True, blank=True)
     created_at = models.DateTimeField(_("created at"), auto_now_add=True, null=True, blank=True)
     modified_at = models.DateTimeField(_("modified at"), auto_now=True)
     is_updated = models.BooleanField(_("is updated"), default=True)
@@ -91,7 +90,7 @@ class RoomEquipment(models.Model):
 
 
 class Event(models.Model):
-    LESSON_SCHEDULE = "lesson_schedule"  # text choices
+    LESSON_SCHEDULE = "lesson_schedule" 
     GENERAL_EVENT = "event"
 
     EVENT_TYPE_CHOICES = [
@@ -101,7 +100,6 @@ class Event(models.Model):
 
     name = models.CharField(_("Event Name"), max_length=50, null=True, blank=True)
     description = models.TextField(_("Description"), null=True, blank=True)
-    meetings = models.ManyToManyField(Meeting, verbose_name=_("Meetings"), blank=True)
     organizer = models.ForeignKey(
         Lecturers, on_delete=models.SET_NULL, verbose_name=_("Organizer"), null=True, blank=True
     )

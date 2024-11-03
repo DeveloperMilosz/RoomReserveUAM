@@ -127,29 +127,27 @@ function displayMeetingsInWeek(meetings) {
         // Sprawdzamy, czy wydarzenie jest w bieżącym tygodniu
         const currentWeekStart = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate() - getMondayFirstDay(currentDate.getDay()));
         const currentWeekEnd = new Date(currentWeekStart);
-        currentWeekEnd.setDate(currentWeekStart.getDate() + 6); // Koniec tygodnia
+        currentWeekEnd.setDate(currentWeekStart.getDate() + 6);
 
         if (startDate >= currentWeekStart && startDate <= currentWeekEnd) {
             const dayIndex = getMondayFirstDay(startDate.getDay());
 
-            // Inicjujemy tablicę spotkań dla danego dnia, jeśli jeszcze nie istnieje
             if (!dayMeetings[dayIndex]) {
                 dayMeetings[dayIndex] = [];
             }
 
-            // Dodaj spotkanie do odpowiedniego dnia
             dayMeetings[dayIndex].push({
 
-                id: meeting.id, // Zakładamy, że spotkanie ma unikalne ID
+                id: meeting.id,
                 start_time: startDate,
                 end_time: endDate,
                 title: meeting.title,
+                color: meeting.color
             });
             console.log(meeting)
         }
     });
 
-    // Dla każdego dnia tygodnia, sprawdzamy nakładanie się spotkań i ustawiamy odpowiednią szerokość
     Object.keys(dayMeetings).forEach(dayIndex => {
         const dayEl = document.querySelector(`#calendar .day.weekly:nth-child(${parseInt(dayIndex) + 2})`);
 
@@ -175,6 +173,7 @@ function displayMeetingsInWeek(meetings) {
                 eventEl.textContent = meeting.title;
 
                 const position = timeToPosition(meeting.start_time, meeting.end_time);
+                eventEl.style.backgroundColor = meeting.color;
                 eventEl.style.position = "absolute"; // Pozycjonowanie absolutne
                 eventEl.style.top = position.top + 'px'; // Pozycja od góry
                 eventEl.style.height = position.height + 'px'; // Wysokość wydarzenia
@@ -265,7 +264,6 @@ function displayMeetingsInMonth(meetings) {
                 // Sprawdź, czy już istnieje `div` dla wydarzeń, jeśli nie, to go stwórz
                 let eventsContainer = dayEl.querySelector('.events');
                 if (!eventsContainer) {
-                    // eventsContainer = document.createElement('div');
                     eventsContainer = document.createElement('a');
                     eventsContainer.href="/meeting/"+meeting.id;
                     eventsContainer.classList.add('events');
@@ -274,6 +272,7 @@ function displayMeetingsInMonth(meetings) {
 
                 // Stwórz nowy element wydarzenia
                 const eventEl = document.createElement('div');
+                eventEl.style.backgroundColor = meeting.color;
                 eventEl.classList.add('event');
                 eventEl.textContent = meeting.title;
                 
