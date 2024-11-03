@@ -34,11 +34,13 @@ class Meeting(models.Model):
     CLASS_GROUP = "classgroup"
 
     MEETING_TYPE_CHOICES = [
-        (MEETING, _("meeting")),
-        (CLASS_GROUP, _("classgroup")),
+        (MEETING, _("Spotkanie")),
+        (CLASS_GROUP, _("Grupa zajęciowa")),
     ]
 
-    meeting_type = models.CharField(_("meeting type"), max_length=50, choices=MEETING_TYPE_CHOICES, null=True, blank=True)
+    meeting_type = models.CharField(
+        _("Typ spotkania"), max_length=50, choices=MEETING_TYPE_CHOICES, null=True, blank=True
+    )
     start_time = models.DateTimeField()
     end_time = models.DateTimeField()
     name_pl = models.CharField(_("name pl"), max_length=80, null=True, blank=True)

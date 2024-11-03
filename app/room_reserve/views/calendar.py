@@ -37,6 +37,8 @@ def meeting_details(request, meeting_id):
 
 def new_meeting(request):
     rooms = Room.objects.all()
+    events = Event.objects.all()
+    lecturers = Lecturers.objects.all()
     if request.method == 'POST':
         form = MeetingForm(request.POST)
         if form.is_valid():
@@ -44,7 +46,7 @@ def new_meeting(request):
             return redirect('home')
     else:
         form = MeetingForm()
-    return render(request, 'pages/calendar/new_meeting.html', {'form': form, 'rooms': rooms})
+    return render(request, 'pages/calendar/new_meeting.html', {'form': form, 'rooms': rooms, 'events': events, 'lecturers': lecturers})
 
 
 def new_event(request):

@@ -25,12 +25,11 @@
                 <input type="datetime-local" name="end_time" placeholder="Data zakończenia" required id="id_end_time">
             </div>
             
-            <!-- Meeting Type -->
             <div class="input-box">
                 <select name="meeting_type" required id="id_meeting_type">
                     <option value="" disabled selected>Wybierz typ spotkania</option>
-                    {% for type in meeting_types %}
-                        <option value="{{ type.id }}">{{ type.type }}</option>
+                    {% for choice in form.fields.meeting_type.choices %}
+                        <option value="{{ choice.0 }}">{{ choice.1 }}</option>
                     {% endfor %}
                 </select>
             </div>
@@ -45,34 +44,39 @@
                 </select>
             </div>
 
-            <!-- Description -->
             <div class="input-box">
                 <textarea name="description" placeholder="Opis spotkania" id="id_description" oninput='this.style.height = "";this.style.height = this.scrollHeight + "px"'></textarea>
             </div>
 
-            <!-- Lecturers -->
             <div class="input-box">
 
                 <select name="lecturers" id="id_lecturers">
-                    <option value="" disabled selected>Wybierz wykładowców</option>
+                    <option value="" disabled selected>Wybierz wykładowce</option>
                     {% for lecturer in lecturers %}
-                        <option value="{{ lecturer.id }}">{{ lecturer.name }}</option>
+                        <option value="{{ lecturer.id }}">{{ lecturer.first_name }} {{ lecturer.last_name }}</option>
                     {% endfor %}
                 </select>
+                
             </div>
 
-            <!-- Capacity -->
             <div class="input-box">
                 <input type="number" name="capacity" placeholder="Liczba uczęstników" min="1" id="id_capacity">
             </div>
 
-            <!-- Color -->
+            <div class="input-box">
+                <select name="event" id="id_event">
+                    <option value="" selected>Bez wydarzenia</option>
+                    {% for event in events %}
+                        <option value="{{ event.id }}">{{ event.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
             <div class="input-box">
                 <label for="id_color">Wybierz kolor:</label>
                 <input type="color" name="color" value="#FF0000" id="id_color">
             </div>
 
-            <!-- Is Updated -->
             <div class="input-box" style="display:none">
                 <label>
                     <input type="checkbox" name="is_updated" id="id_is_updated" checked>

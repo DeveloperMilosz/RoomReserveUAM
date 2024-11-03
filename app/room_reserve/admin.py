@@ -31,4 +31,3 @@ class EventAdmin(admin.ModelAdmin):
     list_display = ('name', 'event_type', 'organizer', 'start_date', 'end_date')
     search_fields = ('name', 'description')
     list_filter = ('event_type', 'organizer')
-    # Usunięto filter_horizontal dla `meetings`, ponieważ nie jest to ManyToManyField.
