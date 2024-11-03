@@ -491,13 +491,22 @@ form > a {
   padding-left: 24px;
   padding-right: 24px;
   text-align: left;
-}
+  
+  > p.color-display{
+    display: flex;
+    align-items: center;
 
-.meeting-detail-row {
-  display: flex;
-  justify-content: space-between;
+    > strong {
+      margin-right: 6px;
+    }
+  }
 
-  > p {
-    width: 50%;
+  .meeting-detail-row {
+    display: flex;
+    justify-content: space-between;
+  
+    > p {
+      width: 50%;
+    }
   }
 }

@@ -1,9 +1,9 @@
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-from room_reserve.models import Meeting, Room  # Zaktualizowane na import z modelu głównego
+from room_reserve.models import Meeting, Event, Room, Lecturers
 from django.utils.dateparse import parse_datetime
 from django.shortcuts import render, redirect, get_object_or_404
-from room_reserve.forms.meeting import MeetingForm
+from room_reserve.forms.calendar import MeetingForm, EventForm
 
 import json
 
@@ -23,12 +23,17 @@ def get_meetings(request):
             'capacity': meeting.capacity,
             'color': meeting.color,
             'is_updated': meeting.is_updated,
-            'in_event': meeting.event is not None,  # Check if the meeting has an associated event
-            'event_name': meeting.event.name if meeting.event else None  # Get event name if exists
+            'in_event': meeting.event is not None,
+            'event_name': meeting.event.name if meeting.event else None
         }
         for meeting in meetings
     ]
     return JsonResponse(events, safe=False)
+
+def meeting_details(request, meeting_id):
+    meeting = get_object_or_404(Meeting, pk=meeting_id)
+    event = meeting.event
+    return render(request, 'pages/calendar/meeting_details.html', {'meeting': meeting, 'event': event})
 
 def new_meeting(request):
     rooms = Room.objects.all()
@@ -41,7 +46,14 @@ def new_meeting(request):
         form = MeetingForm()
     return render(request, 'pages/calendar/new_meeting.html', {'form': form, 'rooms': rooms})
 
-def meeting_details(request, meeting_id):
-    meeting = get_object_or_404(Meeting, pk=meeting_id)
-    event = meeting.event  # Access the associated event directly
-    return render(request, 'pages/calendar/meeting_details.html', {'meeting': meeting, 'event': event})
+
+def new_event(request):
+    lecturers = Lecturers.objects.all()
+    if request.method == 'POST':
+        form = EventForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('home')
+    else:
+        form = EventForm()
+    return render(request, 'pages/calendar/new_event.html', {'form': form, 'lecturers': lecturers})

@@ -457,11 +457,17 @@ form > a {
   padding-right: 24px;
   text-align: left;
 }
-
-.meeting-detail-row {
+.meeting-detail > p.color-display {
+  display: flex;
+  align-items: center;
+}
+.meeting-detail > p.color-display > strong {
+  margin-right: 6px;
+}
+.meeting-detail .meeting-detail-row {
   display: flex;
   justify-content: space-between;
 }
-.meeting-detail-row > p {
+.meeting-detail .meeting-detail-row > p {
   width: 50%;
 }/*# sourceMappingURL=main.css.map */

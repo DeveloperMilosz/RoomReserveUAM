@@ -59,7 +59,6 @@ function updateWeekdaysWithDates() {
     }
 }
 
-
 function generateMonthlyCalendar(year, month) {
     const calendarEl = document.getElementById('calendar');
     calendarEl.innerHTML = '';
@@ -179,7 +178,7 @@ function displayMeetingsInWeek(meetings) {
 
 async function fetchMeetings() {
     try {
-        const response = await fetch('/get-meetings/');
+        const response = await fetch('/get_meetings/');
         const meetings = await response.json();
 
         if (currentView === 'monthly') {

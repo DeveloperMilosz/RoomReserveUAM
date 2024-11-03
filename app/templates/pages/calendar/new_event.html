@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+
+<div class="form-container">
+    <img src="{% static 'img/logo_pl.png' %}" id="logo" alt="logo UAM" aria-hidden="true">
+
+    <h1>Dodaj nowe wydarzenie</h1>
+    <p>Wprowadź szczegóły wydarzenia poniżej, aby dodać nowe wydarzenie.</p>
+
+    <div class="form-form">
+        <form method="post">
+            {% csrf_token %}
+            
+            <div class="input-box">
+                <input type="text" name="name" placeholder="Nazwa wydarzenia" maxlength="50" required id="id_name">
+            </div>
+            
+            <div class="input-box">
+                <select name="event_type" required id="id_event_type">
+                    <option value="" disabled selected>Wybierz typ wydarzenia</option>
+                    <option value="lesson_schedule">Plan zajęć</option>
+                    <option value="event">Wydarzenie</option>
+                </select>
+            </div>
+
+            <div class="input-box">
+                <input type="datetime-local" name="start_date" placeholder="Data rozpoczęcia" required id="id_start_date">
+            </div>
+            
+            <div class="input-box">
+                <input type="datetime-local" name="end_date" placeholder="Data zakończenia" required id="id_end_date">
+            </div>
+
+            <div class="input-box">
+                <textarea name="description" placeholder="Opis wydarzenia" id="id_description" oninput='this.style.height = "";this.style.height = this.scrollHeight + "px"'></textarea>
+            </div>
+
+            <div class="input-box">
+                <select name="organizer" required id="id_organizer">
+                    <option value="" disabled selected>Wybierz organizatora</option>
+                    {% for lecturer in lecturers %}
+                        <option value="{{ lecturer.id }}">{{ lecturer.first_name }} {{ lecturer.last_name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <button type="submit" class="form-button">Dodaj wydarzenie</button>
+        </form>
+    </div>
+</div>
+
+{% endblock content %}
