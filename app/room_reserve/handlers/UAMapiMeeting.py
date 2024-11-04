@@ -26,6 +26,7 @@ meeting_ids = [
     2699, 2700, 2701, 2702, 2703, 2704, 2777,
 ]
 
+
 class MeetingData(BaseModel):
     start_time: str
     end_time: str
