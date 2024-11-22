@@ -12,23 +12,21 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 
 import os
 from pathlib import Path
-
+from huey import RedisHuey
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get("SECRET_KEY")
+SECRET_KEY = os.environ.get("SECRET_KEY", "your-default-secret-key")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG: bool = os.environ.get("DEBUG", "True").lower() in ("true", "1", "yes")
+DEBUG = os.environ.get("DEBUG", "True").lower() in ("true", "1", "yes")
 
 ALLOWED_HOSTS = [host for host in os.environ.get("ALLOWED_HOSTS", "").split(",") if host]
-
 
 # Application definition
 
@@ -42,6 +40,7 @@ INSTALLED_APPS = [
     # Third-party apps
     "allauth",
     "allauth.account",
+    "huey.contrib.djhuey",  # Huey integration
     # Custom apps
     "room_reserve",
     "django_htmx",
@@ -83,21 +82,19 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "core.wsgi.application"
 
-
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": os.environ.get("DB_NAME", default="mydatabase"),
-        "USER": os.environ.get("DB_USER", default="postgres"),
-        "PASSWORD": os.environ.get("DB_PASSWORD", default="postgres"),
-        "HOST": os.environ.get("DB_HOST", default="db"),
-        "PORT": os.environ.get("DB_PORT", default="5432"),
+        "NAME": os.environ.get("DB_NAME", "mydatabase"),
+        "USER": os.environ.get("DB_USER", "postgres"),
+        "PASSWORD": os.environ.get("DB_PASSWORD", "postgres"),
+        "HOST": os.environ.get("DB_HOST", "db"),
+        "PORT": os.environ.get("DB_PORT", "5432"),
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
@@ -117,7 +114,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
 
@@ -128,7 +124,6 @@ TIME_ZONE = "UTC"
 USE_I18N = True
 
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
@@ -145,22 +140,16 @@ STATICFILES_DIRS = [
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-
-# LOGIN_URL = "/login/"
-
-
 AUTHENTICATION_BACKENDS = [
     "django.contrib.auth.backends.ModelBackend",
     "allauth.account.auth_backends.AuthenticationBackend",
 ]
 
+# Email configuration
+EMAIL_BACKEND = os.environ.get("EMAIL_BACKEND", "django.core.mail.backends.console.EmailBackend")
 
-# Sending emails
-EMAIL_BACKEND = os.environ.get("EMAIL_BACKEND", default="django.core.mail.backends.console.EmailBackend")
-
-
-# --- Allauth settings
-ACCOUNT_AUTHENTICATION_METHOD = "email"  # correlate with User.USERNAME_FIELD and User.REQUIRED_FIELDS
+# Allauth settings
+ACCOUNT_AUTHENTICATION_METHOD = "email"
 ACCOUNT_AUTHENTICATED_LOGIN_REDIRECTS = False
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_UNIQUE_EMAIL = True
@@ -179,3 +168,11 @@ AUTH_USER_MODEL = "room_reserve.User"
 
 LOGIN_URL = "/login"
 LOGIN_REDIRECT_URL = "/"
+
+# Huey configuration
+HUEY = RedisHuey(
+    'room_reserve',  # Queue name for tasks
+    host=os.environ.get("REDIS_HOST", "localhost"),  # Redis host (from .env file or default)
+    port=6379,  # Redis default port
+    always_eager=False,  # Asynchronous tasks
+)
