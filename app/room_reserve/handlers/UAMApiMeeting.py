@@ -5,7 +5,8 @@ from room_reserve.models import Meeting
 from typing import Optional, List, Dict
 import logging
 from requests_oauthlib import OAuth1
-#from room_reserve.serializers import MeetingDataIn
+
+# from room_reserve.serializers import MeetingDataIn
 
 # Konfiguracja loggera
 logger = logging.getLogger(__name__)
@@ -21,9 +22,31 @@ USOS_API_MEETING = "/services/tt/room"
 
 # Lista ID spotkań do pobrania
 meeting_ids = [
-    2488, 2489, 2490, 2684, 2685, 2686, 2687, 2688, 2689,
-    2690, 2691, 2692, 2693, 2694, 2695, 2696, 2697, 2698,
-    2699, 2700, 2701, 2702, 2703, 2704, 2777,
+    2488,
+    2489,
+    2490,
+    2684,
+    2685,
+    2686,
+    2687,
+    2688,
+    2689,
+    2690,
+    2691,
+    2692,
+    2693,
+    2694,
+    2695,
+    2696,
+    2697,
+    2698,
+    2699,
+    2700,
+    2701,
+    2702,
+    2703,
+    2704,
+    2777,
 ]
 
 
@@ -31,6 +54,7 @@ class MeetingData(BaseModel):
     start_time: str
     end_time: str
     name: Dict[str, str]
+
 
 class UAMApiHandler:
     def __init__(self, meeting_ids: List[int]):
@@ -65,12 +89,12 @@ class UAMApiHandler:
 
             with transaction.atomic():
                 meeting_obj, created = Meeting.objects.update_or_create(
-                    id=meeting_data.get('id'),  # Zakładając, że ID jest dostępne w danych API
+                    id=meeting_data.get("id"),  # Zakładając, że ID jest dostępne w danych API
                     defaults={
                         "start_time": meeting.start_time,
                         "end_time": meeting.end_time,
-                        "name_pl": meeting.name.get('pl'),  # Zabezpieczenie przed KeyError
-                        "name_en": meeting.name.get('en'),
+                        "name_pl": meeting.name.get("pl"),  # Zabezpieczenie przed KeyError
+                        "name_en": meeting.name.get("en"),
                         "is_updated": True,
                     },
                 )
