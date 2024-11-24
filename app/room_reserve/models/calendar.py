@@ -2,6 +2,7 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 from colorfield.fields import ColorField
 
+
 class Room(models.Model):
     room_number = models.CharField(_("room number"), max_length=30)
     building_id = models.IntegerField(_("building id"))
@@ -11,7 +12,6 @@ class Room(models.Model):
     room_supervisor = models.ForeignKey(
         "room_reserve.User", on_delete=models.SET_NULL, verbose_name=_("room supervisor"), blank=True, null=True
     )
-    room_equipment = models.ManyToManyField("RoomEquipment", verbose_name=_("equipment"), blank=True)
     created_at = models.DateTimeField(_("created at"), auto_now_add=True)
     modified_at = models.DateTimeField(_("modified at"), auto_now=True)
     is_updated = models.BooleanField(_("is updated"), default=True)
@@ -28,6 +28,7 @@ class Lecturers(models.Model):
 
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
+
 
 class Meeting(models.Model):
     MEETING = "meeting"
@@ -49,8 +50,10 @@ class Meeting(models.Model):
     description = models.CharField(max_length=255, null=True, blank=True)
     lecturers = models.ManyToManyField(Lecturers, verbose_name=_("Lecturers"), blank=True)
     capacity = models.IntegerField(_("meeting capacity"), null=True, blank=True)
-    color = ColorField(default='#FF0000')
-    event = models.ForeignKey('Event', verbose_name=_("Event"), on_delete=models.CASCADE, related_name="meetings", null=True, blank=True)
+    color = ColorField(default="#FF0000")
+    event = models.ForeignKey(
+        "Event", verbose_name=_("Event"), on_delete=models.CASCADE, related_name="meetings", null=True, blank=True
+    )
     created_at = models.DateTimeField(_("created at"), auto_now_add=True, null=True, blank=True)
     modified_at = models.DateTimeField(_("modified at"), auto_now=True)
     is_updated = models.BooleanField(_("is updated"), default=True)
@@ -59,40 +62,16 @@ class Meeting(models.Model):
         return f"{self.name_pl} ({self.start_time} - {self.end_time})"
 
 
-class EquipmentType(models.TextChoices):
-    PROJECTOR = "projector", _("Projector")
-    SINK = "sink", _("Sink")
-    WHITEBOARD = "whiteboard", _("Whiteboard")
-    INTERACTIVE_WHITEBOARD = "interactive_whiteboard", _("Interactive Whiteboard")
-    COMPUTER = "computer", _("Computer")
-    WIRELESS_MICROPHONE = "wireless_microphone", _("Wireless Microphone")
-    VISUALIZER = "visualizer", _("Visualizer")
-    INTERNET_ACCESS = "internet_access", _("Internet Access")
-    AUDITORY_DESKS = "auditory_desks", _("Auditory Desks")
-    SEATING_PLACES = "seating_places", _("Seating Places")
-    FLIPCHART = "flipchart", _("Flipchart")
-    SHOWER = "shower", _("Shower")
-    ACID_RESISTANT_TABLES = "acid_resistant_tables", _("Acid-Resistant Tables")
-    SERVER = "server", _("Server")
-    NETWORK_DEVICES = "network_devices", _("Network Devices")
-
-
-class RoomEquipment(models.Model):
-    equipment_type = models.CharField(_("Equipment Type"), max_length=50, choices=EquipmentType.choices)
-    quantity = models.IntegerField(_("Quantity"), default=1)
-    created_at = models.DateTimeField(_("Created At"), auto_now_add=True)
-
-    class Meta:
-        constraints = [models.UniqueConstraint(fields=["equipment_type"], name="unique_equipment_type")]
-        verbose_name = _("Room Equipment")
-        verbose_name_plural = _("Room Equipment")
-
-    def __str__(self):
-        return f"{self.get_equipment_type_display()} (Quantity: {self.quantity})"
+class RoomAttribute(models.Model):
+    room = models.ForeignKey(Room, on_delete=models.CASCADE, related_name="attributes")
+    attribute_id = models.CharField(_("attribute id"), max_length=100)
+    description_pl = models.TextField(_("description (PL)"))
+    description_en = models.TextField(_("description (EN)"))
+    count = models.IntegerField(_("count"))
 
 
 class Event(models.Model):
-    LESSON_SCHEDULE = "lesson_schedule" 
+    LESSON_SCHEDULE = "lesson_schedule"
     GENERAL_EVENT = "event"
 
     EVENT_TYPE_CHOICES = [

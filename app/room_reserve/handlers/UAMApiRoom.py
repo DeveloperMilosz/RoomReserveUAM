@@ -6,16 +6,19 @@ from typing import Optional
 import logging
 from pydantic import BaseModel
 
+
 # Define Pydantic models
 class BuildingNameIn(BaseModel):
     pl: str
     en: str
+
 
 class RoomDataIn(BaseModel):
     id: int
     number: str
     building_id: int
     building_name: BuildingNameIn
+
 
 # Configure logger
 logger = logging.getLogger(__name__)
@@ -26,10 +29,33 @@ USOS_API_ROOM = "/services/geo/room"
 
 # Room IDs to retrieve
 room_ids = [
-    2488, 2489, 2490, 2684, 2685, 2686, 2687, 2688, 2689,
-    2690, 2691, 2692, 2693, 2694, 2695, 2696, 2697, 2698,
-    2699, 2700, 2701, 2702, 2703, 2777,
+    2488,
+    2489,
+    2490,
+    2684,
+    2685,
+    2686,
+    2687,
+    2688,
+    2689,
+    2690,
+    2691,
+    2692,
+    2693,
+    2694,
+    2695,
+    2696,
+    2697,
+    2698,
+    2699,
+    2700,
+    2701,
+    2702,
+    2703,
+    2777,
+    354,
 ]
+
 
 class UAMApiHandler:
     def __init__(self, room_ids: list):
@@ -90,6 +116,7 @@ class UAMApiHandler:
             room_data = self.get_room_data(room_id)
             if room_data:
                 self.save_room(room_data)
+
 
 # Run the handler if script is executed directly
 if __name__ == "__main__":
