@@ -58,5 +58,6 @@ urlpatterns = [
 path('new-meeting/', calendar_views.new_meeting, name='new-meeting'),
 
     path('meeting/<int:meeting_id>/', calendar_views.meeting_details, name='meeting_details'),
-
-]
+    path('editmeeting/<int:meeting_id>/', calendar_views.edit_meeting, name='edit_meeting'),
+    path('delete_meeting/<int:meeting_id>/', views.delete_meeting, name='delete_meeting'),
+] 

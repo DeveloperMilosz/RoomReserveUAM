@@ -12,6 +12,9 @@
     <p><strong>Opis:</strong> <br>{{ meeting.description }}</p>
     <p><strong>Pokój:</strong> <br>{{ meeting.room }}</p>
     <p><strong>Liczba miejsc:</strong> <br>{{ meeting.capacity }}</p>
+    {% comment %} <div id="edit"><button id="editbutton"></button></div> {% endcomment %}
+    <a href="{% url 'edit_meeting' meeting_id=meeting.id %}" class="btn btn-primary">Edytuj</a>
+
 </div>
 
 {% endblock content %}

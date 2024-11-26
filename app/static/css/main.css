@@ -448,7 +448,16 @@ form>a{
   display: flex;
   justify-content: space-between;
 }
+
+.rowedit
+{
+  margin: 20px;
+  display: flex;
+  justify-content: space-between;
+}
+
 .row>p
 {
   width: 50%;
 }
+

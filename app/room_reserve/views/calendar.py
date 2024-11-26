@@ -34,3 +34,26 @@ def new_meeting(request):
 def meeting_details(request, meeting_id):
     meeting = get_object_or_404(Meeting, pk=meeting_id)
     return render(request, 'pages/calendar/meeting_details.html', {'meeting': meeting})
+
+# def edit_meeting(request, meeting_id):
+#     editmeeting = get_object_or_404(Meeting, pk=meeting_id)
+#     return render(request, 'pages/calendar/edit_meeting.html', {'meeting': editmeeting})
+
+def edit_meeting(request, meeting_id):
+    # Fetch the existing meeting object by ID
+    meeting = get_object_or_404(Meeting, pk=meeting_id)
+    
+    if request.method == 'POST':
+        # Initialize the form with POST data and bind it to the existing meeting instance
+        form = MeetingForm(request.POST, instance=meeting)
+        
+        if form.is_valid():
+            # Save changes if the form is valid
+            form.save()
+            return redirect('meeting_details', meeting_id=meeting.id)  # Redirect to the meeting details page or home page
+    else:
+        # Initialize the form with the existing meeting instance for GET requests
+        form = MeetingForm(instance=meeting)
+    
+    # Render the edit page with the form and meeting instance
+    return render(request, 'pages/calendar/edit_meeting.html', {'form': form, 'meeting': meeting})
