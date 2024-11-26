@@ -51,13 +51,28 @@ urlpatterns = [
         name="account_reset_password_from_key_done",
     ),
     path(
-        'get-meetings/', 
+        'get_meetings/', 
         calendar_views.get_meetings, 
         name='get_meetings'
         ),
-path('new-meeting/', calendar_views.new_meeting, name='new-meeting'),
 
-    path('meeting/<int:meeting_id>/', calendar_views.meeting_details, name='meeting_details'),
     path('editmeeting/<int:meeting_id>/', calendar_views.edit_meeting, name='edit_meeting'),
     path('delete_meeting/<int:meeting_id>/', views.delete_meeting, name='delete_meeting'),
-] 
+
+    path(
+        'new_meeting/', 
+        calendar_views.new_meeting, 
+        name='new_meeting'
+        ),
+    path(
+        'new_event/', 
+        calendar_views.new_event, 
+        name='new_event'
+        ),
+    path(
+        'meeting/<int:meeting_id>/', 
+        calendar_views.meeting_details, 
+        name='meeting_details'
+        ),
+]
+

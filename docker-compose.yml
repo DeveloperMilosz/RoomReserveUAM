@@ -1,4 +1,4 @@
-x-base-app-conf: &base_app_conf # env_file: .env
+x-base-app-conf: &base_app_conf
   env_file: .env
   stdin_open: true
   tty: true
@@ -10,7 +10,6 @@ services:
     image: django_app:latest
     container_name: django_app
     command: python manage.py runserver 0.0.0.0:8000
-    restart: always
     build:
       context: .
       dockerfile: docker/Dockerfile
@@ -21,8 +20,9 @@ services:
     depends_on:
       - db
       - django-migrations
+      - huey
+      - redis # Dodaj Redis jako zależność
 
-  # Apply Django migrations
   django-migrations:
     <<: *base_app_conf
     image: django_app:latest
@@ -37,10 +37,24 @@ services:
     depends_on:
       - db
 
+  huey:
+    <<: *base_app_conf
+    image: django_app:latest
+    container_name: huey
+    command: python manage.py run_huey
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    volumes:
+      - "./app:/src/app"
+    depends_on:
+      - db
+      - redis # Redis jako zależność dla Huey
+
   db:
     image: postgres:17.0-alpine
-    command: ["postgres", "-c", "log_statement=all", "-c", "log_destination=stderr"]
     container_name: db
+    command: ["postgres", "-c", "log_statement=all", "-c", "log_destination=stderr"]
     restart: always
     environment:
       - POSTGRES_DB=mydatabase
@@ -50,6 +64,13 @@ services:
       - "5432:5432"
     volumes:
       - django_app_db:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7.0-alpine
+    container_name: redis
+    ports:
+      - "6379:6379"
+    restart: always
 
 volumes:
   django_app_db:

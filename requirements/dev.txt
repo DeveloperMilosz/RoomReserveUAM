@@ -18,27 +18,30 @@ certifi==2024.8.30
     # via
     #   httpcore
     #   httpx
+    #   requests
+charset-normalizer==3.4.0
+    # via requests
 decorator==5.1.1
     # via
     #   ipdb
     #   ipython
 django==4.2.7
     # via
-    #   -r requirements/base.in
+    #   -r /home/oskar/Pulpit/rzyg/RoomReserveUAM/requirements/base.in
     #   django-allauth
     #   django-debug-toolbar
     #   django-extensions
     #   django-htmx
 django-allauth==65.0.2
-    # via -r requirements/base.in
+    # via -r /home/oskar/Pulpit/rzyg/RoomReserveUAM/requirements/base.in
 django-colorfield==0.11.0
-    # via -r requirements/base.in
+    # via -r /home/oskar/Pulpit/rzyg/RoomReserveUAM/requirements/base.in
 django-debug-toolbar==3.8.1
     # via -r requirements/dev.in
 django-extensions==3.2.3
     # via -r requirements/dev.in
 django-htmx==1.19.0
-    # via -r requirements/base.in
+    # via -r /home/oskar/Pulpit/rzyg/RoomReserveUAM/requirements/base.in
 executing==2.1.0
     # via stack-data
 h11==0.14.0
@@ -46,11 +49,14 @@ h11==0.14.0
 httpcore==1.0.6
     # via httpx
 httpx==0.27.2
-    # via -r requirements/base.in
+    # via -r /home/oskar/Pulpit/rzyg/RoomReserveUAM/requirements/base.in
+huey==2.5.2
+    # via -r /home/oskar/Pulpit/rzyg/RoomReserveUAM/requirements/base.in
 idna==3.10
     # via
     #   anyio
     #   httpx
+    #   requests
 iniconfig==2.0.0
     # via pytest
 ipdb==0.13.13
@@ -63,6 +69,8 @@ jedi==0.19.1
     # via ipython
 matplotlib-inline==0.1.7
     # via ipython
+oauthlib==3.2.2
+    # via requests-oauthlib
 packaging==24.1
     # via pytest
 parso==0.8.4
@@ -76,19 +84,27 @@ pluggy==1.5.0
 prompt-toolkit==3.0.48
     # via ipython
 psycopg2-binary==2.9.9
-    # via -r requirements/base.in
+    # via -r /home/oskar/Pulpit/rzyg/RoomReserveUAM/requirements/base.in
 ptyprocess==0.7.0
     # via pexpect
 pure-eval==0.2.3
     # via stack-data
 pydantic==2.9.2
-    # via -r requirements/base.in
+    # via -r /home/oskar/Pulpit/rzyg/RoomReserveUAM/requirements/base.in
 pydantic-core==2.23.4
     # via pydantic
 pygments==2.18.0
     # via ipython
 pytest==7.4.3
     # via -r requirements/dev.in
+redis==5.2.0
+    # via -r /home/oskar/Pulpit/rzyg/RoomReserveUAM/requirements/base.in
+requests==2.32.3
+    # via
+    #   -r /home/oskar/Pulpit/rzyg/RoomReserveUAM/requirements/base.in
+    #   requests-oauthlib
+requests-oauthlib==2.0.0
+    # via -r /home/oskar/Pulpit/rzyg/RoomReserveUAM/requirements/base.in
 six==1.16.0
     # via asttokens
 sniffio==1.3.1
@@ -109,5 +125,7 @@ typing-extensions==4.12.2
     # via
     #   pydantic
     #   pydantic-core
+urllib3==2.2.3
+    # via requests
 wcwidth==0.2.13
     # via prompt-toolkit

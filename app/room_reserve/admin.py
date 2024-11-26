@@ -1,16 +1,52 @@
 from django.contrib import admin
-from room_reserve.models.calendar import Room
-from room_reserve.models.calendar import Meeting
+from .models import Room, Lecturers, Meeting, RoomAttribute, Event
 
 
 @admin.register(Room)
 class RoomAdmin(admin.ModelAdmin):
+    list_display = ("room_number", "building_id", "building_name_pl", "building_name_en", "capacity", "room_supervisor")
+    search_fields = ("room_number", "building_name_pl", "building_name_en", "room_supervisor__username")
+    list_filter = ("building_name_pl", "building_name_en", "capacity")
+    ordering = ("room_number", "building_id")
+    inlines = []  # Inline RoomAttributes will be added below
 
-    list_display = ("room_number", "building_name_pl", "capacity")
-    search_fields = ("room_number", "building_name_pl", "room_supervisor__username")
+
+@admin.register(RoomAttribute)
+class RoomAttributeAdmin(admin.ModelAdmin):
+    list_display = ("room", "attribute_id", "description_pl", "description_en", "count")
+    search_fields = ("attribute_id", "description_pl", "description_en", "room__room_number")
+    list_filter = ("attribute_id",)
+    ordering = ("room", "attribute_id")
+
+
+# Adding RoomAttributeInline to RoomAdmin
+class RoomAttributeInline(admin.TabularInline):
+    model = RoomAttribute
+    extra = 1  # Show one empty row for adding new attributes
+    fields = ("attribute_id", "description_pl", "description_en", "count")
+    readonly_fields = ()  # If you want to make some fields read-only
+
+
+# Add inline to RoomAdmin
+RoomAdmin.inlines.append(RoomAttributeInline)
+
+
+@admin.register(Lecturers)
+class LecturersAdmin(admin.ModelAdmin):
+    list_display = ("first_name", "last_name", "email", "department")
+    search_fields = ("first_name", "last_name", "email", "department")
+
 
 @admin.register(Meeting)
 class MeetingAdmin(admin.ModelAdmin):
+    list_display = ("name_pl", "name_en", "meeting_type", "start_time", "end_time", "room", "capacity", "is_updated")
+    search_fields = ("name_pl", "name_en", "description")
+    list_filter = ("meeting_type", "is_updated")
+    filter_horizontal = ("lecturers",)
 
-    list_display = ("start_time", "end_time", "name_pl", "name_en", "room")
-    search_fields = ("room_number", "building_name")
+
+@admin.register(Event)
+class EventAdmin(admin.ModelAdmin):
+    list_display = ("name", "event_type", "organizer", "start_date", "end_date")
+    search_fields = ("name", "description")
+    list_filter = ("event_type", "organizer")
