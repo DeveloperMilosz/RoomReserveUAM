@@ -6,10 +6,13 @@ from typing import Optional, List, Dict
 import logging
 from requests_oauthlib import OAuth1
 
-# from room_reserve.serializers import MeetingDataIn
-
 # Konfiguracja loggera
 logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+handler = logging.StreamHandler()  # Logi będą wyświetlane w konsoli
+formatter = logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
+handler.setFormatter(formatter)
+logger.addHandler(handler)
 
 # Klucze do uwierzytelniania OAuth
 consumer_key = "N7AhjH9YPUVKN6ft3zfU"
@@ -88,12 +91,18 @@ class UAMApiHandler:
             meeting = MeetingData(**meeting_data)
 
             with transaction.atomic():
+                # Debugowanie - wyświetlenie kluczowych danych przed zapisem
+                logger.debug(
+                    f"Attempting to save meeting with start_time: {meeting.start_time}, "
+                    f"name_pl: {meeting.name.get('pl')}, end_time: {meeting.end_time}"
+                )
+
+                # Weryfikacja unikalności za pomocą kilku pól
                 meeting_obj, created = Meeting.objects.update_or_create(
-                    id=meeting_data.get("id"),  # Zakładając, że ID jest dostępne w danych API
+                    start_time=meeting.start_time,
+                    name_pl=meeting.name.get("pl"),  # Założenie, że 'start_time' i 'name_pl' są unikalne
                     defaults={
-                        "start_time": meeting.start_time,
                         "end_time": meeting.end_time,
-                        "name_pl": meeting.name.get("pl"),  # Zabezpieczenie przed KeyError
                         "name_en": meeting.name.get("en"),
                         "is_updated": True,
                     },
