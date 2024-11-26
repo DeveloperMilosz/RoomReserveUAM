@@ -71,6 +71,7 @@
     {% else %}
         <p><em>To spotkanie nie jest przypisane do żadnego wydarzenia.</em></p>
     {% endif %}
+<a href="{% url 'edit_meeting' meeting_id=meeting.id %}" class="btn btn-primary">Edytuj</a>
 </div>
 
 {% endblock content %}

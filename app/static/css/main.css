@@ -461,7 +461,7 @@ form > a {
 .meeting-detail .meeting-detail-row {
   display: flex;
   justify-content: space-between;
-}
+
 .meeting-detail .meeting-detail-row > p {
   width: 50%;
-}/*# sourceMappingURL=main.css.map */
+}
