@@ -289,54 +289,54 @@ form > a {
   align-items: center;
   margin: 20px 0px;
 
-  > * {
-    width: 216px;
+  .calendar-buttons{
+    display: flex;
+
+    button:first-child {
+      margin-right: 8px;
+    }
   }
-}
 
-#toggleView {
-  margin: unset;
-}
-
-.calendar-title {
-  font-weight: 900;
-  font-size: 24px;
-  text-align: center;
-}
-
-.calendar-navigation {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 24px;
-
-  > button {
-    background-color: transparent;
-    border: 0;
-    color: rgb(15, 45, 102);
-    border: solid black;
-    border-width: 0 3px 3px 0;
-    display: inline-block;
-    padding: 3px;
+  .calendar-title {
+    font-weight: 900;
+    font-size: 24px;
+    text-align: center;
   }
-}
 
-#arrow-left {
-  transform: rotate(135deg);
-  -webkit-transform: rotate(135deg);
-}
+  .calendar-navigation {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 24px;
+  
+    > button {
+      background-color: transparent;
+      border: 0;
+      color: rgb(15, 45, 102);
+      border: solid black;
+      border-width: 0 3px 3px 0;
+      display: inline-block;
+      padding: 3px;
+    }
 
-#dateRange {
-  font-size: 20px;
-  text-transform: capitalize;
-  margin: 0px 8px;
-  min-width: 216px;
-  text-align: center;
-}
-
-#arrow-right {
-  transform: rotate(-45deg);
-  -webkit-transform: rotate(-45deg);
+    #arrow-left {
+      transform: rotate(135deg);
+      -webkit-transform: rotate(135deg);
+    }
+    
+    #dateRange {
+      font-size: 20px;
+      text-transform: capitalize;
+      margin: 0px 8px;
+      min-width: 216px;
+      text-align: center;
+    }
+    
+    #arrow-right {
+      transform: rotate(-45deg);
+      -webkit-transform: rotate(-45deg);
+    }
+  }
 }
 
 .monthly {

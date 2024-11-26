@@ -209,6 +209,17 @@ document.getElementById('toggleView').addEventListener('click', function () {
     fetchMeetings();
 });
 
+document.getElementById('goToToday').addEventListener('click', function () {
+    currentDate = new Date();
+    if (currentView === 'monthly') {
+        generateMonthlyCalendar(currentDate.getFullYear(), currentDate.getMonth());
+    } else {
+        generateWeeklyCalendar(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate());
+    }
+    updateDateRange();
+    fetchMeetings();
+});
+
 document.getElementById('arrow-left').addEventListener('click', function () {
     if (currentView === 'monthly') {
         currentDate.setMonth(currentDate.getMonth() - 1);
@@ -260,7 +271,6 @@ function displayMeetingsInMonth(meetings) {
         }
     });
 }
-
 
 updateDateRange();
 generateMonthlyCalendar(currentDate.getFullYear(), currentDate.getMonth());

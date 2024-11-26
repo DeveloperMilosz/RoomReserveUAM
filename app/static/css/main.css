@@ -268,27 +268,24 @@ form > a {
   align-items: center;
   margin: 20px 0px;
 }
-.calendar-menu > * {
-  width: 216px;
+.calendar-menu .calendar-buttons {
+  display: flex;
 }
-
-#toggleView {
-  margin: unset;
+.calendar-menu .calendar-buttons button:first-child {
+  margin-right: 8px;
 }
-
-.calendar-title {
+.calendar-menu .calendar-title {
   font-weight: 900;
   font-size: 24px;
   text-align: center;
 }
-
-.calendar-navigation {
+.calendar-menu .calendar-navigation {
   display: flex;
   justify-content: center;
   align-items: center;
   font-size: 24px;
 }
-.calendar-navigation > button {
+.calendar-menu .calendar-navigation > button {
   background-color: transparent;
   border: 0;
   color: rgb(15, 45, 102);
@@ -297,21 +294,18 @@ form > a {
   display: inline-block;
   padding: 3px;
 }
-
-#arrow-left {
+.calendar-menu .calendar-navigation #arrow-left {
   transform: rotate(135deg);
   -webkit-transform: rotate(135deg);
 }
-
-#dateRange {
+.calendar-menu .calendar-navigation #dateRange {
   font-size: 20px;
   text-transform: capitalize;
   margin: 0px 8px;
   min-width: 216px;
   text-align: center;
 }
-
-#arrow-right {
+.calendar-menu .calendar-navigation #arrow-right {
   transform: rotate(-45deg);
   -webkit-transform: rotate(-45deg);
 }
