@@ -78,3 +78,11 @@ def new_event(request):
     else:
         form = EventForm()
     return render(request, 'pages/calendar/new_event.html', {'form': form, 'lecturers': lecturers})
+
+def delete_meeting(request, meeting_id):
+    # Ensure the user is authenticated or has the right permissions
+    if request.method == "POST":
+        meeting = get_object_or_404(Meeting, id=meeting_id)
+        meeting.delete()
+        return JsonResponse({'message': 'Meeting deleted successfully'}, status=200)
+    return JsonResponse({'error': 'Invalid request method'}, status=400)
