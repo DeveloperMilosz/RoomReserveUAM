@@ -9,12 +9,26 @@
     <div class="rowedit"><p><strong>Nazwa spotkania:</strong> <br><input type="text" name="name_pl" value={{ meeting.name_pl }} maxlength="255" required id="id_name_pl"></p>
     <p><strong>Meeting name:</strong> <br><input type="text" name="name_en" value={{ meeting.name_en }} maxlength="255" required id="id_name_en"></p></div>
     <p><strong>Prowadzacy:</strong> <br>{{ meeting.lecturers }}</p>
-    {{meeting.end_time}}
     <div class="rowedit"><p><strong>Czas rozpoczęcia:</strong> <br><input type="datetime-local" name="start_time" value={{ meeting.start_time|date:'Y-m-d\\TH:i' }} required id="id_start_time"></p>
     <p><strong>Czas zakończenia:</strong> <br><input type="datetime-local" name="end_time" value={{ meeting.end_time|date:'Y-m-d\\TH:i' }} required id="id_end_time"></p></div>
-    <p><strong>Opis:</strong> <br>{{ meeting.description }}</p>
-    <p><strong>Pokój:</strong> <br>{{ meeting.room }}</p>
-    <p><strong>Liczba miejsc:</strong> <br>{{ meeting.capacity }}</p>
+    <p><strong>Opis:</strong> <br><input type="text" name="description" value={{ meeting.description }} maxlength="255" required id="description"></p>
+    <div class="input-box">
+        <select name="room" required id="id_room">
+            <option value="" disabled selected>Wybierz Sale</option>
+            {% for room in rooms %}
+                <option value="{{ room.id }}">Sala: {{ room.room_number }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <p><strong>Liczba miejsc:</strong> <br><input type="text" name="capacity" value={{ meeting.capacity }} maxlength<="4" required id="capacity"></p>
+    <div class="input-box">
+                <select name="meeting_type" required id="id_meeting_type">
+                    <option value="{{ meeting.event }}" disabled selected>Wybierz typ spotkania</option>
+                    {% for choice in form.fields.meeting_type.choices %}
+                        <option value="{{ choice.0 }}">{{ choice.1 }}</option>
+                    {% endfor %}
+                </select>
+            </div>
     <button type="submit" class="form-button">Edytuj wydarzenie</button>
 </form>
 </div>
