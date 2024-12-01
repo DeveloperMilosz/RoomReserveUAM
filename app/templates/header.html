@@ -4,8 +4,10 @@
     <nav>
       <ul>
           <li><a href="{% url 'home' %}">System rezerwacji UAM</a></li>
-          <li><a href="{% url 'home' %}">Wyszukiwanie</a></li>
-          
+
+          <!-- Link do wyszukiwania -->
+          <li><a href="{% url 'search_view' %}">Wyszukiwanie</a></li>
+
           <li>
               <a href="{% url 'home' %}">Rezerwacja</a>
               <ul class="submenu">
@@ -13,7 +15,7 @@
                   <li><a href="{% url 'new_event' %}">Złóż wniosek o spotkanie</a></li>
               </ul>
           </li>
-          
+
           <li>
               <a href="{% url 'home' %}">Profil</a>
               <ul class="submenu">

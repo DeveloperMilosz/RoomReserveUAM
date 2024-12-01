@@ -39,7 +39,6 @@ urlpatterns = [
         name="account_reset_password_done",
     ),
     path("password/change/", auth_views.password_change, name="account_password_change"),
-
     re_path(
         r"^password/reset/key/(?P<uidb36>[0-9A-Za-z]+)-(?P<key>.+)/$",
         auth_views.password_reset_from_key,
@@ -50,29 +49,11 @@ urlpatterns = [
         auth_views.password_reset_from_key_done,
         name="account_reset_password_from_key_done",
     ),
-    path(
-        'get_meetings/', 
-        calendar_views.get_meetings, 
-        name='get_meetings'
-        ),
-
-    path('editmeeting/<int:meeting_id>/', calendar_views.edit_meeting, name='edit_meeting'),
-    path('delete_meeting/<int:meeting_id>/', calendar_views.delete_meeting, name='delete_meeting'),
-
-    path(
-        'new_meeting/', 
-        calendar_views.new_meeting, 
-        name='new_meeting'
-        ),
-    path(
-        'new_event/', 
-        calendar_views.new_event, 
-        name='new_event'
-        ),
-    path(
-        'meeting/<int:meeting_id>/', 
-        calendar_views.meeting_details, 
-        name='meeting_details'
-        ),
+    path("get_meetings/", calendar_views.get_meetings, name="get_meetings"),
+    path("editmeeting/<int:meeting_id>/", calendar_views.edit_meeting, name="edit_meeting"),
+    path("delete_meeting/<int:meeting_id>/", calendar_views.delete_meeting, name="delete_meeting"),
+    path("new_meeting/", calendar_views.new_meeting, name="new_meeting"),
+    path("new_event/", calendar_views.new_event, name="new_event"),
+    path("meeting/<int:meeting_id>/", calendar_views.meeting_details, name="meeting_details"),
+    path("search/", calendar_views.search_view, name="search_view"),
 ]
-
