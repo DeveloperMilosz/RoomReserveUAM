@@ -1,125 +1,213 @@
 {% extends 'base.html' %}
-
 {% block content %}
 <h1>Wyniki wyszukiwania</h1>
 
-<!-- Wyszukiwarka spotkań -->
-<h2>Wyszukaj spotkania:</h2>
-<form method="GET" action="">
-    <div>
-        <label for="meeting_query">Szukaj po nazwie</label>
-        <input type="text" id="meeting_query" name="meeting_query" value="{{ meeting_query }}">
-    </div>
-    <div>
-        <label for="meeting_type">Typ spotkania</label>
-        <select id="meeting_type" name="meeting_type">
-            <option value="">Wszystkie</option>
-            <option value="meeting" {% if meeting_type == 'meeting' %}selected{% endif %}>Spotkanie</option>
-            <option value="classgroup" {% if meeting_type == 'classgroup' %}selected{% endif %}>Grupa zajęciowa</option>
-        </select>
-    </div>
-    <div>
-        <label for="start_date_meeting">Data rozpoczęcia</label>
-        <input type="date" id="start_date_meeting" name="start_date_meeting" value="{{ start_date_meeting }}">
-    </div>
-    <div>
-        <label for="end_date_meeting">Data zakończenia</label>
-        <input type="date" id="end_date_meeting" name="end_date_meeting" value="{{ end_date_meeting }}">
-    </div>
-    <button type="submit" name="search_type" value="meetings">Szukaj spotkań</button>
-</form>
+<!-- Przełącznik wyszukiwarek -->
+<div class="search-switch">
+    <button type="button" class="switch-button" data-target="meetings-search">Spotkania</button>
+    <button type="button" class="switch-button" data-target="events-search">Wydarzenia</button>
+    <button type="button" class="switch-button" data-target="rooms-search">Sale</button>
+</div>
 
-<hr>
+<!-- Wyszukiwarka spotkań -->
+<!-- Wyszukiwarka spotkań -->
+<!-- Wyszukiwarka spotkań -->
+<div id="meetings-search" class="search-section">
+  <h2>Wyszukaj spotkania:</h2>
+  <form method="GET" action="">
+      <div>
+          <label for="meeting_query">Szukaj po nazwie</label>
+          <input type="text" id="meeting_query" name="meeting_query" value="{{ meeting_query }}">
+      </div>
+      <div>
+          <label for="meeting_type">Typ spotkania</label>
+          <select id="meeting_type" name="meeting_type">
+              <option value="">Wszystkie</option>
+              <option value="meeting" {% if meeting_type == 'meeting' %}selected{% endif %}>Spotkanie</option>
+              <option value="classgroup" {% if meeting_type == 'classgroup' %}selected{% endif %}>Grupa zajęciowa</option>
+          </select>
+      </div>
+      <div>
+          <label for="start_date_meeting">Data rozpoczęcia</label>
+          <input type="date" id="start_date_meeting" name="start_date_meeting" value="{{ start_date_meeting }}">
+      </div>
+      <div>
+          <label for="end_date_meeting">Data zakończenia</label>
+          <input type="date" id="end_date_meeting" name="end_date_meeting" value="{{ end_date_meeting }}">
+      </div>
+      <div>
+          <label for="lecturer">Prowadzący</label>
+          <select id="lecturer" name="lecturer">
+              <option value="">Wszyscy</option>
+              {% for lecturer in all_lecturers %}
+                  <option value="{{ lecturer.id }}" {% if lecturer|yesno:"True" == lecturer %}selected{% endif %}>
+                      {{ lecturer.first_name }} {{ lecturer.last_name }}
+                  </option>
+              {% endfor %}
+          </select>
+      </div>
+      <div>
+          <label for="room">Pokój</label>
+          <select id="room" name="room">
+              <option value="">Wszystkie</option>
+              {% for room in all_rooms %}
+                  <option value="{{ room.id }}" {% if room|yesno:"True" == room %}selected{% endif %}>
+                      {{ room.room_number }}
+                  </option>
+              {% endfor %}
+          </select>
+      </div>
+      <div>
+          <label for="meeting_capacity">Liczba osób na spotkaniu</label>
+          <input type="number" id="meeting_capacity" name="meeting_capacity" value="{{ meeting_capacity }}">
+      </div>
+      <div>
+          <label for="room_capacity">Liczba osób w pokoju</label>
+          <input type="number" id="room_capacity" name="room_capacity" value="{{ room_capacity }}">
+      </div>
+      <div>
+          <label for="event">Wydarzenie</label>
+          <select id="event" name="event">
+              <option value="">Wszystkie</option>
+              {% for event in all_events %}
+                  <option value="{{ event.id }}" {% if event|yesno:"True" == event %}selected{% endif %}>
+                      {{ event.name }}
+                  </option>
+              {% endfor %}
+          </select>
+      </div>
+      <button type="submit" name="search_type" value="meetings">Szukaj spotkań</button>
+  </form>
+</div>
+
 
 <!-- Wyszukiwarka wydarzeń -->
-<h2>Wyszukaj wydarzenia:</h2>
-<form method="GET" action="">
-    <div>
-        <label for="event_query">Szukaj po nazwie</label>
-        <input type="text" id="event_query" name="event_query" value="{{ event_query }}">
-    </div>
-    <div>
-        <label for="event_type">Typ wydarzenia</label>
-        <select id="event_type" name="event_type">
-            <option value="">Wszystkie</option>
-            <option value="lesson_schedule" {% if event_type == 'lesson_schedule' %}selected{% endif %}>Plan zajęć</option>
-            <option value="event" {% if event_type == 'event' %}selected{% endif %}>Wydarzenie</option>
-        </select>
-    </div>
-    <div>
-        <label for="start_date_event">Data rozpoczęcia</label>
-        <input type="date" id="start_date_event" name="start_date_event" value="{{ start_date_event }}">
-    </div>
-    <div>
-        <label for="end_date_event">Data zakończenia</label>
-        <input type="date" id="end_date_event" name="end_date_event" value="{{ end_date_event }}">
-    </div>
-    <button type="submit" name="search_type" value="events">Szukaj wydarzeń</button>
-</form>
-
-<hr>
+<div id="events-search" class="search-section" style="display: none;">
+    <h2>Wyszukaj wydarzenia:</h2>
+    <form method="GET" action="">
+        <div>
+            <label for="event_query">Szukaj po nazwie</label>
+            <input type="text" id="event_query" name="event_query" value="{{ event_query }}">
+        </div>
+        <div>
+            <label for="event_type">Typ wydarzenia</label>
+            <select id="event_type" name="event_type">
+                <option value="">Wszystkie</option>
+                <option value="lesson_schedule" {% if event_type == 'lesson_schedule' %}selected{% endif %}>Plan zajęć</option>
+                <option value="event" {% if event_type == 'event' %}selected{% endif %}>Wydarzenie</option>
+            </select>
+        </div>
+        <div>
+            <label for="start_date_event">Data rozpoczęcia</label>
+            <input type="date" id="start_date_event" name="start_date_event" value="{{ start_date_event }}">
+        </div>
+        <div>
+            <label for="end_date_event">Data zakończenia</label>
+            <input type="date" id="end_date_event" name="end_date_event" value="{{ end_date_event }}">
+        </div>
+        <button type="submit" name="search_type" value="events">Szukaj wydarzeń</button>
+    </form>
+</div>
 
 <!-- Wyszukiwarka wolnych sal -->
-<h2>Wyszukaj wolne sale:</h2>
-<form method="GET" action="">
-    <div>
-        <label for="room_query">Szukaj po numerze pokoju</label>
-        <input type="text" id="room_query" name="room_query" value="{{ room_query }}">
-    </div>
-    <div>
-        <label for="start_date_room">Data rozpoczęcia</label>
-        <input type="date" id="start_date_room" name="start_date_room" value="{{ start_date_room }}">
-    </div>
-    <div>
-        <label for="end_date_room">Data zakończenia</label>
-        <input type="date" id="end_date_room" name="end_date_room" value="{{ end_date_room }}">
-    </div>
-    <button type="submit" name="search_type" value="rooms">Szukaj sal</button>
-</form>
+<div id="rooms-search" class="search-section" style="display: none;">
+    <h2>Wyszukaj wolne sale:</h2>
+    <form method="GET" action="">
+        <div>
+            <label for="room_query">Szukaj po numerze pokoju</label>
+            <input type="text" id="room_query" name="room_query" value="{{ room_query }}">
+        </div>
+        <div>
+            <label for="start_date_room">Data rozpoczęcia</label>
+            <input type="date" id="start_date_room" name="start_date_room" value="{{ start_date_room }}">
+        </div>
+        <div>
+            <label for="end_date_room">Data zakończenia</label>
+            <input type="date" id="end_date_room" name="end_date_room" value="{{ end_date_room }}">
+        </div>
+        <button type="submit" name="search_type" value="rooms">Szukaj sal</button>
+    </form>
+</div>
 
 <hr>
 
-<!-- Wyniki wyszukiwania -->
-<h2>Wyniki:</h2>
+<!-- Przełącznik widoku wyników -->
+<div class="results-switch">
+    <button type="button" class="view-button" data-view="list">Lista</button>
+    <button type="button" class="view-button" data-view="calendar">Kalendarz</button>
+</div>
 
-<!-- Wyniki spotkań -->
-{% if meetings %}
-    <h3>Spotkania:</h3>
-    <ul>
-        {% for meeting in meetings %}
-            <li>
-                <a href="{% url 'meeting_details' meeting.id %}">
-                    {{ meeting.name_pl }} ({{ meeting.start_time }} - {{ meeting.end_time }})
-                </a>
-                <p>{{ meeting.description }}</p>
-            </li>
-        {% endfor %}
-    </ul>
-{% endif %}
+<!-- Widok listy -->
+<div id="list-view" class="results-view">
+    <!-- Wyniki spotkań -->
+    {% if meetings %}
+        <h3>Spotkania:</h3>
+        <ul>
+            {% for meeting in meetings %}
+                <li>
+                    <a href="{% url 'meeting_details' meeting.id %}">
+                        {{ meeting.name_pl }} ({{ meeting.start_time }} - {{ meeting.end_time }})
+                    </a>
+                    <p>{{ meeting.description }}</p>
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
 
-<!-- Wyniki wydarzeń -->
-{% if events %}
-    <h3>Wydarzenia:</h3>
-    <ul>
-        {% for event in events %}
-            <li>
-                <a href="{% url 'event_details' event.id %}">
-                    {{ event.name }} ({{ event.start_date }} - {{ event.end_date }})
-                </a>
-                <p>{{ event.description }}</p>
-            </li>
-        {% endfor %}
-    </ul>
-{% endif %}
+    <!-- Wyniki wydarzeń -->
+    {% if events %}
+        <h3>Wydarzenia:</h3>
+        <ul>
+            {% for event in events %}
+                <li>
+                    <a href="{% url 'event_details' event.id %}">
+                        {{ event.name }} ({{ event.start_date }} - {{ event.end_date }})
+                    </a>
+                    <p>{{ event.description }}</p>
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
 
-<!-- Wyniki wolnych sal -->
-{% if available_rooms %}
-    <h3>Wolne sale:</h3>
-    <ul>
-        {% for room in available_rooms %}
-            <li>Pokój {{ room.room_number }}</li>
-        {% endfor %}
-    </ul>
-{% endif %}
+    <!-- Wyniki wolnych sal -->
+    {% if available_rooms %}
+        <h3>Wolne sale:</h3>
+        <ul>
+            {% for room in available_rooms %}
+                <li>Pokój {{ room.room_number }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+</div>
+
+<!-- Widok kalendarza -->
+<div id="calendar-view" class="results-view" style="display: none;">
+    <p>Tu będzie widok na kalendarzu</p>
+</div>
+
+<script>
+    // Przełączanie między widokami wyszukiwarek
+    document.querySelectorAll('.switch-button').forEach(button => {
+        button.addEventListener('click', () => {
+            document.querySelectorAll('.search-section').forEach(section => {
+                section.style.display = 'none';
+            });
+
+            const target = document.getElementById(button.getAttribute('data-target'));
+            if (target) {
+                target.style.display = 'block';
+            }
+        });
+    });
+
+    // Przełączanie między widokiem listy i kalendarza
+    document.querySelectorAll('.view-button').forEach(button => {
+        button.addEventListener('click', () => {
+            const view = button.getAttribute('data-view');
+            document.getElementById('list-view').style.display = view === 'list' ? 'block' : 'none';
+            document.getElementById('calendar-view').style.display = view === 'calendar' ? 'block' : 'none';
+        });
+    });
+</script>
 
 {% endblock %}

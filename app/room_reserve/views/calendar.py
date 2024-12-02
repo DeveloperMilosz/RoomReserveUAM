@@ -111,6 +111,11 @@ def search_view(request):
         meeting_type = request.GET.get("meeting_type", "").strip()
         start_date_meeting = request.GET.get("start_date_meeting", "")
         end_date_meeting = request.GET.get("end_date_meeting", "")
+        lecturer = request.GET.get("lecturer", "").strip()
+        room = request.GET.get("room", "").strip()
+        meeting_capacity = request.GET.get("meeting_capacity", "")
+        room_capacity = request.GET.get("room_capacity", "")
+        event_id = request.GET.get("event", "").strip()  # Pobieramy ID wydarzenia
 
         meeting_filters = Q()
         if meeting_query:
@@ -119,7 +124,20 @@ def search_view(request):
             meeting_filters &= Q(meeting_type=meeting_type)
         if start_date_meeting and end_date_meeting:
             meeting_filters &= Q(start_time__gte=start_date_meeting, end_time__lte=end_date_meeting)
-        meetings = Meeting.objects.filter(meeting_filters)
+        if lecturer:
+            meeting_filters &= Q(lecturers__first_name__icontains=lecturer) | Q(
+                lecturers__last_name__icontains=lecturer
+            )
+        if room:
+            meeting_filters &= Q(room__id=room)
+        if meeting_capacity:
+            meeting_filters &= Q(capacity__gte=meeting_capacity)
+        if room_capacity:
+            meeting_filters &= Q(room__capacity__gte=room_capacity)
+        if event_id:  # Filtrujemy po wydarzeniu
+            meeting_filters &= Q(event__id=event_id)
+
+        meetings = Meeting.objects.filter(meeting_filters).distinct()
 
     # Wyszukiwanie wydarzeń
     elif search_type == "events":
@@ -153,6 +171,11 @@ def search_view(request):
         if room_query:
             available_rooms = available_rooms.filter(room_number__icontains=room_query)
 
+    # Pobranie danych do list rozwijanych
+    all_rooms = Room.objects.all()
+    all_lecturers = Lecturers.objects.all()
+    all_events = Event.objects.all()
+
     return render(
         request,
         "pages/calendar/search.html",
@@ -160,6 +183,9 @@ def search_view(request):
             "meetings": meetings,
             "events": events,
             "available_rooms": available_rooms,
+            "all_rooms": all_rooms,
+            "all_lecturers": all_lecturers,
+            "all_events": all_events,
             "meeting_query": request.GET.get("meeting_query", ""),
             "event_query": request.GET.get("event_query", ""),
             "room_query": request.GET.get("room_query", ""),
@@ -171,6 +197,11 @@ def search_view(request):
             "end_date_event": request.GET.get("end_date_event", ""),
             "start_date_room": request.GET.get("start_date_room", ""),
             "end_date_room": request.GET.get("end_date_room", ""),
+            "lecturer": request.GET.get("lecturer", ""),
+            "room": request.GET.get("room", ""),
+            "meeting_capacity": request.GET.get("meeting_capacity", ""),
+            "room_capacity": request.GET.get("room_capacity", ""),
+            "event": request.GET.get("event", ""),  # Przekazujemy ID wybranego wydarzenia
         },
     )
 
