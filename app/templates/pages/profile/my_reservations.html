@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Moje Rezerwacje</h1>
+<p>Lista Twoich rezerwacji:</p>
+<ul>
+  <!-- Przykład dynamicznej listy -->
+  {% for reservation in reservations %}
+    <li>{{ reservation.name }} - {{ reservation.date }}</li>
+  {% empty %}
+    <li>Nie masz jeszcze żadnych rezerwacji.</li>
+  {% endfor %}
+</ul>
+{% endblock %}

@@ -19,9 +19,8 @@
           <li>
               <a href="{% url 'home' %}">Profil</a>
               <ul class="submenu">
-                <li><a href="{% url 'home' %}">Mój profil</a></li>
-                <li><a href="{% url 'home' %}">Moje rezerwacje</a></li>
-                <li><a href="{% url 'home' %}">Mój kalendarz</a></li>
+                <li><a href="{% url 'my_profile' %}">Mój profil</a></li>
+                <li><a href="{% url 'my_reservations' %}">Moje rezerwacje</a></li>
                 <li><a href="{% url 'account_password_change' %}">Reset hasła</a></li>
                 <li><a href="{% url 'account_logout' %}">Wyloguj się</a></li>
               </ul>
