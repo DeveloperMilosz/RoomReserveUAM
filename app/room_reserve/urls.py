@@ -4,6 +4,7 @@ from django.urls import re_path
 from room_reserve.views import home as home_views
 from room_reserve.views import auth as auth_views
 from room_reserve.views import calendar as calendar_views
+from room_reserve.views import profile as profile_views
 
 
 urlpatterns = [
@@ -56,4 +57,6 @@ urlpatterns = [
     path("new_event/", calendar_views.new_event, name="new_event"),
     path("meeting/<int:meeting_id>/", calendar_views.meeting_details, name="meeting_details"),
     path("search/", calendar_views.search_view, name="search_view"),
+    path("profil/", profile_views.my_profile_view, name="my_profile"),
+    path("reservation/", profile_views.my_reservations_view, name="my_reservations"),
 ]
