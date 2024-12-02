@@ -45,8 +45,17 @@ class MeetingAdmin(admin.ModelAdmin):
     filter_horizontal = ("lecturers",)
 
 
+class MeetingInline(admin.TabularInline):
+    model = Meeting
+    extra = 1  # Liczba pustych wierszy do dodania
+    fields = ("meeting_type", "name_pl", "name_en", "start_time", "end_time", "room", "capacity", "color", "is_updated")
+    readonly_fields = ()  # Możesz ustawić niektóre pola jako tylko do odczytu
+    show_change_link = True  # Umożliwia przejście do edycji spotkania
+
+
 @admin.register(Event)
 class EventAdmin(admin.ModelAdmin):
     list_display = ("name", "event_type", "organizer", "start_date", "end_date")
     search_fields = ("name", "description")
     list_filter = ("event_type", "organizer")
+    inlines = [MeetingInline]  # Dodanie MeetingInline
