@@ -5,6 +5,7 @@ from room_reserve.views import home as home_views
 from room_reserve.views import auth as auth_views
 from room_reserve.views import calendar as calendar_views
 from room_reserve.views import rosberrypi_viewer as rosberrypi_views
+from room_reserve.views import event_meeting as event_meeting
 
 
 urlpatterns = [
@@ -75,6 +76,7 @@ urlpatterns = [
         calendar_views.meeting_details, 
         name='meeting_details'
         ),
-    path('room/<str:room_number>/schedule/', rosberrypi_views.room_schedule_view, name='room_schedule')
+    path('room/<str:room_number>/schedule/', rosberrypi_views.room_schedule_view, name='room_schedule'),
+    path('create-event/', event_meeting.create_event_with_meetings, name='create_event_with_meetings'),
 ]
 
