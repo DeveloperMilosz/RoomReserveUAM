@@ -11,7 +11,8 @@ import json
 
 
 def get_meetings(request):
-    meetings = Meeting.objects.select_related("room", "event").prefetch_related("lecturers").all()
+    # Fetch only approved meetings
+    meetings = Meeting.objects.select_related("room", "event").prefetch_related("lecturers").filter(is_approved=True)
     events = [
         {
             "id": meeting.id,
@@ -47,7 +48,11 @@ def new_meeting(request):
     if request.method == "POST":
         form = MeetingForm(request.POST)
         if form.is_valid():
-            form.save()
+            # Default new meetings to `is_approved=False`
+            meeting = form.save(commit=False)
+            meeting.is_approved = False
+            meeting.save()
+            form.save_m2m()
             return redirect("home")
     else:
         form = MeetingForm()
@@ -59,24 +64,14 @@ def new_meeting(request):
 
 
 def edit_meeting(request, meeting_id):
-    # Fetch the existing meeting object by ID
     meeting = get_object_or_404(Meeting, pk=meeting_id)
-
     if request.method == "POST":
-        # Initialize the form with POST data and bind it to the existing meeting instance
         form = MeetingForm(request.POST, instance=meeting)
-
         if form.is_valid():
-            # Save changes if the form is valid
             form.save()
-            return redirect(
-                "meeting_details", meeting_id=meeting.id
-            )  # Redirect to the meeting details page or home page
+            return redirect("meeting_details", meeting_id=meeting.id)
     else:
-        # Initialize the form with the existing meeting instance for GET requests
         form = MeetingForm(instance=meeting)
-
-    # Render the edit page with the form and meeting instance
     return render(request, "pages/calendar/edit_meeting.html", {"form": form, "meeting": meeting})
 
 
@@ -93,7 +88,6 @@ def new_event(request):
 
 
 def delete_meeting(request, meeting_id):
-    # Ensure the user is authenticated or has the right permissions
     if request.method == "POST":
         meeting = get_object_or_404(Meeting, id=meeting_id)
         meeting.delete()
@@ -105,7 +99,6 @@ def search_view(request):
     search_type = request.GET.get("search_type", "")
     meetings, events, available_rooms = [], [], []
 
-    # Wyszukiwanie spotkań
     if search_type == "meetings":
         meeting_query = request.GET.get("meeting_query", "").strip()
         meeting_type = request.GET.get("meeting_type", "").strip()
@@ -115,9 +108,9 @@ def search_view(request):
         room = request.GET.get("room", "").strip()
         meeting_capacity = request.GET.get("meeting_capacity", "")
         room_capacity = request.GET.get("room_capacity", "")
-        event_id = request.GET.get("event", "").strip()  # Pobieramy ID wydarzenia
+        event_id = request.GET.get("event", "").strip()
 
-        meeting_filters = Q()
+        meeting_filters = Q(is_approved=True)  # Ensure only approved meetings are fetched
         if meeting_query:
             meeting_filters &= Q(name_pl__icontains=meeting_query) | Q(name_en__icontains=meeting_query)
         if meeting_type:
@@ -134,12 +127,11 @@ def search_view(request):
             meeting_filters &= Q(capacity__gte=meeting_capacity)
         if room_capacity:
             meeting_filters &= Q(room__capacity__gte=room_capacity)
-        if event_id:  # Filtrujemy po wydarzeniu
+        if event_id:
             meeting_filters &= Q(event__id=event_id)
 
         meetings = Meeting.objects.filter(meeting_filters).distinct()
 
-    # Wyszukiwanie wydarzeń
     elif search_type == "events":
         event_query = request.GET.get("event_query", "").strip()
         event_type = request.GET.get("event_type", "").strip()
@@ -155,7 +147,6 @@ def search_view(request):
             event_filters &= Q(start_date__gte=start_date_event, end_date__lte=end_date_event)
         events = Event.objects.filter(event_filters)
 
-    # Wyszukiwanie wolnych sal
     elif search_type == "rooms":
         room_query = request.GET.get("room_query", "").strip()
         start_date_room = request.GET.get("start_date_room", "")
@@ -171,7 +162,6 @@ def search_view(request):
         if room_query:
             available_rooms = available_rooms.filter(room_number__icontains=room_query)
 
-    # Pobranie danych do list rozwijanych
     all_rooms = Room.objects.all()
     all_lecturers = Lecturers.objects.all()
     all_events = Event.objects.all()
@@ -201,9 +191,6 @@ def search_view(request):
             "room": request.GET.get("room", ""),
             "meeting_capacity": request.GET.get("meeting_capacity", ""),
             "room_capacity": request.GET.get("room_capacity", ""),
-            "event": request.GET.get("event", ""),  # Przekazujemy ID wybranego wydarzenia
+            "event": request.GET.get("event", ""),
         },
     )
-
-    # Renderowanie wyników w szablonie
-    return render(request, "pages/calendar/search.html", context)
