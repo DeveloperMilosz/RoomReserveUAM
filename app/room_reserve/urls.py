@@ -4,6 +4,8 @@ from django.urls import re_path
 from room_reserve.views import home as home_views
 from room_reserve.views import auth as auth_views
 from room_reserve.views import calendar as calendar_views
+from room_reserve.views import rosberrypi_viewer as rosberrypi_views
+from room_reserve.views import event_meeting as event_meeting
 from room_reserve.views import profile as profile_views
 
 
@@ -50,6 +52,8 @@ urlpatterns = [
         auth_views.password_reset_from_key_done,
         name="account_reset_password_from_key_done",
     ),
+    path('room/<str:room_number>/schedule/', rosberrypi_views.room_schedule_view, name='room_schedule'),
+    path('create-event/', event_meeting.create_event_with_meetings, name='create_event_with_meetings'),
     path("get_meetings/", calendar_views.get_meetings, name="get_meetings"),
     path("editmeeting/<int:meeting_id>/", calendar_views.edit_meeting, name="edit_meeting"),
     path("delete_meeting/<int:meeting_id>/", calendar_views.delete_meeting, name="delete_meeting"),
