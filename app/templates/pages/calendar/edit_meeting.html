@@ -14,7 +14,7 @@
     <p><strong>Opis:</strong> <br><input type="text" name="description" value={{ meeting.description }} maxlength="255" required id="description"></p>
     <div class="input-box">
         <select name="room" required id="id_room">
-            <option value="{{room.room_number}}" disabled selected>Wybierz Sale</option>
+            <option value="" disabled selected>Wybierz Sale</option>
             {% for room in rooms %}
                 <option value="{{ room.id }}">Sala: {{ room.room_number }}</option>
             {% endfor %}
