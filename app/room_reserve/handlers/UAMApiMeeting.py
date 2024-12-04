@@ -105,6 +105,7 @@ class UAMApiHandler:
                         "end_time": meeting.end_time,
                         "name_en": meeting.name.get("en"),
                         "is_updated": True,
+                        "is_approved": True,
                     },
                 )
                 if created:
