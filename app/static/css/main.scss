@@ -370,6 +370,10 @@ form > a {
       top: 0px;
       width: 100%;
     }
+
+    &:hover > .events {
+      z-index: 99;
+    }
   }
 
   &.weekly > strong {

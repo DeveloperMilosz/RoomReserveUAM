@@ -341,6 +341,9 @@ form > a {
   top: 0px;
   width: 100%;
 }
+.day:not(.weekly):hover > .events {
+  z-index: 99;
+}
 .day.weekly > strong {
   margin-top: -27px;
 }
