@@ -4,6 +4,7 @@ from django.urls import re_path
 from room_reserve.views import home as home_views
 from room_reserve.views import auth as auth_views
 from room_reserve.views import calendar as calendar_views
+from room_reserve.views import rosberrypi_viewer as rosberrypi_views
 
 
 urlpatterns = [
@@ -74,5 +75,6 @@ urlpatterns = [
         calendar_views.meeting_details, 
         name='meeting_details'
         ),
+    path('room/<str:room_number>/schedule/', rosberrypi_views.room_schedule_view, name='room_schedule')
 ]
 
