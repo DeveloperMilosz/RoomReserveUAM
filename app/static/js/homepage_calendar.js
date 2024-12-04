@@ -246,28 +246,62 @@ async function fetchMeetings() {
 
 document.getElementById('toggleView').addEventListener('click', () => {
     currentView = currentView === 'monthly' ? 'weekly' : 'monthly';
-    currentView === 'monthly' ? generateMonthlyCalendar() : generateWeeklyCalendar();
+    if (currentView === 'monthly') {
+        generateMonthlyCalendar(currentDate.getFullYear(), currentDate.getMonth());
+    } else {
+        generateWeeklyCalendar(
+            currentDate.getFullYear(),
+            currentDate.getMonth(),
+            currentDate.getDate()
+        );
+    }
     updateDateRange();
     fetchMeetings();
 });
 
-document.getElementById('goToToday').addEventListener('click', () => {
-    currentDate = new Date();
-    currentView === 'monthly' ? generateMonthlyCalendar() : generateWeeklyCalendar();
+document.getElementById('goToToday').addEventListener('click', function () {
+    currentDate = new Date(); // Ustawiamy bieżącą datę
+    if (currentView === 'monthly') {
+        generateMonthlyCalendar(currentDate.getFullYear(), currentDate.getMonth());
+    } else {
+        generateWeeklyCalendar(
+            currentDate.getFullYear(),
+            currentDate.getMonth(),
+            currentDate.getDate()
+        );
+    }
     updateDateRange();
     fetchMeetings();
 });
 
-document.getElementById('arrow-left').addEventListener('click', () => {
-    currentDate.setDate(currentDate.getDate() - (currentView === 'monthly' ? 30 : 7));
-    currentView === 'monthly' ? generateMonthlyCalendar() : generateWeeklyCalendar();
+document.getElementById('arrow-left').addEventListener('click', function () {
+    if (currentView === 'monthly') {
+        currentDate.setMonth(currentDate.getMonth() - 1); // Przejście do poprzedniego miesiąca
+        generateMonthlyCalendar(currentDate.getFullYear(), currentDate.getMonth());
+    } else {
+        currentDate.setDate(currentDate.getDate() - 7); // Przejście do poprzedniego tygodnia
+        generateWeeklyCalendar(
+            currentDate.getFullYear(),
+            currentDate.getMonth(),
+            currentDate.getDate()
+        );
+    }
     updateDateRange();
     fetchMeetings();
 });
 
-document.getElementById('arrow-right').addEventListener('click', () => {
-    currentDate.setDate(currentDate.getDate() + (currentView === 'monthly' ? 30 : 7));
-    currentView === 'monthly' ? generateMonthlyCalendar() : generateWeeklyCalendar();
+document.getElementById('arrow-right').addEventListener('click', function () {
+    if (currentView === 'monthly') {
+        currentDate.setMonth(currentDate.getMonth() + 1); // Przejście do następnego miesiąca
+        generateMonthlyCalendar(currentDate.getFullYear(), currentDate.getMonth());
+    } else {
+        currentDate.setDate(currentDate.getDate() + 7); // Przejście do następnego tygodnia
+        generateWeeklyCalendar(
+            currentDate.getFullYear(),
+            currentDate.getMonth(),
+            currentDate.getDate()
+        );
+    }
     updateDateRange();
     fetchMeetings();
 });
