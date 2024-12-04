@@ -118,7 +118,8 @@ const displayMeetings = meetings => {
                         dayEl.appendChild(eventsContainer);
                     }
 
-                    const eventEl = document.createElement('div');
+                    const eventEl = document.createElement('a');
+                    eventEl.href = `/meeting/${meeting.id}`;
                     eventEl.classList.add('event');
                     eventEl.style.backgroundColor = meeting.color;
                     eventEl.textContent = meeting.title;
