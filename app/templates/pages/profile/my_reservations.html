@@ -1,14 +1,67 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h1>Moje Rezerwacje</h1>
-<p>Lista Twoich rezerwacji:</p>
-<ul>
-  <!-- Przykład dynamicznej listy -->
-  {% for reservation in reservations %}
-    <li>{{ reservation.name }} - {{ reservation.date }}</li>
-  {% empty %}
-    <li>Nie masz jeszcze żadnych rezerwacji.</li>
-  {% endfor %}
-</ul>
+<div class="container">
+    <h1>Moje Rezerwacje</h1>
+
+    <!-- Oczekujące -->
+    <section>
+        <h2>Oczekujące na zaakceptowanie</h2>
+        {% if pending_reservations %}
+            <ul>
+                {% for reservation in pending_reservations %}
+                    <li>
+                        <strong>{{ reservation.name_pl }}</strong><br>
+                        Data rozpoczęcia: {{ reservation.start_time }}<br>
+                        Data zakończenia: {{ reservation.end_time }}<br>
+                        Sala: {{ reservation.room.room_number }}<br>
+                        <a href="{% url 'edit_meeting' reservation.id %}">Edytuj</a>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>Brak oczekujących rezerwacji.</p>
+        {% endif %}
+    </section>
+
+    <!-- Zatwierdzone -->
+    <section>
+        <h2>Zaakceptowane</h2>
+        {% if approved_reservations %}
+            <ul>
+                {% for reservation in approved_reservations %}
+                    <li>
+                        <strong>{{ reservation.name_pl }}</strong><br>
+                        Data rozpoczęcia: {{ reservation.start_time }}<br>
+                        Data zakończenia: {{ reservation.end_time }}<br>
+                        Sala: {{ reservation.room.room_number }}<br>
+                        <a href="{% url 'edit_meeting' reservation.id %}">Edytuj</a>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>Brak zaakceptowanych rezerwacji.</p>
+        {% endif %}
+    </section>
+
+    <!-- Odrzucone -->
+    <section>
+        <h2>Odrzucone</h2>
+        {% if rejected_reservations %}
+            <ul>
+                {% for reservation in rejected_reservations %}
+                    <li>
+                        <strong>{{ reservation.name_pl }}</strong><br>
+                        Data rozpoczęcia: {{ reservation.start_time }}<br>
+                        Data zakończenia: {{ reservation.end_time }}<br>
+                        Sala: {{ reservation.room.room_number }}<br>
+                        <a href="{% url 'edit_meeting' reservation.id %}">Edytuj</a>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>Brak odrzuconych rezerwacji.</p>
+        {% endif %}
+    </section>
+</div>
 {% endblock %}

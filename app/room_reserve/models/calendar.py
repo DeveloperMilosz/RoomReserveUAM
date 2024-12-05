@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from colorfield.fields import ColorField
+from django.contrib.auth import get_user_model
 
 
 class Room(models.Model):
@@ -28,6 +29,9 @@ class Lecturers(models.Model):
 
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
+
+
+User = get_user_model()
 
 
 class Meeting(models.Model):
@@ -58,6 +62,9 @@ class Meeting(models.Model):
     created_at = models.DateTimeField(_("created at"), auto_now_add=True, null=True, blank=True)
     modified_at = models.DateTimeField(_("modified at"), auto_now=True)
     is_updated = models.BooleanField(_("is updated"), default=True)
+    submitted_by = models.ForeignKey(
+        User, on_delete=models.SET_NULL, null=True, blank=True, verbose_name=_("Submitted By")
+    )
 
     def __str__(self):
         return f"{self.name_pl} ({self.start_time} - {self.end_time})"

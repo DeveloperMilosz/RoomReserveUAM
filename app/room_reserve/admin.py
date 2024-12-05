@@ -61,10 +61,12 @@ class MeetingAdmin(admin.ModelAdmin):
         "capacity",
         "is_approved",  # Added for approval workflow
         "is_updated",
+        "submitted_by",  # Show who submitted the meeting
     )
-    search_fields = ("name_pl", "name_en", "description")
-    list_filter = ("meeting_type", "is_approved", "is_updated")  # Filter by approval status
+    search_fields = ("name_pl", "name_en", "description", "submitted_by__username", "submitted_by__email")
+    list_filter = ("meeting_type", "is_approved", "is_updated", "submitted_by")  # Filter by who submitted the meeting
     filter_horizontal = ("lecturers",)
+    readonly_fields = ("submitted_by",)  # Make submitted_by read-only in admin
     actions = ["approve_meetings", "reject_meetings"]
 
     # Add approval actions for meetings
@@ -79,13 +81,31 @@ class MeetingAdmin(admin.ModelAdmin):
     approve_meetings.short_description = "Approve selected meetings"
     reject_meetings.short_description = "Reject selected meetings"
 
+    # Automatically set the submitted_by field if not already set
+    def save_model(self, request, obj, form, change):
+        if not obj.submitted_by:
+            obj.submitted_by = request.user
+        super().save_model(request, obj, form, change)
+
 
 # MeetingInline for EventAdmin
 class MeetingInline(admin.TabularInline):
     model = Meeting
     extra = 1  # Number of empty rows to display
-    fields = ("meeting_type", "name_pl", "name_en", "start_time", "end_time", "room", "capacity", "color", "is_approved", "is_updated")
-    readonly_fields = ("is_updated",)  # Optional: Make specific fields read-only
+    fields = (
+        "meeting_type",
+        "name_pl",
+        "name_en",
+        "start_time",
+        "end_time",
+        "room",
+        "capacity",
+        "color",
+        "is_approved",
+        "is_updated",
+        "submitted_by",  # Include submitted_by in the inline view
+    )
+    readonly_fields = ("is_updated", "submitted_by")  # Optional: Make specific fields read-only
     show_change_link = True  # Enable navigation to edit meetings
 
 

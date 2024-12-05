@@ -6,7 +6,7 @@ from room_reserve.views import auth as auth_views
 from room_reserve.views import calendar as calendar_views
 from room_reserve.views import rosberrypi_viewer as rosberrypi_views
 from room_reserve.views import event_meeting as event_meeting
-from room_reserve.views import profile as profile_views
+from room_reserve.views import profile_views
 
 
 urlpatterns = [
@@ -52,8 +52,8 @@ urlpatterns = [
         auth_views.password_reset_from_key_done,
         name="account_reset_password_from_key_done",
     ),
-    path('room/<str:room_number>/schedule/', rosberrypi_views.room_schedule_view, name='room_schedule'),
-    path('create-event/', event_meeting.create_event_with_meetings, name='create_event_with_meetings'),
+    path("room/<str:room_number>/schedule/", rosberrypi_views.room_schedule_view, name="room_schedule"),
+    path("create-event/", event_meeting.create_event_with_meetings, name="create_event_with_meetings"),
     path("get_meetings/", calendar_views.get_meetings, name="get_meetings"),
     path("editmeeting/<int:meeting_id>/", calendar_views.edit_meeting, name="edit_meeting"),
     path("delete_meeting/<int:meeting_id>/", calendar_views.delete_meeting, name="delete_meeting"),
@@ -62,5 +62,5 @@ urlpatterns = [
     path("meeting/<int:meeting_id>/", calendar_views.meeting_details, name="meeting_details"),
     path("search/", calendar_views.search_view, name="search_view"),
     path("profil/", profile_views.my_profile_view, name="my_profile"),
-    path("reservation/", profile_views.my_reservations_view, name="my_reservations"),
+    path("reservation/", profile_views.my_reservations, name="my_reservations"),
 ]
