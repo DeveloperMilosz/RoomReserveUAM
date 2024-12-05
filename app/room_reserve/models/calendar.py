@@ -89,7 +89,7 @@ class Event(models.Model):
 
     name = models.CharField(_("Event Name"), max_length=50, null=True, blank=True)
     description = models.TextField(_("Description"), null=True, blank=True)
-    organizer = models.ForeignKey(
+    lecturers = models.ManyToManyField(
         Lecturers, on_delete=models.SET_NULL, verbose_name=_("Organizer"), null=True, blank=True
     )
     event_type = models.CharField(_("Event Type"), max_length=50, choices=EVENT_TYPE_CHOICES)
