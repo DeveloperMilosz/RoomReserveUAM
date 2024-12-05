@@ -59,6 +59,7 @@ class Meeting(models.Model):
         "Event", verbose_name=_("Event"), on_delete=models.CASCADE, related_name="meetings", null=True, blank=True
     )
     is_approved = models.BooleanField(_("is approved"), default=False)
+    is_rejected = models.BooleanField(_("is rejected"), default=False)
     created_at = models.DateTimeField(_("created at"), auto_now_add=True, null=True, blank=True)
     modified_at = models.DateTimeField(_("modified at"), auto_now=True)
     is_updated = models.BooleanField(_("is updated"), default=True)
