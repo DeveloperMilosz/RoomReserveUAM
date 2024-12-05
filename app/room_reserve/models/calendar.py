@@ -50,7 +50,7 @@ class Meeting(models.Model):
     description = models.CharField(max_length=255, null=True, blank=True)
     lecturers = models.ManyToManyField(Lecturers, verbose_name=_("Lecturers"), blank=True)
     capacity = models.IntegerField(_("meeting capacity"), null=True, blank=True)
-    color = ColorField(default="#FF0000")
+    color = ColorField(default="#2873FF")
     event = models.ForeignKey(
         "Event", verbose_name=_("Event"), on_delete=models.CASCADE, related_name="meetings", null=True, blank=True
     )
