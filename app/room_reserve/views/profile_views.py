@@ -13,9 +13,9 @@ def my_reservations(request):
     user = request.user
 
     # Filtruj rezerwacje użytkownika
-    pending_reservations = Meeting.objects.filter(submitted_by=user, is_approved=False)
+    pending_reservations = Meeting.objects.filter(submitted_by=user, is_approved=False, is_rejected=False)
     approved_reservations = Meeting.objects.filter(submitted_by=user, is_approved=True)
-    rejected_reservations = Meeting.objects.filter(submitted_by=user).exclude(is_approved=True, is_updated=True)
+    rejected_reservations = Meeting.objects.filter(submitted_by=user, is_rejected=True)
 
     return render(
         request,
