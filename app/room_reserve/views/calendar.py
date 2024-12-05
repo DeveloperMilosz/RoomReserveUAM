@@ -1,13 +1,36 @@
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-from room_reserve.models import Meeting, Event, Room, Lecturers
-from django.utils.dateparse import parse_date
 from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from django.utils.dateparse import parse_date
+from django.db.models import Q
+from room_reserve.models import Meeting, Event, Room, Lecturers
 from room_reserve.forms.calendar import MeetingForm, EventForm
 from datetime import datetime
-from django.db.models import Q
-
 import json
+
+
+@login_required
+def new_meeting(request):
+    rooms = Room.objects.all()
+    events = Event.objects.all()
+    lecturers = Lecturers.objects.all()
+    if request.method == "POST":
+        form = MeetingForm(request.POST)
+        if form.is_valid():
+            meeting = form.save(commit=False)
+            meeting.is_approved = False  # Domyślnie wniosek niezatwierdzony
+            meeting.submitted_by = request.user  # Zapisz obecnie zalogowanego użytkownika
+            meeting.save()
+            form.save_m2m()  # Zapisz powiązania Many-to-Many
+            return redirect("home")
+    else:
+        form = MeetingForm()
+    return render(
+        request,
+        "pages/calendar/new_meeting.html",
+        {"form": form, "rooms": rooms, "events": events, "lecturers": lecturers},
+    )
 
 
 def get_meetings(request):
@@ -41,38 +64,31 @@ def meeting_details(request, meeting_id):
     return render(request, "pages/calendar/meeting_details.html", {"meeting": meeting, "event": event})
 
 
-def new_meeting(request):
-    rooms = Room.objects.all()
-    events = Event.objects.all()
-    lecturers = Lecturers.objects.all()
-    if request.method == "POST":
-        form = MeetingForm(request.POST)
-        if form.is_valid():
-            # Default new meetings to `is_approved=False`
-            meeting = form.save(commit=False)
-            meeting.is_approved = False
-            meeting.save()
-            form.save_m2m()
-            return redirect("home")
-    else:
-        form = MeetingForm()
-    return render(
-        request,
-        "pages/calendar/new_meeting.html",
-        {"form": form, "rooms": rooms, "events": events, "lecturers": lecturers},
-    )
-
-
+@login_required
 def edit_meeting(request, meeting_id):
-    meeting = get_object_or_404(Meeting, pk=meeting_id)
+    # Pobierz obiekt spotkania dla zalogowanego użytkownika
+    meeting = get_object_or_404(Meeting, pk=meeting_id, submitted_by=request.user)
+
     if request.method == "POST":
+        # Przekaż dane z formularza oraz instancję spotkania
         form = MeetingForm(request.POST, instance=meeting)
         if form.is_valid():
             form.save()
-            return redirect("meeting_details", meeting_id=meeting.id)
+            # Po zapisaniu przekieruj do "Moje Rezerwacje"
+            return redirect("my_reservations")
     else:
+        # Przy pierwszym załadowaniu formularza wypełnij go istniejącymi danymi
         form = MeetingForm(instance=meeting)
-    return render(request, "pages/calendar/edit_meeting.html", {"form": form, "meeting": meeting})
+
+    # Renderuj stronę edycji z formularzem
+    return render(
+        request,
+        "pages/calendar/edit_meeting.html",
+        {
+            "form": form,
+            "meeting": meeting,
+        },
+    )
 
 
 def new_event(request):
