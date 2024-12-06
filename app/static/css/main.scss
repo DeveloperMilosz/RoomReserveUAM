@@ -27,8 +27,9 @@ a {
   color: rgb(15, 45, 102);
   transition: .2s;
 
-  &:hover {
-    color: #018dc4;
+  &.event:hover{
+    font-weight: 750;
+    padding: 5px 0px;
   }
 }
 

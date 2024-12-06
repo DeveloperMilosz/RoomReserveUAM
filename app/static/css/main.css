@@ -24,8 +24,9 @@ a {
   color: rgb(15, 45, 102);
   transition: 0.2s;
 }
-a:hover {
-  color: #018dc4;
+a.event:hover {
+  font-weight: 750;
+  padding: 5px 0px;
 }
 
 .header {
