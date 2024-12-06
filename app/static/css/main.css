@@ -286,7 +286,9 @@ form > a {
   display: flex;
   justify-content: space-evenly;
   align-items: center;
-  margin: 20px 0px;
+  margin: 20px auto;
+  width: 100%;
+  max-width: 1900px;
 }
 .calendar-menu .calendar-buttons {
   display: flex;
@@ -375,7 +377,9 @@ form > a {
 }
 
 #calendar {
-  margin-bottom: 100px;
+  max-width: 1900px;
+  margin: 0px auto 100px;
+  width: 100%;
 }
 
 .events {
@@ -417,6 +421,7 @@ form > a {
   border-right: 1px solid #ccc;
   position: absolute;
   width: 100%;
+  max-width: 1900px;
 }
 
 .time-label {
@@ -444,6 +449,9 @@ form > a {
   text-align: center;
   font-weight: bold;
   height: 40px;
+  max-width: 1900px;
+  margin: 0px auto;
+  width: 100%;
 }
 
 .weekly .weekdays {
