@@ -399,6 +399,15 @@ form > a {
     &:hover > .events {
       z-index: 99;
     }
+
+    .events{
+      a:last-child {
+        border-radius: 0px 0px 8px 8px;
+      }
+      a:first-child {
+        border-radius: 8px 8px 0px 0px;
+      }
+    }
   }
 
   &.weekly > strong {

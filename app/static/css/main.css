@@ -364,6 +364,12 @@ form > a {
 .day:not(.weekly):hover > .events {
   z-index: 99;
 }
+.day:not(.weekly) .events a:last-child {
+  border-radius: 0px 0px 8px 8px;
+}
+.day:not(.weekly) .events a:first-child {
+  border-radius: 8px 8px 0px 0px;
+}
 .day.weekly > strong {
   margin-top: -27px;
 }
