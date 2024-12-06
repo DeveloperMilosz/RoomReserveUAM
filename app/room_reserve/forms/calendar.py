@@ -2,6 +2,32 @@ from django import forms
 from room_reserve.models import Meeting, Event
 
 class MeetingForm(forms.ModelForm):
+    is_recurring = forms.BooleanField(required=False, initial=False)
+    frequency_select = forms.ChoiceField(
+        choices=[
+            ('daily', 'Codziennie'),
+            ('weekly', 'Co tydzień'),
+            ('biweekly', 'Co drugi tydzień'),
+            ('monthly', 'Co miesiąc'),
+            ('custom_days', 'Wybierz dni')
+        ],
+        required=False
+    )
+    days_of_week = forms.MultipleChoiceField(
+        choices=[
+            ('0', 'Poniedziałek'),
+            ('1', 'Wtorek'),
+            ('2', 'Środa'),
+            ('3', 'Czwartek'),
+            ('4', 'Piątek'),
+            ('5', 'Sobota'),
+            ('6', 'Niedziela')
+        ],
+        widget=forms.CheckboxSelectMultiple,
+        required=False
+    )
+    cycle_end_date = forms.DateField(required=False)
+
     class Meta:
         model = Meeting
         fields = [
@@ -11,20 +37,8 @@ class MeetingForm(forms.ModelForm):
         widgets = {
             'start_time': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
             'end_time': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
-            'description': forms.Textarea(attrs={'placeholder': 'Opis spotkania', 'rows': 3}),
-            'lecturers': forms.SelectMultiple(attrs={'size': '5'}),
-            'color': forms.TextInput(attrs={'type': 'color'}),
-            'event': forms.Select(attrs={'placeholder': 'Wybierz wydarzenie'})
         }
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.fields['meeting_type'].choices = [
-            ("meeting", "Spotkanie"), 
-            ("classgroup", "Grupa zajęciowa")
-        ]
-        self.fields['event'].queryset = Event.objects.all()
-        self.fields['event'].required = False
 
 class EventForm(forms.ModelForm):
     class Meta:

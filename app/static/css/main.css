@@ -261,6 +261,25 @@ form > a {
   resize: vertical;
   box-sizing: border-box;
 }
+.form-form .is_recurring {
+  display: flex;
+  width: 100%;
+  justify-content: center;
+}
+.form-form .is_recurring input {
+  width: auto;
+  margin-left: 8px;
+}
+.form-form .days-selection > .weekdays-select {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 5px;
+}
+.form-form .days-selection > .weekdays-select label {
+  display: flex;
+  margin-right: 8px;
+}
 
 .calendar-menu {
   display: flex;
