@@ -1,7 +1,6 @@
 from django import forms
 from room_reserve.models import Meeting, Event
 
-
 class MeetingForm(forms.ModelForm):
     is_recurring = forms.BooleanField(required=False, initial=False)
     frequency_select = forms.ChoiceField(
@@ -32,42 +31,26 @@ class MeetingForm(forms.ModelForm):
     class Meta:
         model = Meeting
         fields = [
-            "name_pl",
-            "name_en",
-            "start_time",
-            "end_time",
-            "meeting_type",
-            "room",
-            "description",
-            "lecturers",
-            "capacity",
-            "color",
-            "is_updated",
-            "event",
+                        'name_pl', 'name_en', 'start_time', 'end_time', 'meeting_type', 'room', 
+            'description', 'lecturers', 'capacity', 'color', 'is_updated', 'event'
         ]
         widgets = {
             'start_time': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
             'end_time': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
-        }
-            "start_time": forms.DateTimeInput(attrs={"type": "datetime-local"}),
-            "end_time": forms.DateTimeInput(attrs={"type": "datetime-local"}),
-            "description": forms.Textarea(attrs={"placeholder": "Opis spotkania", "rows": 3}),
-            "lecturers": forms.SelectMultiple(attrs={"size": "5"}),
-            "color": forms.TextInput(attrs={"type": "color"}),
-            "event": forms.Select(attrs={"placeholder": "Wybierz wydarzenie"}),
+            'description': forms.Textarea(attrs={'placeholder': 'Opis spotkania', 'rows': 3}),
+            'lecturers': forms.SelectMultiple(attrs={'size': '5'}),
+            'color': forms.TextInput(attrs={'type': 'color'}),
+            'event': forms.Select(attrs={'placeholder': 'Wybierz wydarzenie'})
         }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        # Customization of form field labels or placeholders can go here
-        self.fields["name_pl"].widget.attrs.update({"placeholder": "Wprowadź nazwę w języku polskim"})
-        self.fields["name_en"].widget.attrs.update({"placeholder": "Wprowadź nazwę w języku angielskim"})
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.fields["meeting_type"].choices = [("meeting", "Spotkanie"), ("classgroup", "Grupa zajęciowa")]
-        self.fields["event"].queryset = Event.objects.all()
-        self.fields["event"].required = False
+        self.fields['meeting_type'].choices = [
+            ("meeting", "Spotkanie"), 
+            ("classgroup", "Grupa zajęciowa")
+        ]
+        self.fields['event'].queryset = Event.objects.all()
+        self.fields['event'].required = False
 
 class EventForm(forms.ModelForm):
     class Meta:
