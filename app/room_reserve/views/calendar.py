@@ -6,7 +6,8 @@ from django.utils.dateparse import parse_date
 from django.db.models import Q
 from room_reserve.models import Meeting, Event, Room, Lecturers
 from room_reserve.forms.calendar import MeetingForm, EventForm
-from datetime import datetime
+from datetime import datetime, timedelta
+from django.db.models import Q
 import json
 
 
@@ -63,7 +64,83 @@ def meeting_details(request, meeting_id):
     event = meeting.event
     return render(request, "pages/calendar/meeting_details.html", {"meeting": meeting, "event": event})
 
+def new_meeting(request):
+    rooms = Room.objects.all()
+    events = Event.objects.all()
+    lecturers = Lecturers.objects.all()
 
+    if request.method == "POST":
+        form = MeetingForm(request.POST)
+        if form.is_valid():
+            meeting_data = form.cleaned_data
+
+            is_recurring = meeting_data.get("is_recurring")
+            frequency_select = meeting_data.get("frequency_select")
+            days_of_week = meeting_data.get("days_of_week")
+            cycle_end_date = meeting_data.get("cycle_end_date")
+            start_time = meeting_data.get("start_time")
+            end_time = meeting_data.get("end_time")
+            selected_lecturers = meeting_data.get("lecturers")
+
+            if is_recurring and frequency_select and cycle_end_date:
+                current_date = start_time.date()
+
+                while current_date <= cycle_end_date:
+                    if frequency_select == 'daily':
+                        should_add = True
+                    elif frequency_select == 'weekly':
+                        should_add = (current_date - start_time.date()).days % 7 == 0
+                    elif frequency_select == 'biweekly':
+                        should_add = (current_date - start_time.date()).days % 14 == 0
+                    elif frequency_select == 'monthly':
+                        should_add = current_date.day == start_time.date().day
+                    elif frequency_select == 'custom_days':
+                        should_add = str(current_date.weekday()) in days_of_week
+                    else:
+                        should_add = False
+
+                    if should_add:
+                        meeting = Meeting.objects.create(
+                            name_pl=meeting_data["name_pl"],
+                            name_en=meeting_data["name_en"],
+                            start_time=datetime.combine(current_date, start_time.time()),
+                            end_time=datetime.combine(current_date, end_time.time()),
+                            meeting_type=meeting_data["meeting_type"],
+                            room=meeting_data["room"],
+                            description=meeting_data["description"],
+                            color=meeting_data["color"],
+                            capacity=meeting_data["capacity"],
+                            is_updated=False,
+                            is_approved=False,
+                            event=meeting_data.get("event")
+                        )
+                        # Dodajemy wykładowców do każdego utworzonego spotkania
+                        if selected_lecturers:
+                            meeting.lecturers.set(selected_lecturers)
+
+                    if frequency_select in ['daily', 'weekly', 'biweekly', 'custom_days']:
+                        current_date += timedelta(days=1)
+                    elif frequency_select == 'monthly':
+                        next_month = (current_date.month % 12) + 1
+                        current_date = current_date.replace(month=next_month)
+
+            else:
+                # Single meeting
+                meeting = form.save(commit=False)
+                meeting.is_approved = False
+                meeting.save()
+                form.save_m2m()
+
+            return redirect("home")
+    else:
+        form = MeetingForm()
+
+    return render(
+        request,
+        "pages/calendar/new_meeting.html",
+        {"form": form, "rooms": rooms, "events": events, "lecturers": lecturers},
+    )
+  
 @login_required
 def edit_meeting(request, meeting_id):
     # Pobierz obiekt spotkania dla zalogowanego użytkownika

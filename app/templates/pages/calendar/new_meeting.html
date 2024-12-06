@@ -108,9 +108,84 @@
                 </label>
             </div>
 
+            <!-- Czy spotkanie cykliczne -->
+            <div class="input-box">
+                <label for="id_is_recurring" class="is_recurring">
+                    Czy spotkanie ma być cykliczne?
+                    <input type="checkbox" name="is_recurring" id="id_is_recurring" onclick="toggleRecurringFields()">
+                </label>
+            </div>
+            
+            <!-- Wybór częstotliwości -->
+            <div class="input-box recurring-field" style="display: none;">
+                <label for="id_frequency_select">Częstotliwość spotkań:</label>
+                <select name="frequency_select" id="id_frequency_select" onchange="toggleDaysSelection()">
+                    <option value="" disabled selected>Wybierz częstotliwość</option>
+                    <option value="daily">Codziennie</option>
+                    <option value="weekly">Co tydzień</option>
+                    <option value="biweekly">Co drugi tydzień</option>
+                    <option value="monthly">Co miesiąc</option>
+                    <option value="custom_days">Wybierz dni</option>
+                </select>
+            </div>
+            
+            <!-- Wybór dni tygodnia -->
+            <div class="input-box days-selection" style="display: none;">
+                <label>Wybierz dni tygodnia:</label>
+                <div class="weekdays-select">
+                    <label><input type="checkbox" name="days_of_week" value="0"> Poniedziałek</label>
+                    <label><input type="checkbox" name="days_of_week" value="1"> Wtorek</label>
+                    <label><input type="checkbox" name="days_of_week" value="2"> Środa</label>
+                    <label><input type="checkbox" name="days_of_week" value="3"> Czwartek</label>
+                    <label><input type="checkbox" name="days_of_week" value="4"> Piątek</label>
+                    <label><input type="checkbox" name="days_of_week" value="5"> Sobota</label>
+                    <label><input type="checkbox" name="days_of_week" value="6"> Niedziela</label>
+                </div>
+            </div>
+            
+            <!-- Data zakończenia cyklu -->
+            <div class="input-box recurring-field" style="display: none;">
+                <label for="id_cycle_end_date">Data zakończenia cyklu:</label>
+                <input type="date" name="cycle_end_date" id="id_cycle_end_date">
+            </div>
+
+
             <!-- Przycisk Zatwierdzenia -->
             <button type="submit" class="form-button">Złóż wniosek</button>
         </form>
     </div>
 </div>
+
+
+<script>
+    function toggleRecurringFields() {
+        const isRecurringChecked = document.getElementById('id_is_recurring').checked;
+        const recurringFields = document.querySelectorAll('.recurring-field');
+        const daysSelection = document.querySelector('.days-selection');
+        const frequencySelect = document.getElementById('id_frequency_select');
+    
+        // Pokaż/ukryj pola dla cykliczności
+        recurringFields.forEach(field => {
+            field.style.display = isRecurringChecked ? 'flex' : 'none';
+        });
+    
+        // Ukryj wybór dni tygodnia domyślnie
+        if (!isRecurringChecked || frequencySelect.value !== 'custom_days') {
+            daysSelection.style.display = 'none';
+            frequencySelect.value = ""; // Resetujemy wybór częstotliwości
+        }
+    }
+    
+    function toggleDaysSelection() {
+        const frequencySelect = document.getElementById('id_frequency_select');
+        const daysSelection = document.querySelector('.days-selection');
+    
+        // Pokaż/ukryj wybór dni tygodnia na podstawie częstotliwości
+        if (frequencySelect.value === 'custom_days') {
+            daysSelection.style.display = 'flex';
+        } else {
+            daysSelection.style.display = 'none';
+        }
+    }
+</script>
 {% endblock %}
