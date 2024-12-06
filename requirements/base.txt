@@ -23,10 +23,13 @@ django==4.2.7
     # via
     #   -r requirements/base.in
     #   django-allauth
+    #   django-filter
     #   django-htmx
 django-allauth==65.0.2
     # via -r requirements/base.in
 django-colorfield==0.11.0
+    # via -r requirements/base.in
+django-filter==24.3
     # via -r requirements/base.in
 django-htmx==1.19.0
     # via -r requirements/base.in

@@ -19,4 +19,6 @@ requests-oauthlib==2.0.0
 
 huey==2.5.2
 
+django-filter==24.3
+
 redis
