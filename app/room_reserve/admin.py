@@ -59,33 +59,56 @@ class MeetingAdmin(admin.ModelAdmin):
         "end_time",
         "room",
         "capacity",
-        "is_approved",  # Added for approval workflow
-        "is_updated",
+        "is_approved",  # Status akceptacji
+        "is_rejected",  # Status odrzucenia
+        "is_updated",  # Status aktualizacji
+        "submitted_by",
     )
-    search_fields = ("name_pl", "name_en", "description")
-    list_filter = ("meeting_type", "is_approved", "is_updated")  # Filter by approval status
+    search_fields = ("name_pl", "name_en", "description", "submitted_by__username", "submitted_by__email")
+    list_filter = ("meeting_type", "is_approved", "is_rejected", "is_updated", "submitted_by")
     filter_horizontal = ("lecturers",)
+    readonly_fields = ("submitted_by",)
     actions = ["approve_meetings", "reject_meetings"]
 
-    # Add approval actions for meetings
+    # Akcja: Akceptowanie spotkań
     def approve_meetings(self, request, queryset):
-        queryset.update(is_approved=True)
+        queryset.update(is_approved=True, is_rejected=False)
         self.message_user(request, "Selected meetings have been approved.")
 
+    # Akcja: Odrzucanie spotkań
     def reject_meetings(self, request, queryset):
-        queryset.update(is_approved=False)
+        queryset.update(is_approved=False, is_rejected=True)
         self.message_user(request, "Selected meetings have been rejected.")
 
     approve_meetings.short_description = "Approve selected meetings"
     reject_meetings.short_description = "Reject selected meetings"
+
+    # Automatyczne ustawianie `submitted_by` przy zapisie
+    def save_model(self, request, obj, form, change):
+        if not obj.submitted_by:
+            obj.submitted_by = request.user
+        super().save_model(request, obj, form, change)
 
 
 # MeetingInline for EventAdmin
 class MeetingInline(admin.TabularInline):
     model = Meeting
     extra = 1  # Number of empty rows to display
-    fields = ("meeting_type", "name_pl", "name_en", "start_time", "end_time", "room", "capacity", "color", "is_approved", "is_updated")
-    readonly_fields = ("is_updated",)  # Optional: Make specific fields read-only
+    fields = (
+        "meeting_type",
+        "name_pl",
+        "name_en",
+        "start_time",
+        "end_time",
+        "room",
+        "capacity",
+        "color",
+        "is_approved",
+        "is_rejected",  # Dodaj status odrzucenia
+        "is_updated",
+        "submitted_by",  # Include submitted_by in the inline view
+    )
+    readonly_fields = ("is_updated", "submitted_by")
     show_change_link = True  # Enable navigation to edit meetings
 
 
