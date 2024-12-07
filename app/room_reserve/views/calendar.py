@@ -144,7 +144,7 @@ def new_meeting(request):
 @login_required
 def edit_meeting(request, meeting_id):
     # Pobierz obiekt spotkania dla zalogowanego użytkownika
-    meeting = get_object_or_404(Meeting, pk=meeting_id)
+    meeting = get_object_or_404(Meeting, pk=meeting_id, submitted_by=request.user)
 
     if request.method == "POST":
         # Przekaż dane z formularza oraz instancję spotkania
