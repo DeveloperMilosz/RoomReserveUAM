@@ -5,7 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.utils.dateparse import parse_date
 from django.db.models import Q
 from room_reserve.models import Meeting, Event, Room, Lecturers
-from room_reserve.forms.calendar import MeetingForm, EventForm
+from room_reserve.forms.calendar import MeetingForm, EventForm, EditMeetingForm
 from datetime import datetime, timedelta
 from django.db.models import Q
 import json
@@ -145,17 +145,24 @@ def new_meeting(request):
 def edit_meeting(request, meeting_id):
     # Pobierz obiekt spotkania dla zalogowanego użytkownika
     meeting = get_object_or_404(Meeting, pk=meeting_id)
+    rooms = Room.objects.all()
+    events = Event.objects.all()
+    lecturers = Lecturers.objects.all()
+
+    
 
     if request.method == "POST":
         # Przekaż dane z formularza oraz instancję spotkania
-        form = MeetingForm(request.POST, instance=meeting)
+        form = EditMeetingForm(request.POST, instance=meeting)
         if form.is_valid():
             form.save()
             # Po zapisaniu przekieruj do "Moje Rezerwacje"
             return redirect("my_reservations")
     else:
         # Przy pierwszym załadowaniu formularza wypełnij go istniejącymi danymi
-        form = MeetingForm(instance=meeting)
+        form = EditMeetingForm(instance=meeting)
+    
+    
 
     # Renderuj stronę edycji z formularzem
     return render(
@@ -164,6 +171,9 @@ def edit_meeting(request, meeting_id):
         {
             "form": form,
             "meeting": meeting,
+            "rooms": rooms,
+            "lecturers": lecturers,
+            "events": events,
         },
     )
 
