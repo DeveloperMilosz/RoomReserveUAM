@@ -52,6 +52,7 @@ class LecturersAdmin(admin.ModelAdmin):
 @admin.register(Meeting)
 class MeetingAdmin(admin.ModelAdmin):
     list_display = (
+        "id",
         "name_pl",
         "name_en",
         "meeting_type",
