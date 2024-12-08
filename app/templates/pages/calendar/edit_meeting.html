@@ -7,62 +7,86 @@
     <h1>Edytuj wydarzenie</h1>
     <p>Wprowadź szczegóły wydarzenia poniżej, aby edytowac wydarzenie.</p>
 
-<div class="form.form">
-    <form method="post">
-        {% csrf_token %}
-        <div class="rowedit"><p><strong>Nazwa spotkania (PL):</strong> <br><input type="text" name="name_pl" value="{{ meeting.name_pl }}" maxlength="255" required id="id_name_pl"></p>
-        <p><strong>Nazwa spotkania (EN):</strong> <br><input type="text" name="name_en" value="{{ meeting.name_en }}" maxlength="255" required id="id_name_en"></p></div>
-        <div class="rowedit"><p><strong>Czas rozpoczęcia:</strong> <br><input type="datetime-local" name="start_time" value="{{ meeting.start_time|date:'Y-m-d\\TH:i' }}" required id="id_start_time"></p>
-        <p><strong>Czas zakończenia:</strong> <br><input type="datetime-local" name="end_time" value="{{ meeting.end_time|date:'Y-m-d\\TH:i' }}" required id="id_end_time"></p></div>
-        <div class="input-box">
-            <label for="id_meeting_type">Wybierz typ spotkania:</label>
-            <select name="meeting_type" required id="id_meeting_type">
-                <option value="{{ meeting.event }}" disabled selected>Wybierz typ spotkania</option>
-                {% for choice in form.fields.meeting_type.choices %}
-                   <option value="{{ choice.0 }}">{{ choice.1 }}</option>
-               {% endfor %}
-            </select>
-        </div>
-        <p><strong>Opis:</strong> <br>
-        <div class="input-box">
-            <textarea name="description" placeholder="{{meeting.description}}" id="id_description" oninput='this.style.height = "";this.style.height = this.scrollHeight + "px"'></textarea>
-        </div>
-        <div class="input-box">
-            <label for="id_room">Wybierz salę:</label>
-            <select name="room" id="id_room" required>
-                <option value="{{room.room_number}}" disabled selected>Wybierz salę</option>
-                {% for room in rooms %}
-                    <option value="{{ room.id }}">{{ room.room_number }} ({{ room.building_name_pl }})</option>
-                {% endfor %}
-            </select>
-        </div>
-        <div class="input-box">
-            <label for="lecturer">Wybierz prowadzącego</label>
-            <select name="lecturer" id="id_lecturer" required>
-                <option value="{{ meeting.lecturers }}" disable selected> Wybierz prowadzącego</option>
-                {% for lecturer in lecturers %}
-                    <option value="{{ lecturer.id }}">{{ lecturer.first_name }} {{ lecturer.last_name }}</option>
-                {% endfor %}
-            </select>
-        </div>
-        <div class="input-box">
-            <label for="id_event">Powiązane wydarzenie:</label>
-            <select name="event" id="id_event">
-                <option value="" selected>Bez wydarzenia</option>
-                {% for event in events %}
-                    <option value="{{ event.id }}">{{ event.name }}</option>
-                {% endfor %}
-            </select>
-        </div>
-        <div class="input-box">
-            <label for="id_color">Wybierz kolor:</label>
-                <input type="color" name="color" value={{meeting.color}} id="id_color">
-        </div>
-
-        <p><strong>Liczba miejsc:</strong> <br><input type="text" name="capacity" value={{ meeting.capacity }} maxlength<="4" required id="capacity"></p>
-        <button type="submit" class="form-button">Edytuj wydarzenie</button>
-    </form>
+    <div class="form.form">
+        <form method="post">
+            {% csrf_token %}
+            <div class="rowedit">
+                <p><strong>Nazwa spotkania (PL):</strong><br>
+                    <input type="text" name="name_pl" value="{{ meeting.name_pl }}" maxlength="255" required id="id_name_pl">
+                </p>
+                <p><strong>Nazwa spotkania (EN):</strong><br>
+                    <input type="text" name="name_en" value="{{ meeting.name_en }}" maxlength="255" required id="id_name_en">
+                </p>
+            </div>
+            <div class="rowedit">
+                <p><strong>Czas rozpoczęcia:</strong><br>
+                    <input type="datetime-local" name="start_time" value="{{ meeting.start_time|date:'Y-m-d\\TH:i' }}" required id="id_start_time">
+                </p>
+                <p><strong>Czas zakończenia:</strong><br>
+                    <input type="datetime-local" name="end_time" value="{{ meeting.end_time|date:'Y-m-d\\TH:i' }}" required id="id_end_time">
+                </p>
+            </div>
+            <div class="input-box">
+                <label for="id_meeting_type">Wybierz typ spotkania:</label>
+                <select name="meeting_type" id="id_meeting_type" required>
+                    {% for choice in form.fields.meeting_type.choices %}
+                        <option value="{{ choice.0 }}" 
+                            {% if choice.0 == meeting.meeting_type %}selected{% endif %}>
+                            {{ choice.1 }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <p><strong>Opis:</strong><br>
+            <div class="input-box">
+                <textarea name="description" placeholder="{{ meeting.description }}" id="id_description" 
+                    oninput='this.style.height = "";this.style.height = this.scrollHeight + "px"'>
+                </textarea>
+            </div>
+            <div class="input-box">
+                <label for="id_room">Wybierz salę:</label>
+                <select name="room" id="id_room" required>
+                    <option value="" disabled>Wybierz salę</option>
+                    {% for room in rooms %}
+                        <option value="{{ room.id }}" 
+                            {% if room == meeting.room %}selected{% endif %}>
+                            {{ room.room_number }} ({{ room.building_name_pl }})
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="input-box">
+                <label for="id_lecturers">Wybierz prowadzących:</label>
+                <select name="lecturers" id="id_lecturers" multiple>
+                    {% for lecturer in lecturers %}
+                        <option value="{{ lecturer.id }}" 
+                            {% if lecturer.id|stringformat:"s" in form.data.lecturers or lecturer in meeting.lecturers.all %}selected{% endif %}>
+                            {{ lecturer.first_name }} {{ lecturer.last_name }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="input-box">
+                <label for="id_event">Powiązane wydarzenie:</label>
+                <select name="event" id="id_event">
+                    <option value="" selected>Bez wydarzenia</option>
+                    {% for event in events %}
+                        <option value="{{ event.id }}" 
+                            {% if event == meeting.event %}selected{% endif %}>
+                            {{ event.name }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="input-box">
+                <label for="id_color">Wybierz kolor:</label>
+                <input type="color" name="color" value="{{ meeting.color }}" id="id_color">
+            </div>
+            <p><strong>Liczba miejsc:</strong><br>
+                <input type="text" name="capacity" value="{{ meeting.capacity }}" maxlength="4" required id="capacity">
+            </p>
+            <button type="submit" class="form-button">Edytuj wydarzenie</button>
+        </form>
+    </div>
 </div>
-</div>
-
 {% endblock content %}
