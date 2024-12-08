@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+
+{% block title %}
+Szukaj Spotkań
+{% endblock %}
+
+{% block content %}
+<section>
+    <h1>Szukaj Spotkań</h1>
+    <form method="get">
+        <div>
+            <label for="name">Nazwa spotkania:</label>
+            <input type="text" name="name" id="name">
+        </div>
+        <div>
+            <label for="start_date">Data spotkania:</label>
+            <input type="date" name="start_date" id="start_date">
+        </div>
+        <div>
+            <label for="start_time">Godzina rozpoczęcia:</label>
+            <input type="time" name="start_time" id="start_time">
+        </div>
+        <div>
+            <label for="end_date">Data zakończenia:</label>
+            <input type="date" name="end_date" id="end_date">
+        </div>
+        <div>
+            <label for="end_time">Godzina zakończenia:</label>
+            <input type="time" name="end_time" id="end_time">
+        </div>
+        <div>
+            <label for="lecturer">Prowadzący:</label>
+            <input type="text" name="lecturer" id="lecturer">
+        </div>
+        <div>
+            <label for="room">Sala:</label>
+            <input type="text" name="room" id="room">
+        </div>
+        <div>
+            <label for="meeting_type">Typ spotkania:</label>
+            <select name="meeting_type" id="meeting_type">
+                <option value="">-- Wybierz --</option>
+                {% for choice in filter.form.meeting_type.field.choices %}
+                <option value="{{ choice.0 }}">{{ choice.1 }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div>
+            <label for="event">Wydarzenie:</label>
+            <select name="event" id="event">
+                <option value="">-- Wybierz --</option>
+                {% for event in filter.form.event.field.queryset %}
+                <option value="{{ event.id }}">{{ event.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <button type="submit">Szukaj</button>
+    </form>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Nazwa</th>
+                <th>Prowadzący</th>
+                <th>Sala</th>
+                <th>Data rozpoczęcia</th>
+                <th>Godzina rozpoczęcia</th>
+                <th>Data zakończenia</th>
+                <th>Godzina zakończenia</th>
+                <th>Wydarzenie</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for meeting in filter.qs %}
+            <tr>
+                <td>{{ meeting.name_pl }}</td>
+                <td>{{ meeting.lecturers.all|join:", " }}</td>
+                <td>{{ meeting.room.room_number }}</td>
+                <td>{{ meeting.start_time|date:"Y-m-d" }}</td>
+                <td>{{ meeting.start_time|time:"H:i" }}</td>
+                <td>{{ meeting.end_time|date:"Y-m-d" }}</td>
+                <td>{{ meeting.end_time|time:"H:i" }}</td>
+                <td>{{ meeting.event.name }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</section>
+{% endblock %}

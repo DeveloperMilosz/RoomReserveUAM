@@ -1,5 +1,5 @@
 from django import forms
-from room_reserve.models import Meeting, Event
+from room_reserve.models import Meeting, Event, Room, Lecturers
 
 class MeetingForm(forms.ModelForm):
     is_recurring = forms.BooleanField(required=False, initial=False)
@@ -52,6 +52,47 @@ class MeetingForm(forms.ModelForm):
         self.fields['event'].queryset = Event.objects.all()
         self.fields['event'].required = False
 
+class EditMeetingForm(forms.ModelForm):
+    class Meta:
+        model = Meeting
+        fields = [
+            'name_pl',
+            'name_en',
+            'start_time',
+            'end_time',
+            'meeting_type',
+            'description',
+            'room',
+            'lecturers',
+            'event',
+            'color',
+            'capacity',
+        ]
+        widgets = {
+            'name_pl': forms.TextInput(attrs={'id': 'id_name_pl'}),
+            'name_en': forms.TextInput(attrs={'id': 'id_name_en'}),
+            'start_time': forms.DateTimeInput(attrs={'type': 'datetime-local', 'id': 'id_start_time'}),
+            'end_time': forms.DateTimeInput(attrs={'type': 'datetime-local', 'id': 'id_end_time'}),
+            'meeting_type': forms.Select(attrs={'id': 'id_meeting_type'}),
+            'description': forms.Textarea(attrs={
+                'id': 'id_description',
+                'rows': 3,
+                'oninput': "this.style.height = '';this.style.height = this.scrollHeight + 'px'"
+            }),
+            'room': forms.Select(attrs={'id': 'id_room'}),
+            'lecturers': forms.SelectMultiple(attrs={'id': 'id_lecturer'}),
+            'event': forms.Select(attrs={'id': 'id_event'}),
+            'color': forms.TextInput(attrs={'type': 'color', 'id': 'id_color'}),
+            'capacity': forms.NumberInput(attrs={'id': 'capacity', 'maxlength': 4}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['room'].queryset = Room.objects.all()
+        self.fields['lecturers'].queryset = Lecturers.objects.all()
+        self.fields['event'].queryset = Event.objects.all()
+        self.fields['meeting_type'].choices = Meeting.MEETING_TYPE_CHOICES
+
 class EventForm(forms.ModelForm):
     class Meta:
         model = Event
@@ -65,3 +106,4 @@ class EventForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields["event_type"].choices = [("lesson_schedule", "Plan zajęć"), ("event", "Wydarzenie")]
+

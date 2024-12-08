@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block title %}
+Szukaj Sal
+{% endblock %}
+
+{% block content %}
+<section>
+    <h1>Szukaj Sale</h1>
+    <form method="get">
+        <div>
+            <label for="room_number">Nazwa sali:</label>
+            <input type="text" name="room_number" id="room_number">
+        </div>
+        <div>
+            <label for="attribute">Wyposażenie:</label>
+            <input type="text" name="attribute" id="attribute">
+        </div>
+        <button type="submit">Szukaj</button>
+    </form>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Nazwa Sali</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for room in filter.qs %}
+            <tr>
+                <td>{{ room.room_number }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</section>
+{% endblock %}
