@@ -64,6 +64,12 @@ def meeting_details(request, meeting_id):
     event = meeting.event
     return render(request, "pages/calendar/meeting_details.html", {"meeting": meeting, "event": event})
 
+def event_details(request, event_id):
+    event = get_object_or_404(Event, pk=event_id)
+    meetings = event.meetings.all()
+    return render(request, "pages/calendar/event_details.html", {"event": event, "meetings": meetings})
+
+
 def new_meeting(request):
     rooms = Room.objects.all()
     events = Event.objects.all()

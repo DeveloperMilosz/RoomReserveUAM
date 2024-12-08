@@ -60,6 +60,7 @@ urlpatterns = [
     path("new_meeting/", calendar_views.new_meeting, name="new_meeting"),
     path("new_event/", calendar_views.new_event, name="new_event"),
     path("meeting/<int:meeting_id>/", calendar_views.meeting_details, name="meeting_details"),
+    path("event/<int:event_id>/", calendar_views.event_details, name="event_details"),
     path("search/", calendar_views.search_view, name="search_view"),
     path("profil/", profile_views.my_profile_view, name="my_profile"),
     path("reservation/", profile_views.my_reservations, name="my_reservations"),

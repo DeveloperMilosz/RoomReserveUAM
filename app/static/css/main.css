@@ -488,11 +488,11 @@ form > a {
   padding-right: 24px;
   text-align: left;
 }
-.meeting-detail > p.color-display {
+.meeting-detail > .color-display {
   display: flex;
   align-items: center;
 }
-.meeting-detail > p.color-display > strong {
+.meeting-detail > .color-display > strong {
   margin-right: 6px;
 }
 .meeting-detail .meeting-detail-row {

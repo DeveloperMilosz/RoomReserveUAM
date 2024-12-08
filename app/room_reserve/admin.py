@@ -26,9 +26,9 @@ class RoomAdmin(admin.ModelAdmin):
 # RoomAttributeInline for RoomAdmin
 class RoomAttributeInline(admin.TabularInline):
     model = RoomAttribute
-    extra = 1  # Show one empty row for adding new attributes
+    extra = 1
     fields = ("attribute_id", "description_pl", "description_en", "count")
-    readonly_fields = ()  # Optional: Set fields to read-only if necessary
+    readonly_fields = ()
 
 
 # Add RoomAttributeInline to RoomAdmin
@@ -59,10 +59,12 @@ class MeetingAdmin(admin.ModelAdmin):
         "start_time",
         "end_time",
         "room",
+        "color",
+        "event",
         "capacity",
-        "is_approved",  # Status akceptacji
-        "is_rejected",  # Status odrzucenia
-        "is_updated",  # Status aktualizacji
+        "is_approved",
+        "is_rejected",
+        "is_updated",
         "submitted_by",
     )
     search_fields = ("name_pl", "name_en", "description", "submitted_by__username", "submitted_by__email")
@@ -74,15 +76,15 @@ class MeetingAdmin(admin.ModelAdmin):
     # Akcja: Akceptowanie spotkań
     def approve_meetings(self, request, queryset):
         queryset.update(is_approved=True, is_rejected=False)
-        self.message_user(request, "Selected meetings have been approved.")
+        self.message_user(request, "Potwierdzono wybrane spotkania.")
 
     # Akcja: Odrzucanie spotkań
     def reject_meetings(self, request, queryset):
         queryset.update(is_approved=False, is_rejected=True)
-        self.message_user(request, "Selected meetings have been rejected.")
+        self.message_user(request, "Odrzucono wybrane spotkania.")
 
-    approve_meetings.short_description = "Approve selected meetings"
-    reject_meetings.short_description = "Reject selected meetings"
+    approve_meetings.short_description = "Potwierdź wybrane spotkania"
+    reject_meetings.short_description = "Odrzuć wybrane spotkania"
 
     # Automatyczne ustawianie `submitted_by` przy zapisie
     def save_model(self, request, obj, form, change):
@@ -91,7 +93,6 @@ class MeetingAdmin(admin.ModelAdmin):
         super().save_model(request, obj, form, change)
 
 
-# MeetingInline for EventAdmin
 class MeetingInline(admin.TabularInline):
     model = Meeting
     extra = 1  # Number of empty rows to display
@@ -104,18 +105,19 @@ class MeetingInline(admin.TabularInline):
         "room",
         "capacity",
         "color",
+        "event",
         "is_approved",
-        "is_rejected",  # Dodaj status odrzucenia
+        "is_rejected",
         "is_updated",
-        "submitted_by",  # Include submitted_by in the inline view
+        "submitted_by",
     )
     readonly_fields = ("is_updated", "submitted_by")
-    show_change_link = True  # Enable navigation to edit meetings
+    show_change_link = True
 
 
 @admin.register(Event)
 class EventAdmin(admin.ModelAdmin):
-    list_display = ("name", "event_type", "organizer", "start_date", "end_date")
+    list_display = ("id", "name", "event_type", "organizer", "start_date", "end_date")
     search_fields = ("name", "description")
     list_filter = ("event_type", "organizer")
-    inlines = [MeetingInline]  # Add MeetingInline to EventAdmin
+    inlines = [MeetingInline]

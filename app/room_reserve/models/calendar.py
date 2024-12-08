@@ -29,10 +29,39 @@ class Lecturers(models.Model):
 
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
-
-
 User = get_user_model()
 
+
+class Event(models.Model):
+    LESSON_SCHEDULE = "Zajęcia"
+    GENERAL_EVENT = "Wydarzenie"
+
+    EVENT_TYPE_CHOICES = [
+        (LESSON_SCHEDULE, _("Lesson Schedule")),
+        (GENERAL_EVENT, _("Event")),
+    ]
+
+    name = models.CharField(_("Event Name"), max_length=50, null=True, blank=True)
+    description = models.TextField(_("Description"), null=True, blank=True)
+    organizer = models.ForeignKey(
+        Lecturers, on_delete=models.SET_NULL, verbose_name=_("Organizer"), null=True, blank=True
+    )
+    event_type = models.CharField(_("Event Type"), max_length=50, choices=EVENT_TYPE_CHOICES)
+    start_date = models.DateTimeField(_("Start Date"))
+    end_date = models.DateTimeField(_("End Date"))
+    color = ColorField(default="#0f2d66")
+    created_at = models.DateTimeField(_("Created At"), auto_now_add=True)
+    modified_at = models.DateTimeField(_("Modified At"), auto_now=True)
+
+    def __str__(self):
+        return f"Event: {self.name}"
+
+class RoomAttribute(models.Model):
+    room = models.ForeignKey(Room, on_delete=models.CASCADE, related_name="attributes")
+    attribute_id = models.CharField(_("attribute id"), max_length=100)
+    description_pl = models.TextField(_("description (PL)"))
+    description_en = models.TextField(_("description (EN)"))
+    count = models.IntegerField(_("count"))
 
 class Meeting(models.Model):
     MEETING = "meeting"
@@ -55,8 +84,9 @@ class Meeting(models.Model):
     lecturers = models.ManyToManyField(Lecturers, verbose_name=_("Lecturers"), blank=True)
     capacity = models.IntegerField(_("meeting capacity"), null=True, blank=True)
     color = ColorField(default="#2873FF")
+    # event = models.ForeignKey(Event, on_delete=models.CASCADE, verbose_name=_("id"), blank=True, null=True)
     event = models.ForeignKey(
-        "Event", verbose_name=_("Event"), on_delete=models.CASCADE, related_name="meetings", null=True, blank=True
+        Event, on_delete=models.CASCADE, verbose_name=_("Event"), related_name="meetings", null=True, blank=True
     )
     is_approved = models.BooleanField(_("is approved"), default=False)
     is_rejected = models.BooleanField(_("is rejected"), default=False)
@@ -69,36 +99,3 @@ class Meeting(models.Model):
 
     def __str__(self):
         return f"{self.name_pl} ({self.start_time} - {self.end_time})"
-
-
-class RoomAttribute(models.Model):
-    room = models.ForeignKey(Room, on_delete=models.CASCADE, related_name="attributes")
-    attribute_id = models.CharField(_("attribute id"), max_length=100)
-    description_pl = models.TextField(_("description (PL)"))
-    description_en = models.TextField(_("description (EN)"))
-    count = models.IntegerField(_("count"))
-
-
-class Event(models.Model):
-    LESSON_SCHEDULE = "lesson_schedule"
-    GENERAL_EVENT = "event"
-
-    EVENT_TYPE_CHOICES = [
-        (LESSON_SCHEDULE, _("Lesson Schedule")),
-        (GENERAL_EVENT, _("Event")),
-    ]
-
-    name = models.CharField(_("Event Name"), max_length=50, null=True, blank=True)
-    description = models.TextField(_("Description"), null=True, blank=True)
-    organizer = models.ForeignKey(
-        Lecturers, on_delete=models.SET_NULL, verbose_name=_("Organizer"), null=True, blank=True
-    )
-    event_type = models.CharField(_("Event Type"), max_length=50, choices=EVENT_TYPE_CHOICES)
-    start_date = models.DateTimeField(_("Start Date"))
-    end_date = models.DateTimeField(_("End Date"))
-    color = ColorField(default="#0f2d66")
-    created_at = models.DateTimeField(_("Created At"), auto_now_add=True)
-    modified_at = models.DateTimeField(_("Modified At"), auto_now=True)
-
-    def __str__(self):
-        return f"Event: {self.name}"
