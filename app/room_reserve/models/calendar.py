@@ -51,6 +51,7 @@ class Event(models.Model):
     end_date = models.DateTimeField(_("End Date"))
     color = ColorField(default="#0f2d66")
     is_approved = models.BooleanField(_("is approved"), default=False)
+    is_rejected = models.BooleanField(_("is rejected"), default=False)
     created_at = models.DateTimeField(_("Created At"), auto_now_add=True)
     modified_at = models.DateTimeField(_("Modified At"), auto_now=True)
 
