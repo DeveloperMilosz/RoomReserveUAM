@@ -7,7 +7,6 @@ from django.db.models import Q
 from room_reserve.models import Meeting, Event, Room, Lecturers
 from room_reserve.forms.calendar import MeetingForm, EventForm, EditMeetingForm
 from datetime import datetime, timedelta
-from django.db.models import Q
 import json
 
 
@@ -168,6 +167,8 @@ def new_meeting(request):
             return redirect("home")
     else:
         form = MeetingForm()
+        
+        form.fields['event'].queryset = events
 
     return render(
         request,
@@ -221,8 +222,6 @@ def new_event(request):
         if form.is_valid():
             form.save()
             return redirect("home")
-        else:
-            print(form.errors) 
     else:
         form = EventForm()
     return render(request, "pages/calendar/new_event.html", {"form": form, "lecturers": lecturers})
