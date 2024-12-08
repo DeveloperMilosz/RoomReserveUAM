@@ -140,6 +140,8 @@ def new_meeting(request):
             return redirect("home")
     else:
         form = MeetingForm()
+        
+        form.fields['event'].queryset = events
 
     return render(
         request,
@@ -181,6 +183,8 @@ def new_event(request):
         if form.is_valid():
             form.save()
             return redirect("home")
+        else:
+            print(form.errors)
     else:
         form = EventForm()
     return render(request, "pages/calendar/new_event.html", {"form": form, "lecturers": lecturers})

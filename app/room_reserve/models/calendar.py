@@ -33,8 +33,8 @@ User = get_user_model()
 
 
 class Event(models.Model):
-    LESSON_SCHEDULE = "Zajęcia"
-    GENERAL_EVENT = "Wydarzenie"
+    LESSON_SCHEDULE = "lesson_schedule"
+    GENERAL_EVENT = "event"
 
     EVENT_TYPE_CHOICES = [
         (LESSON_SCHEDULE, _("Lesson Schedule")),
@@ -50,6 +50,7 @@ class Event(models.Model):
     start_date = models.DateTimeField(_("Start Date"))
     end_date = models.DateTimeField(_("End Date"))
     color = ColorField(default="#0f2d66")
+    is_approved = models.BooleanField(_("is approved"), default=False)
     created_at = models.DateTimeField(_("Created At"), auto_now_add=True)
     modified_at = models.DateTimeField(_("Modified At"), auto_now=True)
 
