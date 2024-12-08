@@ -55,7 +55,7 @@ class MeetingForm(forms.ModelForm):
 class EventForm(forms.ModelForm):
     class Meta:
         model = Event
-        fields = ["name", "description", "event_type", "start_date", "end_date", "organizer"]
+        fields = ["name", "description", "event_type", "start_date", "end_date", "organizer", "color"]
         widgets = {
             "start_date": forms.DateTimeInput(attrs={"type": "datetime-local"}),
             "end_date": forms.DateTimeInput(attrs={"type": "datetime-local"}),

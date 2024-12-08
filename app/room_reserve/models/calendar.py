@@ -33,8 +33,8 @@ User = get_user_model()
 
 
 class Event(models.Model):
-    LESSON_SCHEDULE = "Zajęcia"
-    GENERAL_EVENT = "Wydarzenie"
+    LESSON_SCHEDULE = "lesson_schedule"
+    GENERAL_EVENT = "event"
 
     EVENT_TYPE_CHOICES = [
         (LESSON_SCHEDULE, _("Lesson Schedule")),
