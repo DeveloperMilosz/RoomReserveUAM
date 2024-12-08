@@ -16,6 +16,19 @@
             text-align: center;
             margin-bottom: 20px;
         }
+        .clock {
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+            background-color: #f9f9f9;
+            border: 1px solid #ccc;
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
         .meeting {
             border: 2px solid #ccc;
             border-radius: 10px;
@@ -55,49 +68,95 @@
             text-align: center;
         }
     </style>
+    <script>
+        // JavaScript function to update the clock
+        function updateClock() {
+            const clockElement = document.getElementById('clock');
+            const now = new Date();
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            clockElement.textContent = `${hours}:${minutes}:${seconds}`;
+        }
+        // Initialize the clock and set interval
+        setInterval(updateClock, 1000);
+        window.onload = updateClock;
+    </script>
 </head>
 <body>
 
+    <!-- Clock -->
+    <div class="clock" id="clock"></div>
+
     <h1>Harmonogram Sali {{ room.room_number }}</h1>
 
-    <!-- Wyświetlanie bieżącego spotkania -->
+    <!-- Current Meeting -->
     {% if current_meeting %}
-        <div class="meeting" style="background-color: #d4f1d2;">
+        <div class="meeting">
             <div class="meeting-header current">Obecne Spotkanie</div>
             <div class="meeting-content">
                 <p><strong>Nazwa spotkania:</strong> {{ current_meeting.name_pl|default:"Brak tytułu" }}</p>
                 <p><strong>Opis:</strong> {{ current_meeting.description|default:"Brak opisu" }}</p>
                 <p><strong>Czas trwania:</strong> <span class="meeting-time">{{ current_meeting.start_time }} - {{ current_meeting.end_time }}</span></p>
-                <p><strong>Sala:</strong> {{ room.room_number }}</p>
-                <p><strong>Wykładowca:</strong>
+                <p><strong>Wykładowcy:</strong> 
                     {% for lecturer in current_meeting.lecturers.all %}
                         {{ lecturer.first_name }} {{ lecturer.last_name }}{% if not forloop.last %}, {% endif %}
                     {% endfor %}
                 </p>
+                <p><strong>Liczba miejsc:</strong> {{ current_meeting.capacity|default:"Brak" }}</p>
+                <p><strong>Kolor:</strong> 
+                    <span style="display: inline-block; width: 20px; height: 20px; background-color: {{ current_meeting.color }}; border-radius: 50%;"></span>
+                </p>
             </div>
+            {% if current_meeting.event %}
+                <div class="meeting-event">
+                    <h3>Szczegóły Wydarzenia</h3>
+                    <p><strong>Nazwa:</strong> <a href="{% url 'event_details' event_id=current_meeting.event.id %}">{{ current_meeting.event.name }}</a></p>
+                    <p><strong>Typ:</strong> {{ current_meeting.event.get_event_type_display }}</p>
+                    <p><strong>Opis:</strong> {{ current_meeting.event.description }}</p>
+                    <p><strong>Kolor:</strong> 
+                        <span style="display: inline-block; width: 20px; height: 20px; background-color: {{ current_meeting.event.color }}; border-radius: 50%;"></span>
+                    </p>
+                </div>
+            {% endif %}
         </div>
     {% endif %}
 
-    <!-- Wyświetlanie następnego spotkania -->
+    <!-- Next Meeting -->
     {% if next_meeting %}
-        <div class="meeting" style="background-color: #fbd4d4;">
+        <div class="meeting">
             <div class="meeting-header next">Następne Spotkanie</div>
             <div class="meeting-content">
                 <p><strong>Nazwa spotkania:</strong> {{ next_meeting.name_pl|default:"Brak tytułu" }}</p>
                 <p><strong>Opis:</strong> {{ next_meeting.description|default:"Brak opisu" }}</p>
                 <p><strong>Czas trwania:</strong> <span class="meeting-time">{{ next_meeting.start_time }} - {{ next_meeting.end_time }}</span></p>
-                <p><strong>Sala:</strong> {{ room.room_number }}</p>
-                <p><strong>Wykładowca:</strong>
+                <p><strong>Wykładowcy:</strong> 
                     {% for lecturer in next_meeting.lecturers.all %}
                         {{ lecturer.first_name }} {{ lecturer.last_name }}{% if not forloop.last %}, {% endif %}
                     {% endfor %}
                 </p>
+                <p><strong>Liczba miejsc:</strong> {{ next_meeting.capacity|default:"Brak" }}</p>
+                <p><strong>Kolor:</strong> 
+                    <span style="display: inline-block; width: 20px; height: 20px; background-color: {{ next_meeting.color }}; border-radius: 50%;"></span>
+                </p>
             </div>
+            {% if next_meeting.event %}
+                <div class="meeting-event">
+                    <h3>Szczegóły Wydarzenia</h3>
+                    <p><strong>Nazwa:</strong> <a href="{% url 'event_details' event_id=next_meeting.event.id %}">{{ next_meeting.event.name }}</a></p>
+                    <p><strong>Typ:</strong> {{ next_meeting.event.get_event_type_display }}</p>
+                    <p><strong>Opis:</strong> {{ next_meeting.event.description }}</p>
+                    <p><strong>Kolor:</strong> 
+                        <span style="display: inline-block; width: 20px; height: 20px; background-color: {{ next_meeting.event.color }}; border-radius: 50%;"></span>
+                    </p>
+                </div>
+            {% endif %}
         </div>
-    {% else %}
-        {% if not current_meeting %}
-            <p class="no-meeting">Brak kolejnych spotkań dla tej sali.</p>
-        {% endif %}
+    {% endif %}
+
+    <!-- No Meetings -->
+    {% if not current_meeting and not next_meeting %}
+        <p class="no-meeting">Brak spotkań dla tej sali.</p>
     {% endif %}
 
 </body>
