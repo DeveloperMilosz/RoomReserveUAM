@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block title %}
+Wyszukaj Wolne Sale
+{% endblock %}
+
+{% block content %}
+<section>
+    <h1>Wyszukaj Wolne Sale</h1>
+    <form method="get">
+        <div>
+            <label for="start_date">Data początkowa:</label>
+            <input type="date" name="start_date" id="start_date">
+        </div>
+        <div>
+            <label for="start_time">Godzina początkowa:</label>
+            <input type="time" name="start_time" id="start_time">
+        </div>
+        <div>
+            <label for="end_date">Data końcowa:</label>
+            <input type="date" name="end_date" id="end_date">
+        </div>
+        <div>
+            <label for="end_time">Godzina końcowa:</label>
+            <input type="time" name="end_time" id="end_time">
+        </div>
+        <div>
+            <label for="attribute">Wyposażenie:</label>
+            <input type="text" name="attribute" id="attribute" placeholder="Wprowadź wyposażenie">
+        </div>
+        <button type="submit">Szukaj</button>
+    </form>
+
+    {% if filter.qs %}
+    <table>
+        <thead>
+            <tr>
+                <th>Nazwa sali</th>
+                <th>Budynki</th>
+                <th>Wyposażenie</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for room in filter.qs %}
+            <tr>
+                <td>{{ room.room_number }}</td>
+                <td>{{ room.building_name_pl }}</td>
+                <td>
+                    {% for attribute in room.attributes.all %}
+                        {{ attribute.description_pl }}{% if not forloop.last %}, {% endif %}
+                    {% endfor %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p>Brak dostępnych sal w podanym przedziale czasu.</p>
+    {% endif %}
+</section>
+{% endblock %}

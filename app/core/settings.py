@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     "room_reserve",
     "django_htmx",
     "colorfield",
+    "django_filters",
 ]
 
 MIDDLEWARE = [
@@ -171,7 +172,7 @@ LOGIN_REDIRECT_URL = "/"
 
 # Huey configuration
 HUEY = RedisHuey(
-    'room_reserve',  # Queue name for tasks
+    "room_reserve",  # Queue name for tasks
     host=os.environ.get("REDIS_HOST", "localhost"),  # Redis host (from .env file or default)
     port=6379,  # Redis default port
     always_eager=False,  # Asynchronous tasks

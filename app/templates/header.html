@@ -5,8 +5,15 @@
       <ul>
           <li><a href="{% url 'home' %}">System rezerwacji UAM</a></li>
 
-          <!-- Link do wyszukiwania -->
-          <li><a href="{% url 'search_view' %}">Wyszukiwanie</a></li>
+          <li>
+            <a href="#">Wyszukiwanie</a>
+            <ul class="submenu">
+                <li><a href="{% url 'search_meetings' %}">Wyszukaj spotkania</a></li>
+                <li><a href="{% url 'search_events' %}">Wyszukaj wydarzenia</a></li>
+                <li><a href="{% url 'search_rooms' %}">Wyszukaj sale</a></li>
+                <li><a href="{% url 'search_free_rooms' %}">Wyszukaj wolne sale</a></li>
+            </ul>
+          </li>
 
           <li>
               <a href="{% url 'home' %}">Rezerwacja</a>
