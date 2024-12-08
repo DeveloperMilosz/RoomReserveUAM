@@ -7,7 +7,7 @@ from room_reserve.views import calendar as calendar_views
 from room_reserve.views import rosberrypi_viewer as rosberrypi_views
 from room_reserve.views import event_meeting as event_meeting
 from room_reserve.views import profile_views
-
+from room_reserve.views import search as search_views
 
 urlpatterns = [
     # Home
@@ -64,4 +64,8 @@ urlpatterns = [
     path("search/", calendar_views.search_view, name="search_view"),
     path("profil/", profile_views.my_profile_view, name="my_profile"),
     path("reservation/", profile_views.my_reservations, name="my_reservations"),
+    path("search/meetings/", search_views.search_meetings, name="search_meetings"),
+    path("search/events/", search_views.search_events, name="search_events"),
+    path("search/rooms/", search_views.search_rooms, name="search_rooms"),
+    path("search/free-rooms/", search_views.search_free_rooms, name="search_free_rooms"),
 ]
