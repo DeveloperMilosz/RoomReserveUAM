@@ -55,8 +55,7 @@
     {% if event %}
         <hr>
         <h3>Szczegóły Wydarzenia</h3>
-        <a href="{% url 'event_details' event_id=meeting.event.id %}">wydarzenie {{ event.name|default:"Brak" }}</a>
-        <p><strong>Nazwa wydarzenia:</strong> <br>{{ event.name|default:"Brak" }}</p>
+        <p><strong>Nazwa wydarzenia:</strong> <br><a href="{% url 'event_details' event_id=meeting.event.id %}">{{ event.name|default:"Brak" }}</a>
         <p><strong>Typ wydarzenia:</strong> <br>{{ event.get_event_type_display|default:"Brak" }}</p>
         <p><strong>Opis wydarzenia:</strong> <br>{{ event.description|default:"Brak" }}</p>
         <p><strong>Data rozpoczęcia wydarzenia:</strong> <br>{{ event.start_date|default:"Brak" }}</p>
