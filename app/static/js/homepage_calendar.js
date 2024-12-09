@@ -74,12 +74,20 @@ function generateWeeklyCalendar(year, month, day) {
 
     const hourColumn = document.createElement('div');
     hourColumn.classList.add('hour');
-    for (let i = 0; i < 24; i++) {
+    
+    // Pętla od 0 do 23.5 (0.5 oznacza pół godziny)
+    for (let i = 0; i < 24; i += 0.5) {
         const timeLabel = document.createElement('div');
         timeLabel.classList.add('time-label');
-        timeLabel.textContent = `${String(i).padStart(2, '0')}:00`;
+    
+        // Jeśli i jest liczbą całkowitą, dodaj ":00", w przeciwnym razie dodaj ":30"
+        const hour = Math.floor(i); // Całkowita część godziny
+        const minutes = (i % 1 === 0) ? '00' : '30'; // Dodanie minut
+    
+        timeLabel.textContent = `${String(hour).padStart(2, '0')}:${minutes}`;
         hourColumn.appendChild(timeLabel);
     }
+    
     calendarEl.appendChild(hourColumn);
 
     for (let i = 0; i < 7; i++) {
@@ -199,6 +207,7 @@ const displayWeeklyMeetings = meetings => {
                 col.forEach(meeting => {
                     const eventEl = document.createElement('a');
                     eventEl.href = `/meeting/${meeting.id}`;
+                    eventEl.title = `${meeting.title}`
                     eventEl.classList.add('event', 'weekly');
                     eventEl.textContent = meeting.title;
 
