@@ -62,7 +62,6 @@ nav ul {
   display: flex;
 }
 nav ul li {
-  position: relative;
   margin-right: 20px;
 }
 nav ul li a {
@@ -78,21 +77,26 @@ nav ul li a::after {
   height: 2px;
   width: 0%;
   position: absolute;
-  left: 0px;
+  left: 50%;
+  transform: translate(0%, -50%);
   bottom: 5px;
   transition: 0.3s;
 }
 nav ul li a:hover::after {
   width: 100%;
+  left: 0;
 }
 
 nav ul li:hover .submenu {
-  max-height: 500px;
   opacity: 1;
+  top: 51px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
 }
 
 .submenu li {
-  margin: 0;
+  margin: 0px 10px;
 }
 .submenu li a {
   padding: 10px 15px;
@@ -103,25 +107,19 @@ nav ul li:hover .submenu {
 }
 
 .submenu {
+  border-top: 1px solid white;
   display: none;
-  position: absolute;
-  top: 100%;
   left: 0;
   background-color: rgba(15, 45, 102, 0.98);
-  padding: 0;
-  list-style: none;
-  display: block;
   position: absolute;
   top: 100%;
   left: 0;
   padding: 0;
-  list-style: none;
   border-radius: 5px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   overflow: hidden;
-  max-height: 0;
   opacity: 0;
-  transition: max-height 0.5s ease, opacity 0.5s ease;
+  transition: opacity 0.5s ease;
 }
 
 form {

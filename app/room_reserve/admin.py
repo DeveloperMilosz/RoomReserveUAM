@@ -115,9 +115,24 @@ class MeetingInline(admin.TabularInline):
     show_change_link = True
 
 
+from django.contrib import admin
+from .models import Event
+
 @admin.register(Event)
 class EventAdmin(admin.ModelAdmin):
-    list_display = ("id", "name", "event_type", "organizer", "start_date", "end_date")
+    list_display = ("name", "event_type", "organizer", "start_date", "end_date", "is_approved")  # Added is_approved
     search_fields = ("name", "description")
-    list_filter = ("event_type", "organizer")
+    list_filter = ("event_type", "organizer", "is_approved")  # Filter by approval status
     inlines = [MeetingInline]
+    actions = ["approve_events", "reject_events"]
+
+    def approve_events(self, request, queryset):
+        queryset.update(is_approved=True)
+        self.message_user(request, "Selected events have been approved.")
+
+    def reject_events(self, request, queryset):
+        queryset.update(is_approved=False)
+        self.message_user(request, "Selected events have been rejected.")
+
+    approve_events.short_description = "Approve selected events"
+    reject_events.short_description = "Reject selected events"

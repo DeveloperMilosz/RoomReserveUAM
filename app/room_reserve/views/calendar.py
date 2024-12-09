@@ -7,7 +7,6 @@ from django.db.models import Q
 from room_reserve.models import Meeting, Event, Room, Lecturers
 from room_reserve.forms.calendar import MeetingForm, EventForm, EditMeetingForm
 from datetime import datetime, timedelta
-from django.db.models import Q
 import json
 
 
@@ -57,6 +56,34 @@ def get_meetings(request):
         for meeting in meetings
     ]
     return JsonResponse(events, safe=False)
+
+def room_schedule(request, room_id):
+    """
+    Fetch and display the schedule for a specific room, including the current meeting
+    and the next meeting, with event details.
+    """
+    room = get_object_or_404(Room, id=room_id)
+    
+    # Fetch the current meeting (if one is ongoing)
+    current_meeting = Meeting.objects.filter(
+        start_time__lte=now(), end_time__gte=now(), room=room
+    ).select_related('event').first()
+    
+    # Fetch the next meeting (if one is scheduled in the future)
+    next_meeting = Meeting.objects.filter(
+        start_time__gt=now(), room=room
+    ).select_related('event').order_by('start_time').first()
+    
+    # Render the template with the meetings and room context
+    return render(
+        request,
+        "pages/calendar/room_schedule.html",
+        {
+            "room": room,
+            "current_meeting": current_meeting,
+            "next_meeting": next_meeting,
+        },
+    )
 
 
 def meeting_details(request, meeting_id):
@@ -140,6 +167,8 @@ def new_meeting(request):
             return redirect("home")
     else:
         form = MeetingForm()
+        
+        form.fields['event'].queryset = events
 
     return render(
         request,
@@ -164,6 +193,8 @@ def edit_meeting(request, meeting_id):
             form.save()
             # Po zapisaniu przekieruj do "Moje Rezerwacje"
             return redirect("my_reservations")
+        else:
+            print(form.errors) 
     else:
         # Przy pierwszym załadowaniu formularza wypełnij go istniejącymi danymi
         form = EditMeetingForm(instance=meeting)
@@ -191,8 +222,6 @@ def new_event(request):
         if form.is_valid():
             form.save()
             return redirect("home")
-        else:
-            print(form.errors) 
     else:
         form = EventForm()
     return render(request, "pages/calendar/new_event.html", {"form": form, "lecturers": lecturers})
@@ -305,3 +334,5 @@ def search_view(request):
             "event": request.GET.get("event", ""),
         },
     )
+
+    
