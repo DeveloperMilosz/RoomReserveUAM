@@ -58,32 +58,40 @@ Szukaj Spotkań
     </form>
 
     <table>
-        <thead>
-            <tr>
-                <th>Nazwa</th>
-                <th>Prowadzący</th>
-                <th>Sala</th>
-                <th>Data rozpoczęcia</th>
-                <th>Godzina rozpoczęcia</th>
-                <th>Data zakończenia</th>
-                <th>Godzina zakończenia</th>
-                <th>Wydarzenie</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for meeting in filter.qs %}
-            <tr>
-                <td>{{ meeting.name_pl }}</td>
-                <td>{{ meeting.lecturers.all|join:", " }}</td>
-                <td>{{ meeting.room.room_number }}</td>
-                <td>{{ meeting.start_time|date:"Y-m-d" }}</td>
-                <td>{{ meeting.start_time|time:"H:i" }}</td>
-                <td>{{ meeting.end_time|date:"Y-m-d" }}</td>
-                <td>{{ meeting.end_time|time:"H:i" }}</td>
-                <td>{{ meeting.event.name }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+      <thead>
+          <tr>
+              <th>Nazwa</th>
+              <th>Prowadzący</th>
+              <th>Sala</th>
+              <th>Data rozpoczęcia</th>
+              <th>Godzina rozpoczęcia</th>
+              <th>Data zakończenia</th>
+              <th>Godzina zakończenia</th>
+              <th>Wydarzenie</th>
+          </tr>
+      </thead>
+      <tbody>
+          {% for meeting in filter.qs %}
+          <tr>
+              <td>
+                  <a href="{% url 'meeting_details' meeting.id %}">
+                      {{ meeting.name_pl }}
+                  </a>
+              </td>
+              <td>
+                  {% for lecturer in meeting.lecturers.all %}
+                      {{ lecturer.first_name }} {{ lecturer.last_name }}{% if not forloop.last %}, {% endif %}
+                  {% endfor %}
+              </td>
+              <td>{{ meeting.room.room_number }}</td>
+              <td>{{ meeting.start_time|date:"Y-m-d" }}</td>
+              <td>{{ meeting.start_time|time:"H:i" }}</td>
+              <td>{{ meeting.end_time|date:"Y-m-d" }}</td>
+              <td>{{ meeting.end_time|time:"H:i" }}</td>
+              <td>{{ meeting.event.name }}</td>
+          </tr>
+          {% endfor %}
+      </tbody>
+  </table>
 </section>
 {% endblock %}

@@ -36,30 +36,36 @@ Szukaj Wydarzeń
     </form>
 
     <table>
-        <thead>
-            <tr>
-                <th>Nazwa</th>
-                <th>Opis</th>
-                <th>Data rozpoczęcia</th>
-                <th>Godzina rozpoczęcia</th>
-                <th>Data zakończenia</th>
-                <th>Godzina zakończenia</th>
-                <th>Organizator</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for event in filter.qs %}
-            <tr>
-                <td>{{ event.name }}</td>
-                <td>{{ event.description }}</td>
-                <td>{{ event.start_date|date:"Y-m-d" }}</td>
-                <td>{{ event.start_date|time:"H:i" }}</td>
-                <td>{{ event.end_date|date:"Y-m-d" }}</td>
-                <td>{{ event.end_date|time:"H:i" }}</td>
-                <td>{{ event.organizer }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+      <thead>
+          <tr>
+              <th>Nazwa</th>
+              <th>Opis</th>
+              <th>Data rozpoczęcia</th>
+              <th>Godzina rozpoczęcia</th>
+              <th>Data zakończenia</th>
+              <th>Godzina zakończenia</th>
+              <th>Organizator</th>
+          </tr>
+      </thead>
+      <tbody>
+          {% for event in filter.qs %}
+          <tr>
+              <td>
+                  <a href="{% url 'event_details' event.id %}">
+                      {{ event.name }}
+                  </a>
+              </td>
+              <td>{{ event.description }}</td>
+              <td>{{ event.start_date|date:"Y-m-d" }}</td>
+              <td>{{ event.start_date|time:"H:i" }}</td>
+              <td>{{ event.end_date|date:"Y-m-d" }}</td>
+              <td>{{ event.end_date|time:"H:i" }}</td>
+              <td>
+                  {{ event.organizer.first_name }} {{ event.organizer.last_name }}
+              </td>
+          </tr>
+          {% endfor %}
+      </tbody>
+  </table>
 </section>
 {% endblock %}
