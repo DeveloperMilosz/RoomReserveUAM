@@ -10,4 +10,6 @@ Project to reserve rooms in UAM.
 ## Getting Started
 
 1. Enter into root of the project
-2. `make up`
+2. `make up` for create .env
+3. add REDIS_HOST=redis to .env
+4. `make up`
