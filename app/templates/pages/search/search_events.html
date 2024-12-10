@@ -38,6 +38,7 @@ Szukaj Wydarzeń
     <table>
       <thead>
           <tr>
+              <th>ID</th>
               <th>Nazwa</th>
               <th>Opis</th>
               <th>Data rozpoczęcia</th>
@@ -50,6 +51,7 @@ Szukaj Wydarzeń
       <tbody>
           {% for event in filter.qs %}
           <tr>
+              <td>{{ event.id }}</td>
               <td>
                   <a href="{% url 'event_details' event.id %}">
                       {{ event.name }}

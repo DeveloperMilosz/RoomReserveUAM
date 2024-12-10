@@ -22,12 +22,14 @@ Szukaj Sal
     <table>
         <thead>
             <tr>
+                <th>ID</th>
                 <th>Nazwa Sali</th>
             </tr>
         </thead>
         <tbody>
             {% for room in filter.qs %}
             <tr>
+                <td>{{ room.id }}</td>
                 <td>{{ room.room_number }}</td>
             </tr>
             {% endfor %}

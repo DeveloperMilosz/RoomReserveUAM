@@ -35,6 +35,7 @@ Wyszukaj Wolne Sale
     <table>
         <thead>
             <tr>
+                <th>ID</th>
                 <th>Nazwa sali</th>
                 <th>Budynki</th>
                 <th>Wyposażenie</th>
@@ -43,6 +44,7 @@ Wyszukaj Wolne Sale
         <tbody>
             {% for room in filter.qs %}
             <tr>
+                <td>{{ room.id }}</td>
                 <td>{{ room.room_number }}</td>
                 <td>{{ room.building_name_pl }}</td>
                 <td>

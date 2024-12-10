@@ -60,6 +60,7 @@ Szukaj Spotkań
     <table>
       <thead>
           <tr>
+              <th>ID</th>
               <th>Nazwa</th>
               <th>Prowadzący</th>
               <th>Sala</th>
@@ -73,6 +74,7 @@ Szukaj Spotkań
       <tbody>
           {% for meeting in filter.qs %}
           <tr>
+              <td>{{ meeting.id }}</td>
               <td>
                   <a href="{% url 'meeting_details' meeting.id %}">
                       {{ meeting.name_pl }}
