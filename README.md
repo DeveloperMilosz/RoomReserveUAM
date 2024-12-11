@@ -6,6 +6,7 @@ Project to reserve rooms in UAM.
 
 - Docker
 - Docker-compose
+- Make
 
 ## Getting Started
 
