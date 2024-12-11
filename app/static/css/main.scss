@@ -427,6 +427,32 @@ form > a {
   justify-content: center;
 }
 
+.day.weekly {
+  border: 1px solid #ccc;
+  padding: 5px;
+  position: relative;
+  height: 1440px;
+  display: flex;
+  justify-content: center;
+
+  &:nth-last-child(-n+2){
+    background-color: #E0FFFF77;
+  }
+}
+
+.event.weekly {
+  background-color: #2675c0;
+  color: white;
+  padding: 5px;
+  font-size: 12px;
+  box-sizing: border-box;
+  border-radius: 10px;
+  border: 1px solid white;
+  display: flex;
+  justify-content: center;
+  z-index: 3;
+}
+
 .day:not(.weekly) {
   .events {
     .event {
@@ -446,8 +472,17 @@ form > a {
     transition: .3s;
   }
 
+  &:nth-child(7n-1),
+  &:nth-child(7n) {
+    background-color: #E0FFFF88
+  }
+
   &:hover .events {
     max-height: 1000px;
+  }
+
+  &:not([data-day]){
+    background-color: #f5f5f5;
   }
 }
 
@@ -465,6 +500,7 @@ form > a {
   position: absolute;
   width: 100%;
   max-width: 1900px;
+  z-index:2;
 }
 
 .time-label {
@@ -502,27 +538,6 @@ form > a {
 
 .weekly .weekdays {
   grid-template-columns: 80px repeat(7, 1fr);
-}
-
-.day.weekly {
-  border: 1px solid #ccc;
-  padding: 5px;
-  position: relative;
-  height: 1440px;
-  display: flex;
-  justify-content: center;
-}
-
-.event.weekly {
-  background-color: #2675c0;
-  color: white;
-  padding: 5px;
-  font-size: 12px;
-  box-sizing: border-box;
-  border-radius: 10px;
-  border: 1px solid white;
-  display: flex;
-  justify-content: center;
 }
 
 // Meeting detail styling
