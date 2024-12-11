@@ -6,7 +6,7 @@ from room_reserve.filters import MeetingFilter, EventFilter, RoomFilter, FreeRoo
 def search_meetings(request):
     """Wyszukaj spotkania."""
     if request.GET:  # Wyświetl wyniki tylko, jeśli są parametry GET
-        meeting_filter = MeetingFilter(request.GET, queryset=Meeting.objects.all())
+        meeting_filter = MeetingFilter(request.GET, queryset=Meeting.objects.all().order_by('start_time'))
     else:
         meeting_filter = MeetingFilter(queryset=Meeting.objects.none())  # Pusty queryset bez filtrów
     return render(request, "pages/search/search_meetings.html", {"filter": meeting_filter})
