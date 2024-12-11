@@ -146,8 +146,17 @@ AUTHENTICATION_BACKENDS = [
     "allauth.account.auth_backends.AuthenticationBackend",
 ]
 
-# Email configuration
-EMAIL_BACKEND = os.environ.get("EMAIL_BACKEND", "django.core.mail.backends.console.EmailBackend")
+
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+
+# SMTP server settings
+EMAIL_HOST = "ssl0.ovh.net"
+EMAIL_PORT = 465
+EMAIL_USE_TLS = False
+EMAIL_USE_SSL = True
+EMAIL_HOST_USER = "powiadomienia@roomreserveuam.pl"
+EMAIL_HOST_PASSWORD = "iZzXauocwNW6iM4UVZhG"
+DEFAULT_FROM_EMAIL = "powiadomienia@roomreserveuam.pl"
 
 # Allauth settings
 ACCOUNT_AUTHENTICATION_METHOD = "email"
