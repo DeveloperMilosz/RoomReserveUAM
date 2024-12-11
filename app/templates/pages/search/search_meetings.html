@@ -1,8 +1,5 @@
 {% extends "base.html" %}
-
-{% block title %}
-Szukaj Spotkań
-{% endblock %}
+{% load static %}
 
 {% block content %}
 <div class="form-container">
@@ -60,16 +57,41 @@ Szukaj Spotkań
 </div>
 
 {% if filter.qs %}
-<table class="data-table">
+
+<div class="calendar-menu">
+    <div class="calendar-buttons">
+        <button id="toggleView" class="form-button">Zmień widok</button>
+        <button id="goToToday" class="form-button">Dzisiaj</button>
+    </div>
+    <span class="calendar-title">Twój kalendarz</span>
+    <div class="calendar-navigation">
+        <button id="arrow-left"></button>
+        <span id="dateRange"></span>
+        <button id="arrow-right"></button>
+    </div>
+</div>
+
+<div class="weekdays">
+    <div>Poniedziałek</div>
+    <div>Wtorek</div>
+    <div>Środa</div>
+    <div>Czwartek</div>
+    <div>Piątek</div>
+    <div>Sobota</div>
+    <div>Niedziela</div>
+</div>
+
+<div id="calendar" class="monthly"></div>
+
+
+<table class="data-table tabela" display="none">
     <thead>
         <tr>
-            <th>ID</th>
             <th>Nazwa</th>
             <th>Prowadzący</th>
             <th>Sala</th>
-            <th>Data rozpoczęcia</th>
+            <th>Data spotkania</th>
             <th>Godzina rozpoczęcia</th>
-            <th>Data zakończenia</th>
             <th>Godzina zakończenia</th>
             <th>Wydarzenie</th>
         </tr>
@@ -77,9 +99,8 @@ Szukaj Spotkań
     <tbody>
         {% for meeting in filter.qs %}
         <tr>
-            <td>{{ meeting.id }}</td>
             <td>
-                <a href="{% url 'meeting_details' meeting.id %}" class="link">
+                <a href="{% url 'meeting_details' meeting.id %}" class="link linkusiek">
                     {{ meeting.name_pl }}
                 </a>
             </td>
@@ -94,11 +115,15 @@ Szukaj Spotkań
             <td>{{ meeting.end_time|date:"Y-m-d" }}</td>
             <td>{{ meeting.end_time|time:"H:i" }}</td>
             <td>{{ meeting.event.name }}</td>
+            <td display="none">{{ meeting.event.id }}</td>
+            <td display="none">{{ meeting.color }}</td>
         </tr>
         {% endfor %}
     </tbody>
 </table>
+
 {% else %}
 <p class="no-results">Nie znaleziono sal pasujących do kryteriów wyszukiwania.</p>
 {% endif %}
+<script src="{% static 'js/homepage_calendar.js' %}" defer></script>
 {% endblock %}
