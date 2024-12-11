@@ -1,73 +1,74 @@
 {% extends "base.html" %}
-
-{% block title %}
-Szukaj Wydarzeń
-{% endblock %}
+{% load static %}
 
 {% block content %}
-<section>
+<div class="form-container">
     <h1>Szukaj Wydarzeń</h1>
-    <form method="get">
-        <div>
+    <form method="get" class="form-form">
+        <div class="input-box">
             <label for="name">Nazwa wydarzenia:</label>
-            <input type="text" name="name" id="name">
+            <input type="text" name="name" id="name" placeholder="Wprowadź nazwę wydarzenia">
         </div>
-        <div>
+        <div class="input-box">
             <label for="start_date">Data rozpoczęcia:</label>
             <input type="date" name="start_date" id="start_date">
         </div>
-        <div>
+        <div class="input-box">
             <label for="start_time">Godzina rozpoczęcia:</label>
             <input type="time" name="start_time" id="start_time">
         </div>
-        <div>
+        <div class="input-box">
             <label for="end_date">Data zakończenia:</label>
             <input type="date" name="end_date" id="end_date">
         </div>
-        <div>
+        <div class="input-box">
             <label for="end_time">Godzina zakończenia:</label>
             <input type="time" name="end_time" id="end_time">
         </div>
-        <div>
+        <div class="input-box">
             <label for="organizer">Organizator:</label>
-            <input type="text" name="organizer" id="organizer">
+            <input type="text" name="organizer" id="organizer" placeholder="Wprowadź nazwę organizatora">
         </div>
-        <button type="submit">Szukaj</button>
+        <button type="submit" class="form-button">Szukaj</button>
     </form>
+</div>
 
-    <table>
-      <thead>
-          <tr>
-              <th>ID</th>
-              <th>Nazwa</th>
-              <th>Opis</th>
-              <th>Data rozpoczęcia</th>
-              <th>Godzina rozpoczęcia</th>
-              <th>Data zakończenia</th>
-              <th>Godzina zakończenia</th>
-              <th>Organizator</th>
-          </tr>
-      </thead>
-      <tbody>
-          {% for event in filter.qs %}
-          <tr>
-              <td>{{ event.id }}</td>
-              <td>
-                  <a href="{% url 'event_details' event.id %}">
-                      {{ event.name }}
-                  </a>
-              </td>
-              <td>{{ event.description }}</td>
-              <td>{{ event.start_date|date:"Y-m-d" }}</td>
-              <td>{{ event.start_date|time:"H:i" }}</td>
-              <td>{{ event.end_date|date:"Y-m-d" }}</td>
-              <td>{{ event.end_date|time:"H:i" }}</td>
-              <td>
-                  {{ event.organizer.first_name }} {{ event.organizer.last_name }}
-              </td>
-          </tr>
-          {% endfor %}
-      </tbody>
-  </table>
-</section>
+{% if filter.qs %}
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Nazwa</th>
+            <th>Opis</th>
+            <th>Data rozpoczęcia</th>
+            <th>Godzina rozpoczęcia</th>
+            <th>Data zakończenia</th>
+            <th>Godzina zakończenia</th>
+            <th>Organizator</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for event in filter.qs %}
+        <tr>
+            <td>{{ event.id }}</td>
+            <td>
+                <a href="{% url 'event_details' event.id %}">
+                    {{ event.name }}
+                </a>
+            </td>
+            <td>{{ event.description }}</td>
+            <td>{{ event.start_date|date:"Y-m-d" }}</td>
+            <td>{{ event.start_date|time:"H:i" }}</td>
+            <td>{{ event.end_date|date:"Y-m-d" }}</td>
+            <td>{{ event.end_date|time:"H:i" }}</td>
+            <td>
+                {{ event.organizer.first_name }} {{ event.organizer.last_name }}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p class="no-results">Brak dostępnych sal w podanym przedziale czasu.</p>
+{% endif %}
 {% endblock %}
