@@ -1,5 +1,5 @@
 from django.contrib import admin
-from room_reserve.models import Room, Lecturers, Meeting, RoomAttribute, Event, User
+from room_reserve.models import Room, Lecturers, Meeting, RoomAttribute, Event, User, Notification
 from django.contrib.auth.admin import UserAdmin
 from django.utils.translation import gettext_lazy as _
 
@@ -141,10 +141,6 @@ class MeetingInline(admin.TabularInline):
     readonly_fields = ("is_updated", "submitted_by")
     show_change_link = True
 
-
-from django.contrib import admin
-from .models import Event
-
 @admin.register(Event)
 class EventAdmin(admin.ModelAdmin):
     list_display = ("name", "event_type", "organizer", "start_date", "end_date", "is_approved")  # Added is_approved
@@ -163,3 +159,8 @@ class EventAdmin(admin.ModelAdmin):
 
     approve_events.short_description = "Approve selected events"
     reject_events.short_description = "Reject selected events"
+
+@admin.register(Notification)
+class LecturersAdmin(admin.ModelAdmin):
+    list_display = ("title", "message", "user", "notification_type")
+    search_fields = ("title", "message", "user", "notification_type")

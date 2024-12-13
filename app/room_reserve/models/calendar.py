@@ -101,3 +101,40 @@ class Meeting(models.Model):
 
     def __str__(self):
         return f"{self.name_pl} ({self.start_time} - {self.end_time})"
+
+class Notification(models.Model):
+
+    EVENT_CREATED = "event_created"
+    EVENT_APPROVED = "event_approved"
+    EVENT_REJECTED = "event_rejected"
+    MEETING_CREATED = "meeting_created"
+    MEETING_UPDATED = "meeting_updated"
+
+    NOTIFICATION_TYPE_CHOICES = [
+        (EVENT_CREATED, _("Event Created")),
+        (EVENT_APPROVED, _("Event Approved")),
+        (EVENT_REJECTED, _("Event Rejected")),
+        (MEETING_CREATED, _("Meeting Created")),
+        (MEETING_UPDATED, _("Meeting Updated")),
+    ]
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name=_("User"), related_name="notifications")
+    notification_type = models.CharField(
+        _("notification type"), max_length=50, choices=NOTIFICATION_TYPE_CHOICES, default="event_created"
+    )
+    title = models.CharField(_("Title"), max_length=100)
+    message = models.TextField(_("Message"))
+    is_read = models.BooleanField(_("Is Read"), default=False)
+    related_event = models.ForeignKey(
+        Event, on_delete=models.CASCADE, null=True, blank=True, verbose_name=_("Related Event")
+    )
+    related_meeting = models.ForeignKey(
+        Meeting, on_delete=models.CASCADE, null=True, blank=True, verbose_name=_("Related Meeting")
+    )
+    created_at = models.DateTimeField(_("Created At"), auto_now_add=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return f"Notification for {self.user}: {self.title}"
