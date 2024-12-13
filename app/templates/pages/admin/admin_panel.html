@@ -1,0 +1,233 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Review Events and Meetings</h1>
+
+<h2>Pending</h2>
+<h3>Events</h3>
+<form method="post" style="margin-bottom: 10px;">
+    {% csrf_token %}
+    <input type="hidden" name="type" value="event">
+    <button type="submit" name="action" value="approve_all">Approve All</button>
+    <button type="submit" name="action" value="reject_all">Reject All</button>
+</form>
+
+<table>
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Organizer</th>
+            <th>Event Type</th>
+            <th>Start Date</th>
+            <th>End Date</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for event in pending_events %}
+        <tr>
+            <td>{{ event.name }}</td>
+            <td>{{ event.description }}</td>
+            <td>{{ event.organizer }}</td>
+            <td>{{ event.get_event_type_display }}</td>
+            <td>{{ event.start_date }}</td>
+            <td>{{ event.end_date }}</td>
+            <td>
+                <form method="post" style="display:inline;">
+                    {% csrf_token %}
+                    <input type="hidden" name="type" value="event">
+                    <input type="hidden" name="id" value="{{ event.id }}">
+                    <button type="submit" name="action" value="approve">Approve</button>
+                    <button type="submit" name="action" value="reject">Reject</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<h3>Meetings</h3>
+<form method="post" style="margin-bottom: 10px;">
+    {% csrf_token %}
+    <input type="hidden" name="type" value="meeting">
+    <button type="submit" name="action" value="approve_all">Approve All</button>
+    <button type="submit" name="action" value="reject_all">Reject All</button>
+</form>
+
+<table>
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Meeting Type</th>
+            <th>Room</th>
+            <th>Start Time</th>
+            <th>End Time</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for meeting in pending_meetings %}
+        <tr>
+            <td>{{ meeting.name_pl }}</td>
+            <td>{{ meeting.description }}</td>
+            <td>{{ meeting.get_meeting_type_display }}</td>
+            <td>{{ meeting.room }}</td>
+            <td>{{ meeting.start_time }}</td>
+            <td>{{ meeting.end_time }}</td>
+            <td>
+                <form method="post" style="display:inline;">
+                    {% csrf_token %}
+                    <input type="hidden" name="type" value="meeting">
+                    <input type="hidden" name="id" value="{{ meeting.id }}">
+                    <button type="submit" name="action" value="approve">Approve</button>
+                    <button type="submit" name="action" value="reject">Reject</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<h2>Accepted</h2>
+<h3>Events</h3>
+<table>
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Organizer</th>
+            <th>Event Type</th>
+            <th>Start Date</th>
+            <th>End Date</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for event in approved_events %}
+        <tr>
+            <td>{{ event.name }}</td>
+            <td>{{ event.description }}</td>
+            <td>{{ event.organizer }}</td>
+            <td>{{ event.get_event_type_display }}</td>
+            <td>{{ event.start_date }}</td>
+            <td>{{ event.end_date }}</td>
+            <td>
+                <form method="post" style="display:inline;">
+                    {% csrf_token %}
+                    <input type="hidden" name="type" value="event">
+                    <input type="hidden" name="id" value="{{ event.id }}">
+                    <button type="submit" name="action" value="reject">Reject</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<h3>Meetings</h3>
+<table>
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Meeting Type</th>
+            <th>Room</th>
+            <th>Start Time</th>
+            <th>End Time</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for meeting in approved_meetings %}
+        <tr>
+            <td>{{ meeting.name_pl }}</td>
+            <td>{{ meeting.description }}</td>
+            <td>{{ meeting.get_meeting_type_display }}</td>
+            <td>{{ meeting.room }}</td>
+            <td>{{ meeting.start_time }}</td>
+            <td>{{ meeting.end_time }}</td>
+            <td>
+                <form method="post" style="display:inline;">
+                    {% csrf_token %}
+                    <input type="hidden" name="type" value="meeting">
+                    <input type="hidden" name="id" value="{{ meeting.id }}">
+                    <button type="submit" name="action" value="reject">Reject</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<h2>Rejected</h2>
+<h3>Events</h3>
+<table>
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Organizer</th>
+            <th>Event Type</th>
+            <th>Start Date</th>
+            <th>End Date</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for event in rejected_events %}
+        <tr>
+            <td>{{ event.name }}</td>
+            <td>{{ event.description }}</td>
+            <td>{{ event.organizer }}</td>
+            <td>{{ event.get_event_type_display }}</td>
+            <td>{{ event.start_date }}</td>
+            <td>{{ event.end_date }}</td>
+            <td>
+                <form method="post" style="display:inline;">
+                    {% csrf_token %}
+                    <input type="hidden" name="type" value="event">
+                    <input type="hidden" name="id" value="{{ event.id }}">
+                    <button type="submit" name="action" value="approve">Approve</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<h3>Meetings</h3>
+<table>
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Meeting Type</th>
+            <th>Room</th>
+            <th>Start Time</th>
+            <th>End Time</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for meeting in rejected_meetings %}
+        <tr>
+            <td>{{ meeting.name_pl }}</td>
+            <td>{{ meeting.description }}</td>
+            <td>{{ meeting.get_meeting_type_display }}</td>
+            <td>{{ meeting.room }}</td>
+            <td>{{ meeting.start_time }}</td>
+            <td>{{ meeting.end_time }}</td>
+            <td>
+                <form method="post" style="display:inline;">
+                    {% csrf_token %}
+                    <input type="hidden" name="type" value="meeting">
+                    <input type="hidden" name="id" value="{{ meeting.id }}">
+                    <button type="submit" name="action" value="approve">Approve</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

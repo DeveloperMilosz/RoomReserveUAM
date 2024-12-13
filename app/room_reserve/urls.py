@@ -8,6 +8,7 @@ from room_reserve.views import rosberrypi_viewer as rosberrypi_views
 from room_reserve.views import event_meeting as event_meeting
 from room_reserve.views import profile_views
 from room_reserve.views import search as search_views
+from room_reserve.views import admin_panel as admin_views
 
 urlpatterns = [
     # Home
@@ -68,4 +69,5 @@ urlpatterns = [
     path("search/events/", search_views.search_events, name="search_events"),
     path("search/rooms/", search_views.search_rooms, name="search_rooms"),
     path("search/free-rooms/", search_views.search_free_rooms, name="search_free_rooms"),
+    path('admin-panel/', admin_views.admin_panel, name="admin_panel"),
 ]

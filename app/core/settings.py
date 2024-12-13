@@ -148,6 +148,7 @@ AUTHENTICATION_BACKENDS = [
 
 
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+# EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
 # SMTP server settings
 EMAIL_HOST = "ssl0.ovh.net"
