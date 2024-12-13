@@ -1,5 +1,32 @@
 from django.contrib import admin
-from .models import Room, Lecturers, Meeting, RoomAttribute, Event
+from room_reserve.models import Room, Lecturers, Meeting, RoomAttribute, Event, User
+from django.contrib.auth.admin import UserAdmin
+from django.utils.translation import gettext_lazy as _
+
+
+class CustomUserAdmin(UserAdmin):
+    model = User
+    list_display = ("email", "username", "first_name", "last_name", "user_type", "is_active", "is_staff")
+    list_filter = ("user_type", "is_staff", "is_active")
+    fieldsets = (
+        (None, {"fields": ("email", "password")}),
+        (_("Personal info"), {"fields": ("first_name", "last_name", "department", "username")}),
+        (_("Permissions"), {"fields": ("is_active", "is_staff", "is_superuser", "groups", "user_permissions")}),
+        (_("Important dates"), {"fields": ("last_login",)}),
+        (_("User Type"), {"fields": ("user_type",)}),
+    )
+    add_fieldsets = (
+        (None, {
+            "classes": ("wide",),
+            "fields": ("email", "password1", "password2", "user_type", "is_active", "is_staff"),
+        }),
+    )
+    search_fields = ("email", "first_name", "last_name", "username")
+    ordering = ("email",)
+
+
+# Register the custom user admin
+admin.site.register(User, CustomUserAdmin)
 
 
 @admin.register(Room)
