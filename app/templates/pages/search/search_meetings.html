@@ -100,23 +100,46 @@
         {% for meeting in filter.qs %}
         <tr>
             <td>
-                <a href="{% url 'meeting_details' meeting.id %}" class="link linkusiek">
+                <a href="{% url 'meeting_details' meeting.id %}" class="link">
                     {{ meeting.name_pl }}
                 </a>
             </td>
             <td>
+                {% if meeting.lecturers.exists %}
                 {% for lecturer in meeting.lecturers.all %}
                     {{ lecturer.first_name }} {{ lecturer.last_name }}{% if not forloop.last %}, {% endif %}
                 {% endfor %}
+                {% else %}
+                <a href="{% url 'edit_meeting' meeting.id %}">
+                    brak prowadzącego, edytuj
+                </a>
+                {% endif %}
             </td>
-            <td>{{ meeting.room.room_number }}</td>
+            <td>
+                {% if meeting.room %}
+                <a href="{% url 'room_details' meeting.room.room_number %}">
+                    {{ meeting.room.room_number }}
+                </a>
+            {% else %}
+                <a href="{% url 'edit_meeting' meeting.id %}">
+                    brak sali, edytuj
+                </a>
+            {% endif %}
+            </td>
             <td>{{ meeting.start_time|date:"Y-m-d" }}</td>
             <td>{{ meeting.start_time|time:"H:i" }}</td>
             <td>{{ meeting.end_time|date:"Y-m-d" }}</td>
             <td>{{ meeting.end_time|time:"H:i" }}</td>
-            <td>{{ meeting.event.name }}</td>
-            <td display="none">{{ meeting.event.id }}</td>
-            <td display="none">{{ meeting.color }}</td>
+            <td>
+
+                {% if meeting.event %}
+                {{ meeting.event.name }}
+                {% else %}
+                Nieprzypisane
+                {% endif %}
+            </td>
+            <td style="display:none">{{ meeting.event.id }}</td>
+            <td style="display:none">{{ meeting.color }}</td>
         </tr>
         {% endfor %}
     </tbody>

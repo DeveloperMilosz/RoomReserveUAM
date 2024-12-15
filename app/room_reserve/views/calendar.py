@@ -88,8 +88,8 @@ def event_details(request, event_id):
     meetings = event.meetings.all()
     return render(request, "pages/calendar/event_details.html", {"event": event, "meetings": meetings})
 
-def room_details(request, room_id):
-    room = get_object_or_404(Room, id=room_id)
+def room_details(request, room_number):
+    room = get_object_or_404(Room, room_number=room_number)
     attributes = room.attributes.all()
     
     room_number_parts = room.room_number.split(".")
