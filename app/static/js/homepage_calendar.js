@@ -259,8 +259,8 @@ function getMeetingFromTable() {
             title: title,
             start_time: start_time,
             end_time: end_time,
-            name_en: title, // Zakładam, że tytuł w języku angielskim jest taki sam
-            color: color // Domyślny kolor, jeśli nie jest dostarczony w tabeli
+            name_en: title,
+            color: color
         });
     });
     
@@ -305,7 +305,7 @@ document.getElementById('toggleView').addEventListener('click', () => {
 });
 
 document.getElementById('goToToday').addEventListener('click', function () {
-    currentDate = new Date(); // Ustawiamy bieżącą datę
+    currentDate = new Date();
     if (currentView === 'monthly') {
         generateMonthlyCalendar(currentDate.getFullYear(), currentDate.getMonth());
     } else {
@@ -321,10 +321,10 @@ document.getElementById('goToToday').addEventListener('click', function () {
 
 document.getElementById('arrow-left').addEventListener('click', function () {
     if (currentView === 'monthly') {
-        currentDate.setMonth(currentDate.getMonth() - 1); // Przejście do poprzedniego miesiąca
+        currentDate.setMonth(currentDate.getMonth() - 1);
         generateMonthlyCalendar(currentDate.getFullYear(), currentDate.getMonth());
     } else {
-        currentDate.setDate(currentDate.getDate() - 7); // Przejście do poprzedniego tygodnia
+        currentDate.setDate(currentDate.getDate() - 7);
         generateWeeklyCalendar(
             currentDate.getFullYear(),
             currentDate.getMonth(),
@@ -337,10 +337,10 @@ document.getElementById('arrow-left').addEventListener('click', function () {
 
 document.getElementById('arrow-right').addEventListener('click', function () {
     if (currentView === 'monthly') {
-        currentDate.setMonth(currentDate.getMonth() + 1); // Przejście do następnego miesiąca
+        currentDate.setMonth(currentDate.getMonth() + 1);
         generateMonthlyCalendar(currentDate.getFullYear(), currentDate.getMonth());
     } else {
-        currentDate.setDate(currentDate.getDate() + 7); // Przejście do następnego tygodnia
+        currentDate.setDate(currentDate.getDate() + 7);
         generateWeeklyCalendar(
             currentDate.getFullYear(),
             currentDate.getMonth(),
