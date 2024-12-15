@@ -19,48 +19,54 @@ def admin_panel(request):
     if request.method == "POST":
         item_type = request.POST.get("type")
         action = request.POST.get("action")
+        selected_ids = request.POST.getlist("selected_ids")
 
-        # Approve or reject all items
-        if action in ["approve_all", "reject_all"]:
-            if item_type == "event":
-                items = pending_events
-            elif item_type == "meeting":
-                items = pending_meetings
-            else:
+        if action in ["approve_selected", "reject_selected"]:
+            if not selected_ids:
+                messages.error(request, "No items selected.")
+                return redirect("admin_panel")
+
+            # Determine model type
+            model = Event if item_type == "event" else Meeting if item_type == "meeting" else None
+            if not model:
                 messages.error(request, "Invalid item type.")
                 return redirect("admin_panel")
 
-            for item in items:
-                item.is_approved = action == "approve_all"
-                item.is_rejected = action == "reject_all"
+            # Process selected items
+            for item_id in selected_ids:
+                item = get_object_or_404(model, id=item_id)
+                item.is_approved = action == "approve_selected"
+                item.is_rejected = action == "reject_selected"
                 item.save()
 
-            action_text = "approved" if action == "approve_all" else "rejected"
-            messages.success(request, f"All {item_type}s have been {action_text}.")
+            action_text = "approved" if action == "approve_selected" else "rejected"
+            messages.success(request, f"Selected {item_type}s have been {action_text}.")
             return redirect("admin_panel")
 
-        # Approve or reject a single item
-        item_id = request.POST.get("id")
-        if item_id:
-            if item_type == "event":
-                item = get_object_or_404(Event, id=item_id)
-            elif item_type == "meeting":
-                item = get_object_or_404(Meeting, id=item_id)
-            else:
+        if action in ["accept_selected", "reject_selected_from_accepted"]:
+            if not selected_ids:
+                messages.error(request, "No items selected.")
+                return redirect("admin_panel")
+
+            # Determine model type
+            model = Event if item_type == "event" else Meeting if item_type == "meeting" else None
+            if not model:
                 messages.error(request, "Invalid item type.")
                 return redirect("admin_panel")
 
-            if action == "approve":
-                item.is_approved = True
-                item.is_rejected = False
-                messages.success(request, f"{item} approved successfully.")
-            elif action == "reject":
-                item.is_approved = False
-                item.is_rejected = True
-                messages.success(request, f"{item} rejected successfully.")
-            else:
-                messages.error(request, "Invalid action.")
-            item.save()
+            # Accept or reject selected from accepted/rejected
+            for item_id in selected_ids:
+                item = get_object_or_404(model, id=item_id)
+                if action == "accept_selected":
+                    item.is_approved = True
+                    item.is_rejected = False
+                elif action == "reject_selected_from_accepted":
+                    item.is_approved = False
+                    item.is_rejected = True
+                item.save()
+
+            action_text = "accepted" if action == "accept_selected" else "rejected"
+            messages.success(request, f"Selected {item_type}s have been {action_text}.")
             return redirect("admin_panel")
 
     return render(request, "pages/admin/admin_panel.html", {
