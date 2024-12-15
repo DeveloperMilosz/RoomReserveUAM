@@ -1,165 +1,129 @@
 {% extends "base.html" %}
 {% block content %}
 {% load static %}
-<div class="form-container">
+<div class="form-container form-segments">
     <img src="{% static 'img/logo_pl.png' %}" id="logo" alt="logo UAM" aria-hidden="true">
 
-    <h1>Złóż wniosek o wydarzenie</h1>
-    <p>Proszę wprowadzić szczegóły wydarzenia poniżej.</p>
+    <h1>Złóż wniosek o wydarzenie z spotkaniami</h1>
+    <p>Proszę wprowadzić szczegóły wydarzenia i spotkań poniżej.</p>
 
-    <div class="form-form">
-        <form method="post">
-            {% csrf_token %}
+    <form method="post">
+        {% csrf_token %}
+
+        <div id="segments-container" style="display: flex;flex-wrap: wrap;justify-content: center;width: 100%;">
+            <div class="form-form">
+
+                <h2>Wydarzenie</h2>
+                <!-- Informacje o wydarzeniu -->
+                <div class="input-box">
+                    <label for="event-name">Nazwa wydarzenia:</label>
+                    <input type="text" id="event-name" name="eventname" placeholder="Wprowadź nazwę wydarzenia" required>
+                </div>
+
+                <div class="input-box">
+                    <label for="event-description">Opis wydarzenia:</label>
+                    <textarea id="event-description" name="eventdescription" placeholder="Dodaj opis wydarzenia" rows="4" required></textarea>
+                </div>
+
+                <div class="input-box">
+                    <label for="event-date-start">Data początkowa:</label>
+                    <input type="datetime-local" id="event-date-start" name="eventdatestart" required>
+                </div>
+
+                <div class="input-box">
+                    <label for="event-date-end">Data końcowa:</label>
+                    <input type="datetime-local" id="event-date-end" name="eventdateend" required>
+                </div>
+
+                <!-- Organizator -->
+                <div class="input-box">
+                    <label for="organizer">Organizator:</label>
+                    <select id="organizer" name="organizer" required>
+                        <option value="" disabled selected>Wybierz organizatora</option>
+                        {% for lecturer in lecturers %}
+                        <option value="{{ lecturer.id }}">{{ lecturer.first_name }} {{ lecturer.last_name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="input-box">
+                    <label for="event-color">Wybierz kolor wydarzenia:</label>
+                    <input type="color" id="event-color" name="eventcolor" value="#0f2d66" required>
+                </div>
+
+                <button type="button" id="add-segment-btn" class="form-button">Dodaj kolejny segment</button>
+                <button type="submit" class="form-button">Złóż wniosek</button>
+            </div>
+        </div> 
+    </form>
+</div>
+
+<script>
+    // Add new segment dynamically
+    document.getElementById('add-segment-btn').addEventListener('click', function () {
+        const segmentsContainer = document.getElementById('segments-container');
+        const segmentCount = segmentsContainer.getElementsByClassName('segment').length+1;
+        var color = document.querySelector('#event-color').value;
+        console.log(color)
+        const newSegment = document.createElement('div');
+        newSegment.classList.add('form-form','segment')
+        newSegment.innerHTML = `
+            <h2> Spotkanie ${segmentCount} </h2>
             
-            <!-- Informacje o wydarzeniu -->
             <div class="input-box">
-                <label for="event-name">Nazwa wydarzenia:</label>
-                <input type="text" id="event-name" name="eventname" placeholder="Wprowadź nazwę wydarzenia" required>
+                <label for="segment-name-${segmentCount}">Nazwa segmentu:</label>
+                <input type="text" id="segment-name-${segmentCount}" name="segmentname[]" required>
             </div>
 
             <div class="input-box">
-                <label for="event-description">Opis wydarzenia:</label>
-                <textarea id="event-description" name="eventdescription" placeholder="Dodaj opis wydarzenia" rows="4" required></textarea>
-            </div>
-
-            <div class="input-box">
-                <label for="event-date-start">Data początkowa:</label>
-                <input type="datetime-local" id="event-date-start" name="eventdatestart" required>
-            </div>
-
-            <div class="input-box">
-                <label for="event-date-end">Data końcowa:</label>
-                <input type="datetime-local" id="event-date-end" name="eventdateend" required>
-            </div>
-
-            <!-- Organizator -->
-            <div class="input-box">
-                <label for="organizer">Organizator:</label>
-                <select id="organizer" name="organizer" required>
-                    <option value="" disabled selected>Wybierz organizatora</option>
+                <label for="segment-lecturer-${segmentCount}">Prowadzący segment:</label>
+                <select id="segment-lecturer-${segmentCount}" name="segmentlecturer[]" required>
+                    <option value="" disabled selected>Wybierz prowadącego</option>
                     {% for lecturer in lecturers %}
                     <option value="{{ lecturer.id }}">{{ lecturer.first_name }} {{ lecturer.last_name }}</option>
                     {% endfor %}
                 </select>
             </div>
-
-            <!-- Dodaj segmenty -->
+            
             <div class="input-box">
-                <label for="add-segments">
-                    <input type="checkbox" id="add-segments"> Dodaj segmenty wydarzenia
-                </label>
+                <label for="segment-room-${segmentCount}">Sala:</label>
+                <select id="segment-room-${segmentCount}" name="segmentroom[]" required>
+                    <option value="" disabled selected>Wybierz salę</option>
+                    {% for room in rooms %}
+                    <option value="{{ room.id }}">Sala {{ room.room_number }} ({{ room.building_name_pl }})</option>
+                    {% endfor %}
+                </select>
             </div>
 
             <div class="input-box">
-                <label for="event-color">Wybierz kolor wydarzenia:</label>
-                <input type="color" id="event-color" name="eventcolor" value="#0f2d66" required>
+                <label for="segment-description-${segmentCount}">Opis segmentu:</label>
+                <textarea id="segment-description-${segmentCount}" name="segmentdescription[]" rows="3" required></textarea>
+            </div>
+            
+            <div class="input-box">
+                <label for="segment-date-${segmentCount}">Data segmentu:</label>
+                <input type="date" id="segment-date-${segmentCount}" name="segmentdate[]" required>
             </div>
 
-            <div id="segments-container" style="display: none;">
-                <h3>Segmenty wydarzenia</h3>
-                <div id="segments">
-                    <div class="segment">
-                        <label for="segment-name-1">Nazwa segmentu:</label>
-                        <input type="text" id="segment-name-1" name="segmentname[]" required>
-
-                        <label for="segment-lecturer-1">Prowadzący segment:</label>
-                        <select id="segment-lecturer-1" name="segmentlecturer[]" required>
-                            <option value="" disabled selected>Wybierz prowadzącego</option>
-                            {% for lecturer in lecturers %}
-                            <option value="{{ lecturer.id }}">{{ lecturer.first_name }} {{ lecturer.last_name }}</option>
-                            {% endfor %}
-                        </select>
-
-                        <label for="segment-room-1">Sala:</label>
-                        <select id="segment-room-1" name="segmentroom[]" required>
-                            <option value="" disabled selected>Wybierz salę</option>
-                            {% for room in rooms %}
-                            <option value="{{ room.id }}">Sala {{ room.room_number }} ({{ room.building_name_pl }})</option>
-                            {% endfor %}
-                        </select>
-
-                        <label for="segment-description-1">Opis segmentu:</label>
-                        <textarea id="segment-description-1" name="segmentdescription[]" rows="3" required></textarea>
-
-                        <label for="segment-date-1">Data segmentu:</label>
-                        <input type="date" id="segment-date-1" name="segmentdate[]" required>
-
-                        <label for="segment-time-start-1">Godzina początkowa segmentu:</label>
-                        <input type="time" id="segment-time-start-1" name="segmenttimestart[]" required>
-
-                        <label for="segment-time-end-1">Godzina końcowa segmentu:</label>
-                        <input type="time" id="segment-time-end-1" name="segmenttimeend[]" required>
-
-                        <label for="segment-participants-1">Liczba uczestników w segmencie:</label>
-                        <input type="number" id="segment-participants-1" name="segmentparticipants[]" min="1" required>
-
-                        <label for="segment-color-1">Wybierz kolor segmentu:</label>
-                        <input type="color" id="segment-color-1" name="segmentcolor[]" value="#FF5733" required>
-
-                    </br>___________________________________________________________</br>
-                    </div>
-                </div>
-                <button type="button" id="add-segment-btn" class="form-button">Dodaj kolejny segment</button>
+            <div class="input-box">
+                <label for="segment-time-start-${segmentCount}">Godzina początkowa segmentu:</label>
+                <input type="time" id="segment-time-start-${segmentCount}" name="segmenttimestart[]" required>
             </div>
 
-            <!-- Przycisk zatwierdzenia -->
-            <button type="submit" class="form-button">Zarezerwuj</button>
-        </form>
-    </div>
-</div>
+            <div class="input-box">
+                <label for="segment-time-end-${segmentCount}">Godzina końcowa segmentu:</label>
+                <input type="time" id="segment-time-end-${segmentCount}" name="segmenttimeend[]" required>
+            </div>
 
-<script>
-    // Show/hide segment container
-    document.getElementById('add-segments').addEventListener('change', function () {
-        const segmentsContainer = document.getElementById('segments-container');
-        segmentsContainer.style.display = this.checked ? 'block' : 'none';
-    });
+            <div class="input-box">
+                <label for="segment-participants-${segmentCount}">Liczba uczestników w segmencie:</label>
+                <input type="number" id="segment-participants-${segmentCount}" name="segmentparticipants[]" min="1" required>
+            </div>
 
-    // Add new segment dynamically
-    document.getElementById('add-segment-btn').addEventListener('click', function () {
-        const segmentsContainer = document.getElementById('segments');
-        const segmentCount = segmentsContainer.getElementsByClassName('segment').length + 1;
-
-        const newSegment = document.createElement('div');
-        newSegment.classList.add('segment');
-        newSegment.innerHTML = `
-            <label for="segment-name-${segmentCount}">Nazwa segmentu:</label>
-            <input type="text" id="segment-name-${segmentCount}" name="segmentname[]" required>
-
-            <label for="segment-lecturer-${segmentCount}">Prowadzący segment:</label>
-            <select id="segment-lecturer-${segmentCount}" name="segmentlecturer[]" required>
-                <option value="" disabled selected>Wybierz prowadzącego</option>
-                {% for lecturer in lecturers %}
-                <option value="{{ lecturer.id }}">{{ lecturer.first_name }} {{ lecturer.last_name }}</option>
-                {% endfor %}
-            </select>
-
-            <label for="segment-room-${segmentCount}">Sala:</label>
-            <select id="segment-room-${segmentCount}" name="segmentroom[]" required>
-                <option value="" disabled selected>Wybierz salę</option>
-                {% for room in rooms %}
-                <option value="{{ room.id }}">Sala {{ room.room_number }} ({{ room.building_name_pl }})</option>
-                {% endfor %}
-            </select>
-
-            <label for="segment-description-${segmentCount}">Opis segmentu:</label>
-            <textarea id="segment-description-${segmentCount}" name="segmentdescription[]" rows="3" required></textarea>
-
-            <label for="segment-date-${segmentCount}">Data segmentu:</label>
-            <input type="date" id="segment-date-${segmentCount}" name="segmentdate[]" required>
-
-            <label for="segment-time-start-${segmentCount}">Godzina początkowa segmentu:</label>
-            <input type="time" id="segment-time-start-${segmentCount}" name="segmenttimestart[]" required>
-
-            <label for="segment-time-end-${segmentCount}">Godzina końcowa segmentu:</label>
-            <input type="time" id="segment-time-end-${segmentCount}" name="segmenttimeend[]" required>
-
-            <label for="segment-participants-${segmentCount}">Liczba uczestników w segmencie:</label>
-            <input type="number" id="segment-participants-${segmentCount}" name="segmentparticipants[]" min="1" required>
-
-            <label for="segment-color-${segmentCount}">Wybierz kolor segmentu:</label>
-        <input type="color" id="segment-color-${segmentCount}" name="segmentcolor[]" value="#FF5733" required>
-</br>___________________________________________________________</br>
+            <div class="input-box">
+                <label for="egment-color-${segmentCount}">Wybierz kolor spotkania:</label>
+                <input type="color" id="egment-color-${segmentCount}" name="eventcolor" value="${color}" required>
+            </div>
         `;
         segmentsContainer.appendChild(newSegment);
     });

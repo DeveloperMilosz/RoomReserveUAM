@@ -36,31 +36,15 @@
 
           <!-- Powiadomienia -->
           <li class="notification-dropdown">
-            <a href="#" class="notification-btn">
-                Powiadomienia
+            <a href="{% url 'notification_history' %}">
                 {% if header_notifications|length > 0 %}
-                    <span class="notification-count">{{ header_notifications|length }}</span>
+                    Powiadomienia ({{ header_notifications|length }})
+                {% else %}
+                    Powiadomienia
                 {% endif %}
             </a>
-            <ul class="notification-content submenu">
-                {% if header_notifications %}
-                    {% for notification in header_notifications %}
-                        <li class="notification-item {% if not notification.is_read %}unread{% endif %}">
-                            <p>{{ notification.message }}</p>
-                            <small>{{ notification.created_at|date:"Y-m-d H:i" }}</small>
-                        </li>
-                    {% endfor %}
-                    <li>
-                        <a href="{% url 'mark_notifications_as_read' %}">Oznacz wszystkie jako przeczytane</a>
-                    </li>
-                {% else %}
-                    <li><p>Brak nowych powiadomień.</p></li>
-                {% endif %}
-                <li>
-                    <a href="{% url 'notification_history' %}">Zobacz wszystkie powiadomienia</a>
-                </li>
-            </ul>
         </li>
+        
 
     </nav>
   </div>
