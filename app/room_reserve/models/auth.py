@@ -30,5 +30,5 @@ class User(AbstractUser):
         (LECTURER, _("Lecturer")),
         (GUEST, _("Guest")),
     ]
-    
-    user_type = models.CharField(_("User Type"), max_length=50, choices=USER_TYPE_CHOICES)
+
+    user_type = models.CharField(_("User Type"), max_length=50, choices=USER_TYPE_CHOICES, default=STUDENT)
