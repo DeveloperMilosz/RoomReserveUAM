@@ -1,3 +1,4 @@
+# from http.client import NotConnected
 from django.urls import include, path
 from django.urls import re_path
 
@@ -9,6 +10,9 @@ from room_reserve.views import event_meeting as event_meeting
 from room_reserve.views import profile_views
 from room_reserve.views import search as search_views
 from room_reserve.views import admin_panel as admin_views
+from room_reserve.views import test as test_views
+from room_reserve.views import mark_notifications as mark_views
+from room_reserve.views import notifications_history as history_views
 
 urlpatterns = [
     # Home
@@ -69,5 +73,12 @@ urlpatterns = [
     path("search/events/", search_views.search_events, name="search_events"),
     path("search/rooms/", search_views.search_rooms, name="search_rooms"),
     path("search/free-rooms/", search_views.search_free_rooms, name="search_free_rooms"),
-    path('admin-panel/', admin_views.admin_panel, name="admin_panel"),
+    path("admin-panel/", admin_views.admin_panel, name="admin_panel"),
+    # notifications
+    path("notifications/mark-read/", mark_views.mark_notifications_as_read, name="mark_notifications_as_read"),
+    path("notifications/history/", history_views.notification_history, name="notification_history"),
+    # test notifications
+    path("test_notification/", test_views.test_notifications, name="test_notification"),
+    path("test-notify-admin/", test_views.test_notify_admin, name="test_notify_admin"),
+    path("test-notify-event-approval/", test_views.test_notify_event_approval, name="test_notify_event_approval"),
 ]

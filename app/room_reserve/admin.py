@@ -16,10 +16,13 @@ class CustomUserAdmin(UserAdmin):
         (_("User Type"), {"fields": ("user_type",)}),
     )
     add_fieldsets = (
-        (None, {
-            "classes": ("wide",),
-            "fields": ("email", "password1", "password2", "user_type", "is_active", "is_staff"),
-        }),
+        (
+            None,
+            {
+                "classes": ("wide",),
+                "fields": ("email", "password1", "password2", "user_type", "is_active", "is_staff"),
+            },
+        ),
     )
     search_fields = ("email", "first_name", "last_name", "username")
     ordering = ("email",)
@@ -141,6 +144,7 @@ class MeetingInline(admin.TabularInline):
     readonly_fields = ("is_updated", "submitted_by")
     show_change_link = True
 
+
 @admin.register(Event)
 class EventAdmin(admin.ModelAdmin):
     list_display = ("name", "event_type", "organizer", "start_date", "end_date", "is_approved")  # Added is_approved
@@ -160,7 +164,23 @@ class EventAdmin(admin.ModelAdmin):
     approve_events.short_description = "Approve selected events"
     reject_events.short_description = "Reject selected events"
 
+
 @admin.register(Notification)
-class LecturersAdmin(admin.ModelAdmin):
-    list_display = ("title", "message", "user", "notification_type")
-    search_fields = ("title", "message", "user", "notification_type")
+class NotificationAdmin(admin.ModelAdmin):
+    list_display = ("user", "message_preview", "is_read", "submitted_by", "created_at")
+    list_filter = ("is_read", "created_at", "submitted_by")
+    search_fields = ("user__username", "message", "submitted_by__username", "submitted_by__email")
+    ordering = ("-created_at",)
+    readonly_fields = ("submitted_by",)
+
+    def message_preview(self, obj):
+        """Return a short preview of the notification message."""
+        return obj.message[:50] + ("..." if len(obj.message) > 50 else "")
+
+    message_preview.short_description = "Message Preview"
+
+    # Automatyczne ustawianie `submitted_by` przy zapisie
+    def save_model(self, request, obj, form, change):
+        if not obj.submitted_by:
+            obj.submitted_by = request.user
+        super().save_model(request, obj, form, change)

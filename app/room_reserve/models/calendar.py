@@ -29,6 +29,8 @@ class Lecturers(models.Model):
 
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
+
+
 User = get_user_model()
 
 
@@ -58,12 +60,14 @@ class Event(models.Model):
     def __str__(self):
         return f"Event: {self.name}"
 
+
 class RoomAttribute(models.Model):
     room = models.ForeignKey(Room, on_delete=models.CASCADE, related_name="attributes")
     attribute_id = models.CharField(_("attribute id"), max_length=100)
     description_pl = models.TextField(_("description (PL)"))
     description_en = models.TextField(_("description (EN)"))
     count = models.IntegerField(_("count"))
+
 
 class Meeting(models.Model):
     MEETING = "meeting"
@@ -102,39 +106,16 @@ class Meeting(models.Model):
     def __str__(self):
         return f"{self.name_pl} ({self.start_time} - {self.end_time})"
 
+
 class Notification(models.Model):
-
-    EVENT_CREATED = "event_created"
-    EVENT_APPROVED = "event_approved"
-    EVENT_REJECTED = "event_rejected"
-    MEETING_CREATED = "meeting_created"
-    MEETING_UPDATED = "meeting_updated"
-
-    NOTIFICATION_TYPE_CHOICES = [
-        (EVENT_CREATED, _("Event Created")),
-        (EVENT_APPROVED, _("Event Approved")),
-        (EVENT_REJECTED, _("Event Rejected")),
-        (MEETING_CREATED, _("Meeting Created")),
-        (MEETING_UPDATED, _("Meeting Updated")),
-    ]
-
-    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name=_("User"), related_name="notifications")
-    notification_type = models.CharField(
-        _("notification type"), max_length=50, choices=NOTIFICATION_TYPE_CHOICES, default="event_created"
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="notifications")
+    message = models.TextField()
+    is_read = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    submitted_by = models.ForeignKey(
+        User, on_delete=models.SET_NULL, null=True, blank=True, verbose_name=_("Submitted By")
     )
-    title = models.CharField(_("Title"), max_length=100)
-    message = models.TextField(_("Message"))
-    is_read = models.BooleanField(_("Is Read"), default=False)
-    related_event = models.ForeignKey(
-        Event, on_delete=models.CASCADE, null=True, blank=True, verbose_name=_("Related Event")
-    )
-    related_meeting = models.ForeignKey(
-        Meeting, on_delete=models.CASCADE, null=True, blank=True, verbose_name=_("Related Meeting")
-    )
-    created_at = models.DateTimeField(_("Created At"), auto_now_add=True)
-
-    class Meta:
-        ordering = ["-created_at"]
+    is_admin_notification = models.BooleanField(default=False)
 
     def __str__(self):
-        return f"Notification for {self.user}: {self.title}"
+        return f"Notification for {self.user.username} - {self.message[:20]}"

@@ -57,23 +57,24 @@ def get_meetings(request):
     ]
     return JsonResponse(events, safe=False)
 
+
 def room_schedule(request, room_id):
     """
     Fetch and display the schedule for a specific room, including the current meeting
     and the next meeting, with event details.
     """
     room = get_object_or_404(Room, id=room_id)
-    
+
     # Fetch the current meeting (if one is ongoing)
-    current_meeting = Meeting.objects.filter(
-        start_time__lte=now(), end_time__gte=now(), room=room
-    ).select_related('event').first()
-    
+    current_meeting = (
+        Meeting.objects.filter(start_time__lte=now(), end_time__gte=now(), room=room).select_related("event").first()
+    )
+
     # Fetch the next meeting (if one is scheduled in the future)
-    next_meeting = Meeting.objects.filter(
-        start_time__gt=now(), room=room
-    ).select_related('event').order_by('start_time').first()
-    
+    next_meeting = (
+        Meeting.objects.filter(start_time__gt=now(), room=room).select_related("event").order_by("start_time").first()
+    )
+
     # Render the template with the meetings and room context
     return render(
         request,
@@ -90,6 +91,7 @@ def meeting_details(request, meeting_id):
     meeting = get_object_or_404(Meeting, pk=meeting_id)
     event = meeting.event
     return render(request, "pages/calendar/meeting_details.html", {"meeting": meeting, "event": event})
+
 
 def event_details(request, event_id):
     event = get_object_or_404(Event, pk=event_id)
@@ -119,15 +121,15 @@ def new_meeting(request):
                 current_date = start_time.date()
 
                 while current_date <= cycle_end_date:
-                    if frequency_select == 'daily':
+                    if frequency_select == "daily":
                         should_add = True
-                    elif frequency_select == 'weekly':
+                    elif frequency_select == "weekly":
                         should_add = (current_date - start_time.date()).days % 7 == 0
-                    elif frequency_select == 'biweekly':
+                    elif frequency_select == "biweekly":
                         should_add = (current_date - start_time.date()).days % 14 == 0
-                    elif frequency_select == 'monthly':
+                    elif frequency_select == "monthly":
                         should_add = current_date.day == start_time.date().day
-                    elif frequency_select == 'custom_days':
+                    elif frequency_select == "custom_days":
                         should_add = str(current_date.weekday()) in days_of_week
                     else:
                         should_add = False
@@ -145,15 +147,15 @@ def new_meeting(request):
                             capacity=meeting_data["capacity"],
                             is_updated=False,
                             is_approved=False,
-                            event=meeting_data.get("event")
+                            event=meeting_data.get("event"),
                         )
                         # Dodajemy wykładowców do każdego utworzonego spotkania
                         if selected_lecturers:
                             meeting.lecturers.set(selected_lecturers)
 
-                    if frequency_select in ['daily', 'weekly', 'biweekly', 'custom_days']:
+                    if frequency_select in ["daily", "weekly", "biweekly", "custom_days"]:
                         current_date += timedelta(days=1)
-                    elif frequency_select == 'monthly':
+                    elif frequency_select == "monthly":
                         next_month = (current_date.month % 12) + 1
                         current_date = current_date.replace(month=next_month)
 
@@ -167,15 +169,16 @@ def new_meeting(request):
             return redirect("home")
     else:
         form = MeetingForm()
-        
-        form.fields['event'].queryset = events
+
+        form.fields["event"].queryset = events
 
     return render(
         request,
         "pages/calendar/new_meeting.html",
         {"form": form, "rooms": rooms, "events": events, "lecturers": lecturers},
     )
-  
+
+
 @login_required
 def edit_meeting(request, meeting_id):
     # Pobierz obiekt spotkania dla zalogowanego użytkownika
@@ -183,8 +186,6 @@ def edit_meeting(request, meeting_id):
     rooms = Room.objects.all()
     events = Event.objects.all()
     lecturers = Lecturers.objects.all()
-
-    
 
     if request.method == "POST":
         # Przekaż dane z formularza oraz instancję spotkania
@@ -194,12 +195,10 @@ def edit_meeting(request, meeting_id):
             # Po zapisaniu przekieruj do "Moje Rezerwacje"
             return redirect("my_reservations")
         else:
-            print(form.errors) 
+            print(form.errors)
     else:
         # Przy pierwszym załadowaniu formularza wypełnij go istniejącymi danymi
         form = EditMeetingForm(instance=meeting)
-    
-    
 
     # Renderuj stronę edycji z formularzem
     return render(
@@ -334,5 +333,3 @@ def search_view(request):
             "event": request.GET.get("event", ""),
         },
     )
-
-    
