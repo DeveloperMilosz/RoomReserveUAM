@@ -267,35 +267,43 @@ function getMeetingFromTable() {
     return result;
 }
 
-async function fetchMeetings() {
-        let meetings;
-        currentURL = window.location.href
-        if (currentURL === 'http://0.0.0.0:8000/') {
-            apiEndpoint = '/get_meetings/';
-            const response = await fetch(apiEndpoint);
-            meetings = await response.json();
-        }  else {
-            meetings = getMeetingFromTable()
-        }
+// async function fetchMeetingsFromAPI() {
+//     let meetings;
+//     const currentURL = window.location.href;
 
-        console.log(meetings)
+//     if (currentURL === 'http://0.0.0.0:8000/') {
+//         const apiEndpoint = '/get_meetings/';
+//         const response = await fetch(apiEndpoint);
+//         meetings = await response.json();
+//     } else {
+//         meetings = getMeetingFromTable();
+//     }
 
-        if (currentView === 'monthly') {
-            displayMeetings(meetings);
-        } else if (currentView === 'weekly') {
-            const weekStart = new Date(currentDate);
-            weekStart.setDate(currentDate.getDate() - getMondayFirstDay(currentDate.getDay()));
-            const weekEnd = new Date(weekStart);
-            weekEnd.setDate(weekStart.getDate() + 6);
+//     return meetings;
+// }
 
-            const weeklyMeetings = meetings.filter(meeting => {
-                const startDate = new Date(meeting.start_time);
-                return startDate >= weekStart && startDate <= weekEnd;
-            });
+// Function to process and display meetings
+async function processAndDisplayMeetings() {
+    const meetings = await fetchMeetingsFromAPI();
+    console.log(meetings);
 
-            displayMeetings(weeklyMeetings);
-        }
+    if (currentView === 'monthly') {
+        displayMeetings(meetings);
+    } else if (currentView === 'weekly') {
+        const weekStart = new Date(currentDate);
+        weekStart.setDate(currentDate.getDate() - getMondayFirstDay(currentDate.getDay()));
+        const weekEnd = new Date(weekStart);
+        weekEnd.setDate(weekStart.getDate() + 6);
+
+        const weeklyMeetings = meetings.filter(meeting => {
+            const startDate = new Date(meeting.start_time);
+            return startDate >= weekStart && startDate <= weekEnd;
+        });
+
+        displayMeetings(weeklyMeetings);
+    }
 }
+
 
 document.getElementById('toggleView').addEventListener('click', () => {
     currentView = currentView === 'monthly' ? 'weekly' : 'monthly';
@@ -309,7 +317,7 @@ document.getElementById('toggleView').addEventListener('click', () => {
         );
     }
     updateDateRange();
-    fetchMeetings();
+    processAndDisplayMeetings();
 });
 
 document.getElementById('goToToday').addEventListener('click', function () {
@@ -324,7 +332,7 @@ document.getElementById('goToToday').addEventListener('click', function () {
         );
     }
     updateDateRange();
-    fetchMeetings();
+    processAndDisplayMeetings();
 });
 
 document.getElementById('arrow-left').addEventListener('click', function () {
@@ -340,7 +348,7 @@ document.getElementById('arrow-left').addEventListener('click', function () {
         );
     }
     updateDateRange();
-    fetchMeetings();
+    processAndDisplayMeetings();
 });
 
 document.getElementById('arrow-right').addEventListener('click', function () {
@@ -356,9 +364,9 @@ document.getElementById('arrow-right').addEventListener('click', function () {
         );
     }
     updateDateRange();
-    fetchMeetings();
+    processAndDisplayMeetings();
 });
 
 updateDateRange();
 generateMonthlyCalendar();
-fetchMeetings();
+processAndDisplayMeetings();
