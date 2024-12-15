@@ -9,7 +9,7 @@ Szukaj Sal
     <h1>Szukaj Sale</h1>
     <form method="get" class="form-form">
         <div class="input-box">
-            <label for="room_number">Nazwa sali:</label>
+            <label for="room_number">Number sali:</label>
             <input type="text" name="room_number" id="room_number" placeholder="Wprowadź nazwę sali">
         </div>
         <div class="input-box">
@@ -21,22 +21,14 @@ Szukaj Sal
 </div>
 
 {% if filter.qs %}
-<table class="data-table">
-    <thead>
-        <tr>
-            <th>ID</th>
-            <th>Nazwa Sali</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for room in filter.qs %}
-        <tr>
-            <td>{{ room.id }}</td>
-            <td>{{ room.room_number }}</td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+
+<div class="tiles_container">
+{% for room in filter.qs %}
+    <a href="{% url 'room_details' room.room_number %}">
+        {{ room.room_number }}
+    </a>
+    {% endfor %}
+</div>
 {% else %}
 <p class="no-results">Nie znaleziono sal pasujących do kryteriów wyszukiwania.</p>
 {% endif %}

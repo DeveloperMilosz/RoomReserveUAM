@@ -550,12 +550,31 @@ table tbody tr:hover {
   background-color: #f1f1f1;
 }
 table a {
-  color: #007BFF;
-  text-decoration: none;
-  font-weight: 400;
+  font-weight: 500;
   transition: font-weight 0.2s ease-in-out;
   text-align: left;
 }
 table a:hover {
   font-weight: 600;
+}
+
+.tiles_container {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.tiles_container a {
+  width: 160px;
+  color: white;
+  height: 160px;
+  background-color: rgb(40, 115, 255);
+  margin: 12px;
+  display: flex;
+  font-size: 24px;
+  justify-content: center;
+  padding-top: 12px;
+  border-radius: 24px;
+}
+.tiles_container a:hover {
+  font-size: 32px;
 }/*# sourceMappingURL=main.css.map */

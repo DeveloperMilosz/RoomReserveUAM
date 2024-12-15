@@ -30,34 +30,17 @@ Wyszukaj Wolne Sale
         </div>
         <button type="submit" class="form-button">Szukaj</button>
     </form>
-
 </div>
 {% if filter.qs %}
-<table class="data-table">
-    <thead>
-        <tr>
-            <th>ID</th>
-            <th>Nazwa sali</th>
-            <th>Budynki</th>
-            <th>Wyposażenie</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for room in filter.qs %}
-        <tr>
-            <td>{{ room.id }}</td>
-            <td>{{ room.room_number }}</td>
-            <td>{{ room.building_name_pl }}</td>
-            <td>
-                {% for attribute in room.attributes.all %}
-                    {{ attribute.description_pl }}{% if not forloop.last %}, {% endif %}
-                {% endfor %}
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+
+<div class="tiles_container">
+{% for room in filter.qs %}
+    <a href="{% url 'room_details' room.room_number %}">
+        {{ room.room_number }}
+    </a>
+    {% endfor %}
+</div>
 {% else %}
-<p class="no-results">Brak dostępnych sal w podanym przedziale czasu.</p>
+<p class="no-results">Nie znaleziono sal pasujących do kryteriów wyszukiwania.</p>
 {% endif %}
 {% endblock %}

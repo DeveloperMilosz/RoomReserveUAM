@@ -37,30 +37,25 @@
 <table>
     <thead>
         <tr>
-            <th>ID</th>
             <th>Nazwa</th>
             <th>Opis</th>
-            <th>Data rozpoczęcia</th>
-            <th>Godzina rozpoczęcia</th>
-            <th>Data zakończenia</th>
-            <th>Godzina zakończenia</th>
+            <th>Czas rozpoczęcia</th>
+            <th>Czas zakończenia</th>
             <th>Organizator</th>
         </tr>
     </thead>
     <tbody>
         {% for event in filter.qs %}
         <tr>
-            <td>{{ event.id }}</td>
+            <td style="display:none">{{ event.id }}</td>
             <td>
                 <a href="{% url 'event_details' event.id %}">
                     {{ event.name }}
                 </a>
             </td>
             <td>{{ event.description }}</td>
-            <td>{{ event.start_date|date:"Y-m-d" }}</td>
-            <td>{{ event.start_date|time:"H:i" }}</td>
-            <td>{{ event.end_date|date:"Y-m-d" }}</td>
-            <td>{{ event.end_date|time:"H:i" }}</td>
+            <td>{{ event.start_date }}</td>
+            <td>{{ event.end_date }}</td>
             <td>
                 {{ event.organizer.first_name }} {{ event.organizer.last_name }}
             </td>
