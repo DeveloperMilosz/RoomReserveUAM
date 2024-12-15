@@ -44,16 +44,11 @@ a {
 }
 
 .header-container {
-  margin-right: auto;
-  margin-left: auto;
+  margin: 0 auto;
   max-width: 768px;
   box-sizing: border-box;
   display: flex;
   flex-direction: row;
-
-  > * {
-    padding: 1rem 0;
-  }
 
   a {
     color: white;
@@ -68,16 +63,17 @@ nav {
     margin: 0;
     padding: 0;
     display: flex;
+    justify-content: space-between;
 
     li {
-      margin-right: 20px;
 
       a {
         text-decoration: none;
-        padding: 10px 15px;
+        padding: 26px 15px;
         display: block;
         position: relative;
         border-radius: 0px 5px 5px 0px;
+        
 
         &::after {
           content: "";
@@ -87,7 +83,7 @@ nav {
           position: absolute;
           left: 50%;
           transform: translate(0%, -50%);
-          bottom: 5px;
+          bottom: 22px;
           transition: .3s;
         }
 
@@ -97,19 +93,28 @@ nav {
         }
       }
     }
+
+    &.submenu{
+      
+      li {
+        a::after{
+          bottom: 6px;
+        }
+      }
+    }
   }
 }
 
 nav ul li:hover .submenu {
   opacity: 1;
-  top: 51px;
+  top: 64px;
   width: 100%;
   display: flex;
   justify-content: center;
 }
 
 .submenu li {
-  margin: 0px 10px;
+  margin: 10px;
 
   a {
     padding: 10px 15px;
@@ -124,12 +129,10 @@ nav ul li:hover .submenu {
 .submenu {
   border-top: 1px solid white;
   display: none;
-  left: 0;
   background-color: rgba(15, 45, 102, 0.98);
   position: absolute;
   top: 100%;
   left: 0;
-  padding: 0;
   border-radius: 5px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   overflow: hidden;
