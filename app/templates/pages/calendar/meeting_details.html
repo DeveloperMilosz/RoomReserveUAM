@@ -29,7 +29,7 @@
     <p><strong>Sala:</strong> 
         <br>
         {% if meeting.room %}
-            {{ meeting.room.room_number }}
+            <a href="/room/{{ meeting.room.id }}">{{ meeting.room.room_number }}
         {% else %}
             Brak
         {% endif %}

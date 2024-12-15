@@ -2,12 +2,11 @@ async function fetchMeetings() {
     const apiEndpoint = '/get_meetings/';
 
     try {
-        // Fetch meetings from the API
         const response = await fetch(apiEndpoint);
         const meetings = await response.json();
         return meetings;
     } catch (error) {
-        console.error('Error fetching meetings:', error);
+        console.error('Błąd podczas pobierania API:', error);
         return [];
     }
 }
@@ -19,9 +18,6 @@ function filterMeetingsByRoom(meetings) {
     }
 
     const roomNumber = roomNumberElement.innerHTML;
-    console.log(roomNumber)
-
-    // Filter meetings by the specified room number
     return meetings.filter(meeting => meeting.room === roomNumber);
 }
 
