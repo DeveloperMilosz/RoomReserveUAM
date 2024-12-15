@@ -115,6 +115,8 @@
             <td>{{ meeting.end_time|date:"Y-m-d" }}</td>
             <td>{{ meeting.end_time|time:"H:i" }}</td>
             <td>{{ meeting.event.name }}</td>
+
+            {% comment %} <td><a href="{% url 'event_details' event_id=meeting.event.id %}">{{ event.name|default:"Brak" }}</a></td> {% endcomment %}
             <td display="none">{{ meeting.event.id }}</td>
             <td display="none">{{ meeting.color }}</td>
         </tr>
