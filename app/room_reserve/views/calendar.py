@@ -42,6 +42,7 @@ def get_meetings(request):
             "end_time": meeting.end_time.isoformat(),
             "title": meeting.name_pl,
             "color": meeting.color,
+            "room": meeting.room.room_number if meeting.room else None,
         }
         for meeting in meetings
     ]
