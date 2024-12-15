@@ -1,4 +1,4 @@
-async function fetchMeetingsFromAPI() {
+async function importMeetings() {
     let meetings;
     const currentURL = window.location.href;
 

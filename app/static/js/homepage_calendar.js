@@ -267,24 +267,8 @@ function getMeetingFromTable() {
     return result;
 }
 
-// async function fetchMeetingsFromAPI() {
-//     let meetings;
-//     const currentURL = window.location.href;
-
-//     if (currentURL === 'http://0.0.0.0:8000/') {
-//         const apiEndpoint = '/get_meetings/';
-//         const response = await fetch(apiEndpoint);
-//         meetings = await response.json();
-//     } else {
-//         meetings = getMeetingFromTable();
-//     }
-
-//     return meetings;
-// }
-
-// Function to process and display meetings
 async function processAndDisplayMeetings() {
-    const meetings = await fetchMeetingsFromAPI();
+    const meetings = await importMeetings();
     console.log(meetings);
 
     if (currentView === 'monthly') {
