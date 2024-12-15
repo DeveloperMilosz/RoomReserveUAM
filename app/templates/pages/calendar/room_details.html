@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+
+<div class="meeting-detail">
+    <img src="{% static 'img/logo_pl.png' %}" id="logo" alt="logo UAM" aria-hidden="true">
+
+    <p><strong>Numer pokoju:</strong> <br>
+        {{ room.room_number }}
+    </p>
+
+    <div class="meeting-detail-row">
+        <p><strong>Piętro:</strong> <br>
+            {{ floor }}
+        </p>
+
+        <p><strong>Budynek:</strong><br>
+            {{ room.building_name_pl|default:"Brak" }}
+        </p>
+    </div>
+    <p><strong>Liczba miejsc:</strong> <br>
+        {{ room.capacity|default:"Nie określono" }}
+    </p>
+
+    <p><strong>Opiekun sali:</strong> <br>
+        {{ room.room_supervisor|default:"Nie przypisano" }}
+    </p>
+
+    <div class="room-attributes">
+        <h3>Wyposażenie</h3>
+        {% if attributes %}
+            <ul>
+                {% for attribute in attributes %}
+                    <li>
+                        <strong>{{ attribute.attribute_id }}</strong> - {{ attribute.description_pl }}<br>
+                        <em>Ilość:</em> {{ attribute.count }}
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p><em>Brak wyposażenia przypisanego do tego pokoju.</em></p>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock content %}

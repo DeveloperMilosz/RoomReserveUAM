@@ -135,7 +135,7 @@ nav ul li:hover .submenu {
 .submenu {
   border-top: 1px solid white;
   display: none;
-  background-color: rgba(15, 45, 102, 0.98);
+  background-color: rgba(15, 45, 102);
   position: absolute;
   top: 100%;
   left: 0;
@@ -598,6 +598,7 @@ form > a {
   
     > p {
       width: 50%;
+      margin: 0px;
     }
   }
 }

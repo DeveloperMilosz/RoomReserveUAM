@@ -4,7 +4,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.utils.dateparse import parse_date
 from django.db.models import Q
-from room_reserve.models import Meeting, Event, Room, Lecturers
+from room_reserve.models import Meeting, Event, Room, Lecturers, RoomAttribute
 from room_reserve.forms.calendar import MeetingForm, EventForm, EditMeetingForm
 from datetime import datetime, timedelta
 import json
@@ -82,12 +82,23 @@ def meeting_details(request, meeting_id):
     event = meeting.event
     return render(request, "pages/calendar/meeting_details.html", {"meeting": meeting, "event": event})
 
-
 def event_details(request, event_id):
     event = get_object_or_404(Event, pk=event_id)
     meetings = event.meetings.all()
     return render(request, "pages/calendar/event_details.html", {"event": event, "meetings": meetings})
 
+def room_details(request, room_id):
+    room = get_object_or_404(Room, id=room_id)
+    attributes = room.attributes.all()
+    
+    room_number_parts = room.room_number.split(".")
+    floor = "parter" if room_number_parts[0] == "0" else room_number_parts[0]
+    
+    return render(request, "pages/calendar/room_details.html", {
+        "room": room,
+        "attributes": attributes,
+        "floor": floor,
+    })
 
 def new_meeting(request):
     rooms = Room.objects.all()
