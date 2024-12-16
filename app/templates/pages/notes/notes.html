@@ -1,0 +1,188 @@
+{% extends "base.html" %}
+{% block content %}
+<!-- Pasek nawigacyjny -->
+<div class="notes-top">
+    <div class="navbar-title">
+        <h1>Notatki</h1>
+    </div>
+    <div class="navbar-buttons">
+        <a href="{% url 'add_note' %}" class="form-button">Dodaj nową notatkę</a>
+        <button id="manage-statuses-btn" class="form-button">Zarządzaj statusami</button>
+    </div>
+</div>
+
+<!-- Kolumny typu Kanban dla statusów -->
+<div class="kanban-board">
+    {% for status in statuses %}
+        <div class="status-column" data-status-id="{{ status.id }}">
+            <h3 class="status-title" style="color: {{ status.color }};">{{ status.name }}</h3>
+            <div class="note-container">
+                {% for note in notes %}
+                    {% if note.status.id == status.id %}
+                        <div class="note" draggable="true" data-note-id="{{ note.id }}">
+                            <h4>{{ note.title }}</h4>
+                            <p>{{ note.description }}</p>
+                            <div class="details-row">
+                            <small>Termin: {{ note.deadline }}</small>
+                            <a href="{% url 'edit_note' note.id %}" class="note-edit-link">Edytuj</a></div>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+    {% endfor %}
+</div>
+
+<!-- Popup do zarządzania statusami -->
+<div id="manage-statuses-popup" class="form-form popup ">
+    <h1>Zarządzaj statusami</h1>
+    <div id="statuses-list">
+        <ul>
+            {% for status in statuses %}
+                <li class="status-item">
+                    <span class="status-name" style="color: {{ status.color }};">{{ status.name }}</span>
+                    <button class="form-button btn-delete-status" data-status-id="{{ status.id }}">Usuń</button>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+    <form id="add-status-form" class="add-status-form">
+        {% csrf_token %}
+        <label for="status-name">Nowy status:</label>
+        <input type="text" id="status-name" name="name" required>
+        <label for="status-color">Kolor:</label>
+        <input type="color" id="status-color" name="color" value="#CCCCCC">
+
+        <div class="popup-btns">
+        <button type="submit" class="form-button">Dodaj</button>
+    </form>
+    <button id="close-popup-btn" class="form-button">Zamknij</button>
+        </div>
+</div>
+
+<!-- Tło dla popupa -->
+<div id="popup-overlay" class="popup-overlay"></div>
+<!-- JavaScript -->
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // Obsługa drag-and-drop dla notatek
+        const notes = document.querySelectorAll('.note');
+        const columns = document.querySelectorAll('.status-column');
+
+        let draggedNote = null;
+
+        notes.forEach(note => {
+            note.addEventListener('dragstart', (e) => {
+                draggedNote = note;
+                setTimeout(() => note.style.display = 'none', 0);
+            });
+
+            note.addEventListener('dragend', (e) => {
+                setTimeout(() => {
+                    draggedNote.style.display = 'flex';
+                    draggedNote = null;
+                }, 0);
+            });
+        });
+
+        columns.forEach(column => {
+            column.addEventListener('dragover', (e) => e.preventDefault());
+            column.addEventListener('drop', (e) => {
+                e.preventDefault();
+                const statusId = column.getAttribute('data-status-id');
+                if (draggedNote) {
+                    column.querySelector('.note-container').appendChild(draggedNote);
+                    updateNoteStatus(draggedNote.getAttribute('data-note-id'), statusId);
+                }
+            });
+        });
+
+        function updateNoteStatus(noteId, statusId) {
+            fetch(`/api/update_note_status/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}',
+                },
+                body: JSON.stringify({ note_id: noteId, status_id: statusId }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (!data.success) {
+                    alert('Nie udało się zaktualizować statusu');
+                }
+            })
+            .catch(error => console.error('Błąd:', error));
+        }
+
+        // Obsługa popupa do zarządzania statusami
+        const manageStatusesBtn = document.getElementById('manage-statuses-btn');
+        const popup = document.getElementById('manage-statuses-popup');
+        const overlay = document.getElementById('popup-overlay');
+        const closePopupBtn = document.getElementById('close-popup-btn');
+        const addStatusForm = document.getElementById('add-status-form');
+        const deleteStatusBtns = document.querySelectorAll('.delete-status-btn');
+
+        manageStatusesBtn.addEventListener('click', () => {
+            popup.style.display = 'flex';
+            overlay.style.display = 'block';
+        });
+
+        closePopupBtn.addEventListener('click', () => {
+            popup.style.display = 'none';
+            overlay.style.display = 'none';
+        });
+
+        overlay.addEventListener('click', () => {
+            popup.style.display = 'none';
+            overlay.style.display = 'none';
+        });
+
+        addStatusForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const name = document.getElementById('status-name').value;
+            const color = document.getElementById('status-color').value;
+
+            fetch(`/api/add_status/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}',
+                },
+                body: JSON.stringify({ name, color }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    location.reload();
+                } else {
+                    alert('Nie udało się dodać statusu');
+                }
+            });
+        });
+
+        deleteStatusBtns.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const statusId = btn.getAttribute('data-status-id');
+
+                fetch(`/api/delete_status/`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token }}',
+                    },
+                    body: JSON.stringify({ status_id: statusId }),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        location.reload();
+                    } else {
+                        alert('Nie udało się usunąć statusu');
+                    }
+                });
+            });
+        });
+    });
+</script>
+{% endblock %}

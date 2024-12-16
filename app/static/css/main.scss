@@ -151,7 +151,6 @@ nav ul li:hover .submenu {
 .form-container {
   width: 40rem;
   max-width: 100%;
-  border-radius: 8px;
   margin: 2rem auto;
   box-shadow: 0px 0px 16px -5px rgba(66, 68, 90, 1);
   border-radius: 24px;
@@ -220,7 +219,6 @@ nav ul li:hover .submenu {
 .form-button {
   margin: 8px auto;
   padding: 0.5rem 2rem;
-  border: 1px solid #018dc4;
   color: white;
   background-color: rgb(15, 45, 102);
   box-shadow: 2px 2px 2px 0 rgba(0, 0, 0, 0.2);
@@ -229,6 +227,7 @@ nav ul li:hover .submenu {
   border-radius: 8px;
   font-family: inherit;
   font-size: 14px;
+  border: 0;
 
   &:hover {
     background: #018dc4;
@@ -662,6 +661,140 @@ table {
     &:hover{
       font-size: 32px;
 
+    }
+  }
+}
+// board 
+
+.notes-top{
+  display: flex;
+  width: 1800px;
+  margin: 0 auto;
+  justify-content: space-between;
+  align-items: center;
+
+  a.form-button{
+    padding: 15px 32px;
+  }
+}
+
+.kanban-board {
+  display: flex;
+  width: 1800px;
+  margin: 20px auto;
+
+  .status-column {
+    flex: 1;
+    border-radius: 5px;
+    padding: 10px;
+    background-color: rgba(224, 255, 255, 0.5333333333);;
+
+    .status-title {
+      margin-bottom: 10px;
+    }
+
+    .note-container {
+      min-height: 200px;
+
+      .note {
+        border-radius: 5px;
+        background-color: white;
+        margin-bottom: 10px;
+        padding: 10px;
+        cursor: grab;
+        border: 1px solid #ccc;
+        display: flex;
+        flex-direction: column;
+
+        h4{
+          margin: 0;
+        }
+
+        p{
+          margin-bottom: 0px;
+          min-height: 50px;
+        }
+
+        .details-row{
+          display: flex;
+          justify-content: space-between;
+          
+          .note-edit-link {
+            text-decoration: none;
+            color: #007bff;
+          }
+        }
+      }
+    }
+  }
+}
+// Popup
+.popup {
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  z-index: 1000;
+  box-shadow: 0px 0px 16px -5px rgba(66, 68, 90, 1);
+  border-radius: 24px;
+  justify-content: center;
+  flex-direction: column;
+
+
+  .popup-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+  }
+
+  form#add-status-form {
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    align-items: center;
+
+    input{
+      margin-bottom: 8px;
+    }
+
+    input[type="color"] {
+      width: 48px;
+      margin: 0;
+    }
+  }
+  div#statuses-list{
+    ul{
+      padding: 0;
+      
+      .status-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+        width: 100%;
+      }
+    }
+  }
+
+  .form-button{
+    margin-right:0;
+    min-height: 34px;
+    min-width: 72px;
+    padding: 0;
+    border: 0;
+
+    &.btn-delete-status {
+      background-color: red;
+      border: 0;
     }
   }
 }

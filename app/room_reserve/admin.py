@@ -1,5 +1,5 @@
 from django.contrib import admin
-from room_reserve.models import Room, Lecturers, Meeting, RoomAttribute, Event, User, Notification, Group
+from room_reserve.models import Room, Lecturers, Meeting, RoomAttribute, Event, User, Notification, Status, Note, Group
 from django.contrib.auth.admin import UserAdmin
 from django.utils.translation import gettext_lazy as _
 
@@ -176,8 +176,19 @@ class NotificationAdmin(admin.ModelAdmin):
             obj.submitted_by = request.user
         super().save_model(request, obj, form, change)
 
+@admin.register(Status)
+class StatusAdmin(admin.ModelAdmin):
+    list_display = ("name", "created_by")
+    search_fields = ("name", "created_by__username")
 
+
+@admin.register(Note)
+class NoteAdmin(admin.ModelAdmin):
+    list_display = ("title", "owner", "status", "deadline", "created_at")
+    list_filter = ("status", "deadline", "created_at")
+    search_fields = ("title", "description", "owner__username")
 @admin.register(Group)
+
 class GroupAdmin(admin.ModelAdmin):
     list_display = ("name", "group_type", "admin", "is_active", "created_at", "modified_at")
     list_filter = ("group_type", "is_active", "created_at")

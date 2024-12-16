@@ -13,6 +13,7 @@ from room_reserve.views import admin_panel as admin_views
 from room_reserve.views import test as test_views
 from room_reserve.views import mark_notifications as mark_views
 from room_reserve.views import notifications_history as history_views
+from room_reserve.views import notes as notes_views
 
 urlpatterns = [
     # Home
@@ -80,4 +81,11 @@ urlpatterns = [
     path("notifications/history/", history_views.notification_history, name="notification_history"),
     # test notifications
     path("test_notification/", test_views.test_notifications, name="test_notification"),
+    # notes
+    path("notes/", notes_views.notes_list, name="notes_list"),
+    path("notes/add/", notes_views.add_note, name="add_note"),
+    path("notes/edit/<int:note_id>/", notes_views.edit_note, name="edit_note"),
+    path("api/update_note_status/", notes_views.update_note_status, name="update_note_status"),
+    path('api/add_status/', notes_views.add_status, name='add_status'),
+    path('api/delete_status/<int:status_id>/', notes_views.delete_status, name='delete_status'),
 ]
