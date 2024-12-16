@@ -1,7 +1,21 @@
 from huey import crontab
-from huey.contrib.djhuey import periodic_task
+from huey.contrib.djhuey import periodic_task, task
+from room_reserve.models import Notification, User
 from room_reserve.handlers.UAMApiRoom import UAMApiHandler as RoomHandler
 from room_reserve.handlers.UAMApiMeeting import UAMApiHandler as MeetingHandler
+from room_reserve.notifications import notify_user
+
+
+@task()
+def send_notification_task(user_id=None, message="", submitted_by=None, user_type=None):
+    """
+    Wysyła powiadomienia asynchronicznie.
+    """
+    if user_id:
+        user = User.objects.get(id=user_id)
+        notify_user(user=user, message=message, submitted_by=submitted_by)
+    elif user_type:
+        notify_user(message=message, submitted_by=submitted_by, user_type=user_type)
 
 
 # Zadanie do pobierania danych o pokojach co 10 minut
