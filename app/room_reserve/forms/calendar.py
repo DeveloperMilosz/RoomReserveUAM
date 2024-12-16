@@ -1,5 +1,5 @@
 from django import forms
-from room_reserve.models import Meeting, Event, Room, Lecturers
+from room_reserve.models import Meeting, Event, Room, Lecturers, Note
 
 class MeetingForm(forms.ModelForm):
     is_recurring = forms.BooleanField(required=False, initial=False)
@@ -107,3 +107,11 @@ class EventForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         self.fields["event_type"].choices = [("lesson_schedule", "Plan zajęć"), ("event", "Wydarzenie")]
 
+class NoteForm(forms.ModelForm):
+    class Meta:
+        model = Note
+        fields = ["title", "description", "color", "status", "deadline"]
+        widgets = {
+            "deadline": forms.DateTimeInput(attrs={"type": "datetime-local"}),
+            "color": forms.TextInput(attrs={"type": "color"}),
+        }
