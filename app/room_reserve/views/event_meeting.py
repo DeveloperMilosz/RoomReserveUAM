@@ -1,8 +1,9 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from room_reserve.models import Event, Meeting, Lecturers, Room
-import json
 from django.utils.dateparse import parse_datetime
+from room_reserve.notifications import notify_event_submission_with_meetings
+
 
 def create_event_with_meetings(request):
     if request.method == "POST":
@@ -19,7 +20,7 @@ def create_event_with_meetings(request):
             description=event_description,
             start_date=event_start_date,
             end_date=event_end_date,
-            event_type=Event.GENERAL_EVENT
+            event_type=Event.GENERAL_EVENT,
         )
 
         # Collect segment (meeting) data
@@ -50,12 +51,15 @@ def create_event_with_meetings(request):
                 end_time=end_datetime,
                 capacity=segment_participants[i],
                 event=event,  # Link the meeting to the event
-                room=room,    # Link the meeting to the room
+                room=room,  # Link the meeting to the room
             )
 
             # Add lecturer to the meeting
             if lecturer:
                 meeting.lecturers.add(lecturer)
+
+        # Notify administrators about the new event with meetings
+        notify_event_submission_with_meetings(event_name=event_name, user=request.user)
 
         # Success message and redirect
         messages.success(request, "Event and its segments have been successfully created.")
@@ -64,7 +68,11 @@ def create_event_with_meetings(request):
     # Prepare data for the form
     rooms = Room.objects.all()
     lecturers = Lecturers.objects.all()
-    return render(request, "pages/calendar/create_event_with_meetings.html", {
-        "rooms": rooms,
-        "lecturers": lecturers,
-    })
+    return render(
+        request,
+        "pages/calendar/create_event_with_meetings.html",
+        {
+            "rooms": rooms,
+            "lecturers": lecturers,
+        },
+    )
