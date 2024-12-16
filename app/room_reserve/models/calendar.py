@@ -108,7 +108,13 @@ class Meeting(models.Model):
 
 
 class Notification(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="notifications")
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="notifications",
+        null=True,  # Pozwala na wartość null
+        blank=True,  # Pozwala na pominięcie tego pola w formularzach
+    )
     message = models.TextField()
     is_read = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -125,7 +131,7 @@ class Notification(models.Model):
     )
 
     def __str__(self):
-        return f"Notification for {self.user.username} - {self.message[:20]}"
+        return f"Notification for {self.user.username if self.user else 'Admin'} - {self.message[:20]}"
 
 
 class Group(models.Model):
