@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Wyślij Powiadomienie</title>
+</head>
+<body>
+    <h1>Wyślij Powiadomienie</h1>
+    <form method="post" action="{% url 'test_notification' %}">
+        {% csrf_token %}
+        <label for="user">Wybierz użytkownika:</label>
+        <select id="user" name="user">
+            {% for user in users %}
+                <option value="{{ user.id }}">{{ user.first_name }} {{ user.last_name }} ({{ user.email }})</option>
+            {% endfor %}
+        </select>
+        <br>
+        <label for="message">Treść powiadomienia:</label><br>
+        <textarea id="message" name="message" rows="4" cols="50"></textarea><br><br>
+        <button type="submit">Wyślij Powiadomienie</button>
+    </form>
+</body>
+</html>
