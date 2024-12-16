@@ -54,6 +54,11 @@ a.event:hover {
 .header-container a {
   color: white;
 }
+.header-container .left {
+  display: flex;
+  align-items: center;
+  min-height: 72px;
+}
 
 nav {
   width: 100%;
