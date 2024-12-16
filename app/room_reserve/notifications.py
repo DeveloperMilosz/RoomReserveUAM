@@ -1,19 +1,29 @@
-from room_reserve.models import Notification
+from room_reserve.models import Notification, Group
+from django.contrib.auth import get_user_model
 
 
-def notify_user(user, message, submitted_by=None, is_admin_notification=False):
+def notify_user(user=None, message="", submitted_by=None, is_admin_notification=False, user_type=None):
     """
-    Tworzy powiadomienie dla użytkownika.
-    Jeśli `is_admin_notification=True`, powiadomienie zostaje wysłane do wszystkich administratorów.
+    Tworzy powiadomienie dla użytkownika lub grupy.
     """
     if is_admin_notification:
-        from django.contrib.auth.models import User
-
-        admins = User.objects.filter(is_staff=True, is_superuser=True)
+        admins = get_user_model().objects.filter(is_staff=True, is_superuser=True)
         for admin in admins:
             Notification.objects.create(user=admin, message=message, submitted_by=submitted_by)
-    else:
+    elif user_type:
+        users = get_user_model().objects.filter(user_type=user_type)
+        for user in users:
+            Notification.objects.create(user=user, message=message, submitted_by=submitted_by, user_type=user_type)
+    elif user:
         Notification.objects.create(user=user, message=message, submitted_by=submitted_by)
+
+
+def notify_group(group, message, submitted_by=None):
+    """
+    Wysyła powiadomienia do wszystkich członków danej grupy.
+    """
+    for member in group.members.all():
+        Notification.objects.create(user=member, message=message, submitted_by=submitted_by)
 
 
 # Powiadomienia ogólne
@@ -90,3 +100,23 @@ def notify_custom_message(user, message, submitted_by=None):
     Powiadomienie z własnym komunikatem.
     """
     notify_user(user, message, submitted_by=submitted_by)
+
+
+def notify_event_submission_with_meetings(event_name, user):
+    """
+    Tworzy powiadomienia dla każdego administratora o nowym wydarzeniu ze spotkaniami.
+    """
+    user_full_name = f"{user.first_name} {user.last_name}"
+    message = (
+        f"Złożono wniosek o rezerwację wydarzenia '{event_name}' ze spotkaniami "
+        f'przez użytkownika "{user_full_name}".'
+    )
+    User = get_user_model()
+    admins = User.objects.filter(is_staff=True, is_superuser=True)
+    for admin in admins:
+        Notification.objects.create(
+            user=admin,
+            message=message,
+            is_admin_notification=True,
+            submitted_by=user,
+        )

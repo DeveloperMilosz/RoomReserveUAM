@@ -1,34 +1,20 @@
-{% extends "base.html" %}
-
-{% block content %}
-<div class="notification-history">
-    <h1>Historia powiadomień</h1>
-
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Historia powiadomień</title>
+</head>
+<body>
+    <h1>Twoje powiadomienia</h1>
     <ul>
-        {% for notification in page_obj %}
-            <li class="notification-item {% if not notification.is_read %}unread{% endif %}">
-                <p>{{ notification.message }}</p>
-                <small>{{ notification.created_at|date:"Y-m-d H:i" }}</small>
+        {% for notification in notifications %}
+            <li>
+                <strong>{{ notification.created_at|date:"Y-m-d H:i" }}</strong>:
+                {{ notification.message }}
+                {% if not notification.is_read %}
+                    <em>(Nieprzeczytane)</em>
+                {% endif %}
             </li>
         {% endfor %}
     </ul>
-
-    <div class="pagination">
-        <span class="step-links">
-            {% if page_obj.has_previous %}
-                <a href="?page=1">&laquo; Pierwsza</a>
-                <a href="?page={{ page_obj.previous_page_number }}">Poprzednia</a>
-            {% endif %}
-
-            <span class="current">
-                Strona {{ page_obj.number }} z {{ page_obj.paginator.num_pages }}
-            </span>
-
-            {% if page_obj.has_next %}
-                <a href="?page={{ page_obj.next_page_number }}">Następna</a>
-                <a href="?page={{ page_obj.paginator.num_pages }}">Ostatnia &raquo;</a>
-            {% endif %}
-        </span>
-    </div>
-</div>
-{% endblock %}
+</body>
+</html>

@@ -81,8 +81,6 @@ urlpatterns = [
     path("notifications/history/", history_views.notification_history, name="notification_history"),
     # test notifications
     path("test_notification/", test_views.test_notifications, name="test_notification"),
-    path("test-notify-admin/", test_views.test_notify_admin, name="test_notify_admin"),
-    path("test-notify-event-approval/", test_views.test_notify_event_approval, name="test_notify_event_approval"),
     # notes
     path("notes/", notes_views.notes_list, name="notes_list"),
     path("notes/add/", notes_views.add_note, name="add_note"),
