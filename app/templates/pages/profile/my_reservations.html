@@ -6,61 +6,85 @@
 
     <!-- Oczekujące -->
     <section>
-        <h2>Oczekujące na zaakceptowanie</h2>
-        {% if pending_reservations %}
+        <h2>Oczekujące na rozpatrzenie</h2>
+        {% if pending_meetings or pending_events %}
             <ul>
-                {% for reservation in pending_reservations %}
+                {% for meeting in pending_meetings %}
                     <li>
-                        <strong>{{ reservation.name_pl }}</strong><br>
-                        Data rozpoczęcia: {{ reservation.start_time }}<br>
-                        Data zakończenia: {{ reservation.end_time }}<br>
-                        Sala: {{ reservation.room.room_number }}<br>
-                        <a href="{% url 'edit_meeting' reservation.id %}">Edytuj</a>
+                        <strong>Spotkanie: {{ meeting.name_pl }}</strong><br>
+                        Data rozpoczęcia: {{ meeting.start_time }}<br>
+                        Data zakończenia: {{ meeting.end_time }}<br>
+                        Sala: {{ meeting.room.room_number }}<br>
+                        <a href="{% url 'edit_meeting' meeting.id %}">Edytuj</a>
+                    </li>
+                {% endfor %}
+                {% for event in pending_events %}
+                    <li>
+                        <strong>Wydarzenie: {{ event.name }}</strong><br>
+                        Data rozpoczęcia: {{ event.start_date }}<br>
+                        Data zakończenia: {{ event.end_date }}<br>
+                        <a href="{% url 'edit_event' event.id %}">Edytuj</a>
                     </li>
                 {% endfor %}
             </ul>
         {% else %}
-            <p>Brak oczekujących rezerwacji.</p>
+            <p>Brak oczekujących wniosków i rezerwacji.</p>
         {% endif %}
     </section>
 
     <!-- Zatwierdzone -->
     <section>
         <h2>Zaakceptowane</h2>
-        {% if approved_reservations %}
+        {% if approved_meetings or approved_events %}
             <ul>
-                {% for reservation in approved_reservations %}
+                {% for meeting in approved_meetings %}
                     <li>
-                        <strong>{{ reservation.name_pl }}</strong><br>
-                        Data rozpoczęcia: {{ reservation.start_time }}<br>
-                        Data zakończenia: {{ reservation.end_time }}<br>
-                        Sala: {{ reservation.room.room_number }}<br>
-                        <a href="{% url 'edit_meeting' reservation.id %}">Edytuj</a>
+                        <strong>Spotkanie: {{ meeting.name_pl }}</strong><br>
+                        Data rozpoczęcia: {{ meeting.start_time }}<br>
+                        Data zakończenia: {{ meeting.end_time }}<br>
+                        Sala: {{ meeting.room.room_number }}<br>
+                        <a href="{% url 'edit_meeting' meeting.id %}">Edytuj</a>
+                    </li>
+                {% endfor %}
+                {% for event in approved_events %}
+                    <li>
+                        <strong>Wydarzenie: {{ event.name }}</strong><br>
+                        Data rozpoczęcia: {{ event.start_date }}<br>
+                        Data zakończenia: {{ event.end_date }}<br>
+                        <a href="{% url 'edit_event' event.id %}">Edytuj</a>
                     </li>
                 {% endfor %}
             </ul>
         {% else %}
-            <p>Brak zaakceptowanych rezerwacji.</p>
+            <p>Brak zaakceptowanych wniosków i rezerwacji.</p>
         {% endif %}
     </section>
 
     <!-- Odrzucone -->
     <section>
         <h2>Odrzucone</h2>
-        {% if rejected_reservations %}
+        {% if rejected_meetings or rejected_events %}
             <ul>
-                {% for reservation in rejected_reservations %}
+                {% for meeting in rejected_meetings %}
                     <li>
-                        <strong>{{ reservation.name_pl }}</strong><br>
-                        Data rozpoczęcia: {{ reservation.start_time }}<br>
-                        Data zakończenia: {{ reservation.end_time }}<br>
-                        Sala: {{ reservation.room.room_number }}<br>
-                        <a href="{% url 'edit_meeting' reservation.id %}">Edytuj</a>
+                        <strong>Spotkanie: {{ meeting.name_pl }}</strong><br>
+                        Data rozpoczęcia: {{ meeting.start_time }}<br>
+                        Data zakończenia: {{ meeting.end_time }}<br>
+                        Sala: {{ meeting.room.room_number }}<br>
+                        <a href="{% url 'edit_meeting' meeting.id %}">Edytuj</a>
+                    </li>
+                {% endfor %}
+                {% for event in rejected_events %}
+                    <li>
+                        <strong>Wydarzenie: {{ event.name }}</strong><br>
+                        Data rozpoczęcia: {{ event.start_date }}<br>
+                        Data zakończenia: {{ event.end_date }}<br>
+                        <a href="{% url 'edit_event' event.id %}">Edytuj</a>
                     </li>
                 {% endfor %}
             </ul>
         {% else %}
-            <p>Brak odrzuconych rezerwacji.</p>
+            <p>Brak odrzuconych wniosków i rezerwacji.</p>
         {% endif %}
     </section>
 </div>
