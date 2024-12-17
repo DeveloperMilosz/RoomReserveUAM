@@ -56,6 +56,9 @@ class Event(models.Model):
     is_rejected = models.BooleanField(_("is rejected"), default=False)
     created_at = models.DateTimeField(_("Created At"), auto_now_add=True)
     modified_at = models.DateTimeField(_("Modified At"), auto_now=True)
+    submitted_by = models.ForeignKey(
+        User, on_delete=models.SET_NULL, verbose_name=_("Submitted By"), null=True, blank=True
+    )
 
     def __str__(self):
         return f"Event: {self.name}"
@@ -189,6 +192,7 @@ class Group(models.Model):
         if meeting in self.meetings.all():
             self.meetings.remove(meeting)
 
+
 class Status(models.Model):
     name = models.CharField(_("Status Name"), max_length=50, unique=True)
     color = ColorField(default="#CCCCCC", verbose_name=_("Status Color"))
@@ -204,9 +208,7 @@ class Note(models.Model):
     title = models.CharField(_("Title"), max_length=100, null=True, blank=True)
     description = models.TextField(_("Description"), blank=True, null=True)
     color = ColorField(default="#FFFFFF", verbose_name=_("Note Color"))
-    owner = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="notes", verbose_name=_("Owner")
-    )
+    owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name="notes", verbose_name=_("Owner"))
     status = models.ForeignKey(
         Status, on_delete=models.SET_NULL, related_name="notes", null=True, blank=True, verbose_name=_("Status")
     )
