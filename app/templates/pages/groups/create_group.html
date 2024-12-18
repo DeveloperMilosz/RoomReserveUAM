@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h1>Stwórz nową grupę</h1>
+
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-success">Utwórz grupę</button>
+</form>
+
+<a href="{% url 'my_groups' %}" class="btn btn-secondary">Wróć do listy grup</a>
+
+{% endblock %}

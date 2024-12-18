@@ -176,6 +176,7 @@ class NotificationAdmin(admin.ModelAdmin):
             obj.submitted_by = request.user
         super().save_model(request, obj, form, change)
 
+
 @admin.register(Status)
 class StatusAdmin(admin.ModelAdmin):
     list_display = ("name", "created_by")
@@ -187,16 +188,29 @@ class NoteAdmin(admin.ModelAdmin):
     list_display = ("title", "owner", "status", "deadline", "created_at")
     list_filter = ("status", "deadline", "created_at")
     search_fields = ("title", "description", "owner__username")
-@admin.register(Group)
 
+
+@admin.register(Group)
 class GroupAdmin(admin.ModelAdmin):
-    list_display = ("name", "group_type", "admin", "is_active", "created_at", "modified_at")
-    list_filter = ("group_type", "is_active", "created_at")
-    search_fields = ("name", "description", "admin__username", "admin__email")
-    readonly_fields = ("created_at", "modified_at")
+    list_display = ("name", "group_type", "created_at", "is_active")
+    list_filter = ("group_type", "is_active")
+    search_fields = ("name", "description", "admins__email", "members__email")
+    ordering = ("-created_at",)
+    filter_horizontal = ("admins", "members", "meetings")  # Dodaje możliwość łatwego zarządzania wieloma polami
+
     fieldsets = (
-        (None, {"fields": ("name", "description", "group_type", "admin", "is_active")}),
-        (_("Członkowie i spotkania"), {"classes": ("collapse",), "fields": ("members", "meetings")}),
-        (_("Informacje systemowe"), {"classes": ("collapse",), "fields": ("created_at", "modified_at")}),
+        (None, {"fields": ("name", "description", "group_type", "is_active")}),
+        (
+            "Relacje",
+            {
+                "fields": ("admins", "members", "meetings"),
+            },
+        ),
+        (
+            "Daty",
+            {
+                "fields": ("created_at", "modified_at"),
+            },
+        ),
     )
-    autocomplete_fields = ("members", "meetings")
+    readonly_fields = ("created_at", "modified_at")

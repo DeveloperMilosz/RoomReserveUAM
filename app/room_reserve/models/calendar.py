@@ -137,6 +137,11 @@ class Notification(models.Model):
         return f"Notification for {self.user.username if self.user else 'Admin'} - {self.message[:20]}"
 
 
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
+
+
 class Group(models.Model):
     ACADEMIC_YEAR = "academic_year"
     LECTURER_GROUP = "lecturer_group"
@@ -151,8 +156,8 @@ class Group(models.Model):
     name = models.CharField(_("name"), max_length=100)
     description = models.TextField(_("description"), null=True, blank=True)
     group_type = models.CharField(_("group type"), max_length=50, choices=GROUP_TYPE_CHOICES, default=PERSONAL_GROUP)
-    admin = models.ForeignKey(
-        User, on_delete=models.SET_NULL, related_name="administered_groups", verbose_name=_("group admin"), null=True
+    admins = models.ManyToManyField(
+        User, related_name="administered_groups", verbose_name=_("group admins"), blank=True
     )
     members = models.ManyToManyField(
         User, related_name="group_memberships", verbose_name=_("group members"), blank=True
@@ -182,15 +187,15 @@ class Group(models.Model):
         if user in self.members.all():
             self.members.remove(user)
 
-    def assign_to_meeting(self, meeting):
-        """Assign group to a meeting if not already assigned."""
-        if meeting not in self.meetings.all():
-            self.meetings.add(meeting)
+    def add_admin(self, user):
+        """Add a user as an admin if they're not already an admin."""
+        if user not in self.admins.all():
+            self.admins.add(user)
 
-    def remove_from_meeting(self, meeting):
-        """Remove group from a meeting if assigned."""
-        if meeting in self.meetings.all():
-            self.meetings.remove(meeting)
+    def remove_admin(self, user):
+        """Remove a user as an admin if they're an admin."""
+        if user in self.admins.all():
+            self.admins.remove(user)
 
 
 class Status(models.Model):
@@ -208,9 +213,7 @@ class Note(models.Model):
     title = models.CharField(_("Title"), max_length=100, null=True, blank=True)
     description = models.TextField(_("Description"), blank=True, null=True)
     color = ColorField(default="#FFFFFF", verbose_name=_("Note Color"))
-    owner = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="notes", verbose_name=_("Owner")
-    )
+    owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name="notes", verbose_name=_("Owner"))
     status = models.ForeignKey(
         Status, on_delete=models.SET_NULL, related_name="notes", null=True, blank=True, verbose_name=_("Status")
     )

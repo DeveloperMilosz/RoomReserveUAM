@@ -23,9 +23,11 @@
                   <li><a href="{% url 'create_event_with_meetings' %}">Złóż wniosek o wydarzenie ze spotkniem</a></li>
               </ul>
           </li>
+
           <li>
             <a href="{% url 'notes_list' %}">To-Do</a>
           </li>
+
           <li>
               <a href="{% url 'home' %}">Profil</a>
               <ul class="submenu">
@@ -33,6 +35,15 @@
                 <li><a href="{% url 'my_reservations' %}">Moje rezerwacje</a></li>
                 <li><a href="{% url 'account_password_change' %}">Reset hasła</a></li>
                 <li><a href="{% url 'account_logout' %}">Wyloguj się</a></li>
+              </ul>
+          </li>
+
+          <!-- Nowa sekcja "Grupy" -->
+          <li>
+              <a href="#">Grupy</a>
+              <ul class="submenu">
+                  <li><a href="{% url 'my_groups' %}">Moje grupy</a></li>
+                  <li><a href="{% url 'create_group' %}">Stwórz nową grupę</a></li>
               </ul>
           </li>
 
@@ -46,8 +57,6 @@
                 {% endif %}
             </a>
         </li>
-
-
     </nav>
   </div>
   {% else %}
