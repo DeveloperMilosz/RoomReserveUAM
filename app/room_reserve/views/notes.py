@@ -28,48 +28,30 @@ def notes_list(request):
 
 
 @login_required
-def add_note(request):
-    """
-    Handle creating a new note.
-    """
-    if request.method == "POST":
-        form = NoteForm(request.POST)
-        if form.is_valid():
-            note = form.save(commit=False)
-            note.owner = request.user
-            note.save()
-            messages.success(request, "Note created successfully!")
-            return redirect("notes_list")
-    else:
-        form = NoteForm()
+def add_or_edit_note(request, note_id=None):
+    note = None
+    if note_id:  # Jeśli edytujemy notatkę
+        note = get_object_or_404(Note, id=note_id, owner=request.user)
 
-    context = {
-        "form": form,
-    }
-    return render(request, "pages/notes/new_note.html", context)
-
-
-@login_required
-def edit_note(request, note_id):
-    """
-    Handle editing an existing note.
-    """
-    note = get_object_or_404(Note, id=note_id, owner=request.user)
-
-    if request.method == "POST":
+    if request.method == "POST":  # Obsługa formularza
         form = NoteForm(request.POST, instance=note)
         if form.is_valid():
-            form.save()
-            messages.success(request, "Note updated successfully!")
+            new_note = form.save(commit=False)
+            new_note.owner = request.user
+            new_note.save()
+            messages.success(request, "Notatka została zapisana.")
             return redirect("notes_list")
-    else:
+    else:  # Wstępne wypełnienie formularza
         form = NoteForm(instance=note)
 
-    context = {
+    # Pobranie dostępnych statusów stworzonych przez użytkownika
+    statuses = Status.objects.filter(created_by=request.user)
+
+    return render(request, "pages/notes/new_note.html", {
         "form": form,
         "note": note,
-    }
-    return render(request, "pages/notes/edit_note.html", context)
+        "statuses": statuses,
+    })
 
 def update_note_status(request):
     if request.method == "POST":

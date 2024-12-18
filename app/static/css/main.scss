@@ -656,7 +656,7 @@ table {
     width: 160px;
     color: white;
     height: 160px;
-    background-color: rgb(40, 115, 255);;;
+    background-color: rgb(40, 115, 255);
     margin: 12px;
     display: flex;
     font-size: 24px;
@@ -670,8 +670,8 @@ table {
     }
   }
 }
-// board 
 
+// board 
 .notes-top{
   display: flex;
   width: 1800px;
@@ -693,10 +693,14 @@ table {
     flex: 1;
     border-radius: 5px;
     padding: 10px;
-    background-color: rgba(224, 255, 255, 0.5333333333);;
-
+    
+    &:not(:first-child){
+      margin-left: 10px;
+    }
+    
     .status-title {
-      margin-bottom: 10px;
+      margin: 10px 0px 0px;
+      text-align: center;
     }
 
     .note-container {
@@ -712,8 +716,9 @@ table {
         display: flex;
         flex-direction: column;
 
-        h4{
+        h1 {
           margin: 0;
+          text-align: center;
         }
 
         p{

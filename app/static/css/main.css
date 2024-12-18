@@ -603,10 +603,13 @@ table a:hover {
   flex: 1;
   border-radius: 5px;
   padding: 10px;
-  background-color: rgba(224, 255, 255, 0.5333333333);
+}
+.kanban-board .status-column:not(:first-child) {
+  margin-left: 10px;
 }
 .kanban-board .status-column .status-title {
-  margin-bottom: 10px;
+  margin: 10px 0px 0px;
+  text-align: center;
 }
 .kanban-board .status-column .note-container {
   min-height: 200px;
@@ -621,8 +624,9 @@ table a:hover {
   display: flex;
   flex-direction: column;
 }
-.kanban-board .status-column .note-container .note h4 {
+.kanban-board .status-column .note-container .note h1 {
   margin: 0;
+  text-align: center;
 }
 .kanban-board .status-column .note-container .note p {
   margin-bottom: 0px;

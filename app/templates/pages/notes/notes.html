@@ -3,7 +3,7 @@
 <!-- Pasek nawigacyjny -->
 <div class="notes-top">
     <div class="navbar-title">
-        <h1>ToDo</h1>
+        <h1>To-Do</h1>
     </div>
     <div class="navbar-buttons">
         <a href="{% url 'add_note' %}" class="form-button">Dodaj nową notatkę</a>
@@ -14,18 +14,20 @@
 <!-- Kolumny typu Kanban dla statusów -->
 <div class="kanban-board">
     {% for status in statuses %}
-        <div class="status-column" data-status-id="{{ status.id }}">
-            <h3 class="status-title" style="color: {{ status.color }};">{{ status.name }}</h3>
+        <div class="status-column" style="background-color: {{ status.color }}50;" data-status-id="{{ status.id }}">
+            <h1 class="status-title">{{ status.name }}</h1>
             <div class="note-container">
                 {% for note in notes %}
                     {% if note.status.id == status.id %}
-                        <div class="note" draggable="true" data-note-id="{{ note.id }}">
-                            <h4>{{ note.title }}</h4>
-                            <p>{{ note.description }}</p>
-                            <div class="details-row">
-                            <small>Termin: {{ note.deadline }}</small>
-                            <a href="{% url 'edit_note' note.id %}" class="note-edit-link">Edytuj</a></div>
-                        </div>
+                    <div class="note" 
+                    style="border: 2px solid {{ note.color }}; background-color: {{ note.color }}95" 
+                    draggable="true" 
+                    data-note-id="{{ note.id }}">
+                        <h1>{{ note.title }}</h1>
+                        <p>{{ note.description }}</p>
+                        <p>Termin: {{ note.deadline }}</p>
+                        <a href="{% url 'edit_note' note.id %}" class="note-edit-link">Edytuj</a>
+                    </div>
                     {% endif %}
                 {% endfor %}
             </div>

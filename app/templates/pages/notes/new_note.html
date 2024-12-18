@@ -1,9 +1,60 @@
 {% extends "base.html" %}
 {% block content %}
-<h1>{% if note %}Edit Note{% else %}Add Note{% endif %}</h1>
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">{% if note %}Update{% else %}Create{% endif %}</button>
-</form>
+{% load static %}
+
+<div class="form-container">
+    <img src="{% static 'img/logo_pl.png' %}" id="logo" alt="logo UAM" aria-hidden="true">
+
+    {% if note %}
+    <h1>Edytuj notatke</h1>
+    <p>Wprowadź szczegóły notatki poniżej, aby edytować notatke.</p>
+    {% else %}
+    <h1>Dodaj nowe notatke</h1>
+    <p>Wprowadź szczegóły notatki poniżej, aby dodać nową notatke.</p>
+    {% endif %}
+
+    <div class="form-form">
+        <form method="post">
+            {% csrf_token %}
+            <!-- Tytuł -->
+            <div class="input-box">
+                <input type="text" name="title" placeholder="Tytuł notatki" maxlength="100" required id="id_title" value="{{ form.title.value|default:'' }}">
+            </div>
+            
+            <!-- Opis -->
+            <div class="input-box">
+                <textarea name="description" placeholder="Opis notatki" id="id_description" oninput='this.style.height = ""; this.style.height = this.scrollHeight + "px"'>{{ form.description.value|default:'' }}</textarea>
+            </div>
+            
+            <!-- Wybór Statusu -->
+            <div class="input-box">
+                <select name="status" id="id_status" required>
+                    <option value="" disabled {% if not form.status.value %}selected{% endif %}>Wybierz status</option>
+                    {% for status in statuses %}
+                        <option value="{{ status.id }}" {% if form.status.value == status.id|stringformat:"s" %}selected{% endif %}>
+                            {{ status.name }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <!-- Termin -->
+            <div class="input-box">
+                <input type="datetime-local" name="deadline" id="id_deadline"
+                    value="{{ form.deadline.value|date:"Y-m-d\TH:i"|default:'' }}">
+            </div>
+
+            <!-- Wybór Koloru -->
+            <div class="input-box">
+                <label for="id_color">Wybierz kolor:</label>
+                <input type="color" name="color" value="#0f2d66" id="id_color">
+            </div>
+            
+            <!-- Przycisk -->
+            <button type="submit" class="form-button">
+                {% if note %}Edytuj{% else %}Dodaj{% endif %}
+            </button>
+        </form>
+    </div>
+</div>
 {% endblock %}
