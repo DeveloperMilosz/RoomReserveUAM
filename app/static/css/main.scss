@@ -722,21 +722,22 @@ table {
         }
 
         p{
-          margin-bottom: 0px;
-          min-height: 30px;
-
-          p{
-
-          }
+          margin: 0px;
 
           &.deadline-past>span {
             color: #970000;
           }
         }
+      
+        .note-description{
+          margin-top: 10px;
+          min-height: 50px;
+        }
 
         .details-row{
           display: flex;
           justify-content: space-between;
+          margin-top: 10px;
           
           .note-edit-link {
             text-decoration: none;

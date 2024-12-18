@@ -629,15 +629,19 @@ table a:hover {
   text-align: center;
 }
 .kanban-board .status-column .note-container .note p {
-  margin-bottom: 0px;
-  min-height: 30px;
+  margin: 0px;
 }
 .kanban-board .status-column .note-container .note p.deadline-past > span {
   color: #970000;
 }
+.kanban-board .status-column .note-container .note .note-description {
+  margin-top: 10px;
+  min-height: 50px;
+}
 .kanban-board .status-column .note-container .note .details-row {
   display: flex;
   justify-content: space-between;
+  margin-top: 10px;
 }
 .kanban-board .status-column .note-container .note .details-row .note-edit-link {
   text-decoration: none;

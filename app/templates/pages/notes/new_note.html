@@ -31,7 +31,7 @@
                 <select name="status" id="id_status" required>
                     <option value="" disabled {% if not form.status.value %}selected{% endif %}>Wybierz status</option>
                     {% for status in statuses %}
-                        <option value="{{ status.id }}" {% if form.status.value == status.id|stringformat:"s" %}selected{% endif %}>
+                        <option value="{{ status.id }}" {% if form.status.value|stringformat:"s" == status.id|stringformat:"s" %}selected{% endif %}>
                             {{ status.name }}
                         </option>
                     {% endfor %}
@@ -47,8 +47,9 @@
             <!-- Wybór Koloru -->
             <div class="input-box">
                 <label for="id_color">Wybierz kolor:</label>
-                <input type="color" name="color" value="#0f2d66" id="id_color">
+                <input type="color" name="color" id="id_color" value="{{ form.color.value|default:'#0f2d66' }}">
             </div>
+            
             
             <!-- Przycisk -->
             <button type="submit" class="form-button">
