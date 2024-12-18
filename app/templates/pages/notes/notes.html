@@ -25,7 +25,7 @@
                     data-note-id="{{ note.id }}">
                         <h1>{{ note.title }}</h1>
                         <p>{{ note.description }}</p>
-                        <p>Termin: {{ note.deadline }}</p>
+                        <p class="note-deadline {% if note.deadline and note.deadline|date:'U' < now|date:'U' %}deadline-past{% endif %}">Termin: <span>{{ note.deadline }}</span></p>
                         <a href="{% url 'edit_note' note.id %}" class="note-edit-link">Edytuj</a>
                     </div>
                     {% endif %}

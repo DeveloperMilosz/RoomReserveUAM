@@ -6,25 +6,16 @@ from room_reserve.forms.calendar import NoteForm
 from django.http import JsonResponse
 import json
 
-@login_required
+from django.utils import timezone
+
 def notes_list(request):
-    """
-    Display a list of notes for the logged-in user.
-    Supports filtering by status if a `status_id` is passed as a query parameter.
-    """
-    status_id = request.GET.get("status_id")
-    if status_id:
-        notes = Note.objects.filter(owner=request.user, status_id=status_id).order_by("deadline")
-    else:
-        notes = Note.objects.filter(owner=request.user).order_by("deadline")
-
+    notes = Note.objects.filter(owner=request.user).order_by("deadline")
     statuses = Status.objects.filter(created_by=request.user)
-
-    context = {
+    return render(request, "pages/notes/notes.html", {
         "notes": notes,
         "statuses": statuses,
-    }
-    return render(request, "pages/notes/notes.html", context)
+        "now": timezone.now(),  # Aktualny czas
+    })
 
 
 @login_required

@@ -630,7 +630,10 @@ table a:hover {
 }
 .kanban-board .status-column .note-container .note p {
   margin-bottom: 0px;
-  min-height: 50px;
+  min-height: 30px;
+}
+.kanban-board .status-column .note-container .note p.deadline-past > span {
+  color: #970000;
 }
 .kanban-board .status-column .note-container .note .details-row {
   display: flex;

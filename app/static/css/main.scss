@@ -723,7 +723,15 @@ table {
 
         p{
           margin-bottom: 0px;
-          min-height: 50px;
+          min-height: 30px;
+
+          p{
+
+          }
+
+          &.deadline-past>span {
+            color: #970000;
+          }
         }
 
         .details-row{
