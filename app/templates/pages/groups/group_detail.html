@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h1>Szczegóły grupy: {{ group.name }}</h1>
+
+<p><strong>Opis:</strong> {{ group.description }}</p>
+<p><strong>Typ grupy:</strong> {{ group.get_group_type_display }}</p>
+<p><strong>Data utworzenia:</strong> {{ group.created_at }}</p>
+
+<h2>Administratorzy:</h2>
+<ul>
+    {% for admin in group.admins.all %}
+    <li>{{ admin.get_full_name }} ({{ admin.email }})</li>
+    {% endfor %}
+</ul>
+
+<h2>Członkowie:</h2>
+<ul>
+    {% for member in group.members.all %}
+    <li>{{ member.get_full_name }} ({{ member.email }})</li>
+    {% empty %}
+    <li>Brak członków w tej grupie.</li>
+    {% endfor %}
+</ul>
+
+{% if user in group.admins.all %}
+<h2>Dodaj administratora</h2>
+<form method="post" action="{% url 'add_admin' group.id %}">
+    {% csrf_token %}
+    <label for="new_admin_email">Email nowego administratora:</label>
+    <input type="email" id="new_admin_email" name="new_admin_email" required>
+    <button type="submit">Dodaj administratora</button>
+</form>
+<a href="{% url 'edit_group' group.id %}" class="btn btn-primary">Edytuj grupę</a>
+{% endif %}
+
+<a href="{% url 'my_groups' %}" class="btn btn-secondary">Wróć do listy grup</a>
+
+{% endblock %}

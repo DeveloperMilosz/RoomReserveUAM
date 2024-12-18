@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h1>Edytuj grupę: {{ group.name }}</h1>
+
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-success">Zapisz zmiany</button>
+</form>
+
+<a href="{% url 'group_detail' group.id %}" class="btn btn-secondary">Wróć do szczegółów grupy</a>
+
+{% endblock %}

@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+
+<!-- Załadowanie pliku CSS dla formularzy -->
+<link rel="stylesheet" type="text/css" href="{% static 'css/forms.css' %}">
+
+<h1>Moje grupy</h1>
+
+<h2>Grupy, do których należysz:</h2>
+<ul>
+    {% for group in my_groups %}
+    <li>
+        <a href="{% url 'group_detail' group.id %}">{{ group.name }}</a> - {{ group.description }}
+    </li>
+    {% empty %}
+    <li>Nie należysz do żadnej grupy.</li>
+    {% endfor %}
+</ul>
+
+<h2>Grupy, w których jesteś administratorem:</h2>
+<ul>
+    {% for group in admin_groups %}
+    <li>
+        <a href="{% url 'group_detail' group.id %}">{{ group.name }}</a> - {{ group.description }}
+    </li>
+    {% empty %}
+    <li>Nie administrujesz żadną grupą.</li>
+    {% endfor %}
+</ul>
+
+<a href="{% url 'create_group' %}">Stwórz nową grupę</a>
+
+{% endblock %}

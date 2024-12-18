@@ -14,6 +14,8 @@ from room_reserve.views import test as test_views
 from room_reserve.views import mark_notifications as mark_views
 from room_reserve.views import notifications_history as history_views
 from room_reserve.views import notes as notes_views
+from room_reserve.views import group_views
+from room_reserve.views import group_edit_details
 
 urlpatterns = [
     # Home
@@ -86,7 +88,13 @@ urlpatterns = [
     path("notes/add/", notes_views.add_or_edit_note, name="add_note"),
     path("notes/edit/<int:note_id>/", notes_views.add_or_edit_note, name="edit_note"),
     path("api/update_note_status/", notes_views.update_note_status, name="update_note_status"),
-    path('api/add_status/', notes_views.add_status, name='add_status'),
-    path('api/delete_status/<int:status_id>/', notes_views.delete_status, name='delete_status'),
+    path("api/add_status/", notes_views.add_status, name="add_status"),
+    path("api/delete_status/<int:status_id>/", notes_views.delete_status, name="delete_status"),
     path("api/save_note_order/", notes_views.save_note_order, name="save_note_order"),
+    # grupy
+    path("my-groups/", group_views.my_groups_view, name="my_groups"),
+    path("create-group/", group_views.create_group_view, name="create_group"),
+    path("group/<int:group_id>/", group_edit_details.group_detail_view, name="group_detail"),
+    path("group/<int:group_id>/edit/", group_edit_details.edit_group_view, name="edit_group"),
+    path("group/<int:group_id>/add-admin/", group_edit_details.add_admin_view, name="add_admin"),
 ]
