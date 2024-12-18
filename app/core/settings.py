@@ -187,3 +187,6 @@ HUEY = RedisHuey(
     port=6379,  # Redis default port
     always_eager=False,  # Asynchronous tasks
 )
+
+
+CSRF_TRUSTED_ORIGINS = ["https://room-reserve.madeinpila.pl"]
