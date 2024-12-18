@@ -65,21 +65,19 @@
 
 <!-- Tło dla popupa -->
 <div id="popup-overlay" class="popup-overlay"></div>
-<!-- JavaScript -->
 <script>
     document.addEventListener('DOMContentLoaded', () => {
-        // Obsługa drag-and-drop dla notatek
         const notes = document.querySelectorAll('.note');
         const columns = document.querySelectorAll('.status-column');
-
+    
         let draggedNote = null;
-
+    
         notes.forEach(note => {
             note.addEventListener('dragstart', (e) => {
                 draggedNote = note;
                 setTimeout(() => note.style.display = 'none', 0);
             });
-
+    
             note.addEventListener('dragend', (e) => {
                 setTimeout(() => {
                     draggedNote.style.display = 'flex';
@@ -87,105 +85,75 @@
                 }, 0);
             });
         });
-
+    
         columns.forEach(column => {
-            column.addEventListener('dragover', (e) => e.preventDefault());
+            const noteContainer = column.querySelector('.note-container');
+    
+            column.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                const afterElement = getDragAfterElement(noteContainer, e.clientY);
+                if (afterElement == null) {
+                    noteContainer.appendChild(draggedNote);
+                } else {
+                    noteContainer.insertBefore(draggedNote, afterElement);
+                }
+            });
+    
             column.addEventListener('drop', (e) => {
                 e.preventDefault();
                 const statusId = column.getAttribute('data-status-id');
-                if (draggedNote) {
-                    column.querySelector('.note-container').appendChild(draggedNote);
-                    updateNoteStatus(draggedNote.getAttribute('data-note-id'), statusId);
-                }
+                saveNoteOrder(statusId);
             });
         });
-
-        function updateNoteStatus(noteId, statusId) {
-            fetch(`/api/update_note_status/`, {
+    
+        function getDragAfterElement(container, y) {
+            const draggableElements = [...container.querySelectorAll('.note:not(.dragging)')];
+    
+            return draggableElements.reduce((closest, child) => {
+                const box = child.getBoundingClientRect();
+                const offset = y - box.top - box.height / 2;
+                if (offset < 0 && offset > closest.offset) {
+                    return { offset: offset, element: child };
+                } else {
+                    return closest;
+                }
+            }, { offset: Number.NEGATIVE_INFINITY }).element;
+        }
+    
+        function saveNoteOrder() {
+            const columns = document.querySelectorAll('.status-column');
+        
+            const updatedNotes = [];
+            columns.forEach(column => {
+                const statusId = column.getAttribute('data-status-id');
+                const notes = column.querySelectorAll('.note');
+                
+                notes.forEach((note, index) => {
+                    updatedNotes.push({
+                        id: note.getAttribute('data-note-id'),
+                        status_id: statusId,
+                        order: index
+                    });
+                });
+            });
+        
+            fetch(`/api/save_note_order/`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     'X-CSRFToken': '{{ csrf_token }}',
                 },
-                body: JSON.stringify({ note_id: noteId, status_id: statusId }),
+                body: JSON.stringify({ notes: updatedNotes }),
             })
             .then(response => response.json())
             .then(data => {
                 if (!data.success) {
-                    alert('Nie udało się zaktualizować statusu');
+                    alert('Failed to save note positions: ' + (data.error || 'Unknown error'));
                 }
             })
-            .catch(error => console.error('Błąd:', error));
+            .catch(error => console.error('Error:', error));
         }
-
-        // Obsługa popupa do zarządzania statusami
-        const manageStatusesBtn = document.getElementById('manage-statuses-btn');
-        const popup = document.getElementById('manage-statuses-popup');
-        const overlay = document.getElementById('popup-overlay');
-        const closePopupBtn = document.getElementById('close-popup-btn');
-        const addStatusForm = document.getElementById('add-status-form');
-        const deleteStatusBtns = document.querySelectorAll('.delete-status-btn');
-
-        manageStatusesBtn.addEventListener('click', () => {
-            popup.style.display = 'flex';
-            overlay.style.display = 'block';
-        });
-
-        closePopupBtn.addEventListener('click', () => {
-            popup.style.display = 'none';
-            overlay.style.display = 'none';
-        });
-
-        overlay.addEventListener('click', () => {
-            popup.style.display = 'none';
-            overlay.style.display = 'none';
-        });
-
-        addStatusForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const name = document.getElementById('status-name').value;
-            const color = document.getElementById('status-color').value;
-
-            fetch(`/api/add_status/`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': '{{ csrf_token }}',
-                },
-                body: JSON.stringify({ name, color }),
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    location.reload();
-                } else {
-                    alert('Nie udało się dodać statusu');
-                }
-            });
-        });
-
-        deleteStatusBtns.forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const statusId = btn.getAttribute('data-status-id');
-
-                fetch(`/api/delete_status/`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRFToken': '{{ csrf_token }}',
-                    },
-                    body: JSON.stringify({ status_id: statusId }),
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        location.reload();
-                    } else {
-                        alert('Nie udało się usunąć statusu');
-                    }
-                });
-            });
-        });
     });
+    
 </script>
 {% endblock %}

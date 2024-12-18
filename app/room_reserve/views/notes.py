@@ -8,23 +8,27 @@ import json
 
 from django.utils import timezone
 
+
 def notes_list(request):
-    notes = Note.objects.filter(owner=request.user).order_by("deadline")
+    status_id = request.GET.get("status_id")
     statuses = Status.objects.filter(created_by=request.user)
-    return render(request, "pages/notes/notes.html", {
+    notes = Note.objects.filter(owner=request.user).order_by("status", "order")
+
+    context = {
         "notes": notes,
         "statuses": statuses,
-        "now": timezone.now(),  # Aktualny czas
-    })
+        "now": timezone.now(),
+    }
+    return render(request, "pages/notes/notes.html", context)
 
 
 @login_required
 def add_or_edit_note(request, note_id=None):
     note = None
-    if note_id:  # Jeśli edytujemy notatkę
+    if note_id:
         note = get_object_or_404(Note, id=note_id, owner=request.user)
 
-    if request.method == "POST":  # Obsługa formularza
+    if request.method == "POST":
         form = NoteForm(request.POST, instance=note)
         if form.is_valid():
             new_note = form.save(commit=False)
@@ -32,10 +36,9 @@ def add_or_edit_note(request, note_id=None):
             new_note.save()
             messages.success(request, "Notatka została zapisana.")
             return redirect("notes_list")
-    else:  # Wstępne wypełnienie formularza
+    else:
         form = NoteForm(instance=note)
 
-    # Pobranie dostępnych statusów stworzonych przez użytkownika
     statuses = Status.objects.filter(created_by=request.user)
 
     return render(request, "pages/notes/new_note.html", {
@@ -51,11 +54,9 @@ def update_note_status(request):
             note_id = data.get("note_id")
             status_id = data.get("status_id")
 
-            # Ensure note belongs to the logged-in user
             note = Note.objects.get(id=note_id, owner=request.user)
             status = Status.objects.get(id=status_id, created_by=request.user)
 
-            # Update note status
             note.status = status
             note.save()
 
@@ -88,4 +89,26 @@ def delete_status(request):
             return JsonResponse({"success": True})
         except Status.DoesNotExist:
             return JsonResponse({"success": False, "error": "Status not found"}, status=404)
+    return JsonResponse({"success": False, "error": "Invalid request"}, status=400)
+
+def save_note_order(request):
+    if request.method == "POST":
+        try:
+            data = json.loads(request.body)
+            notes = data.get("notes", [])
+
+            for note_data in notes:
+                note_id = note_data.get("id")
+                status_id = note_data.get("status_id")
+                order = note_data.get("order")
+
+                note = Note.objects.get(id=note_id, owner=request.user)
+                note.status_id = status_id
+                note.order = order
+                note.save()
+
+            return JsonResponse({"success": True})
+        except Exception as e:
+            return JsonResponse({"success": False, "error": str(e)}, status=400)
+
     return JsonResponse({"success": False, "error": "Invalid request"}, status=400)

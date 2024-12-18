@@ -88,4 +88,5 @@ urlpatterns = [
     path("api/update_note_status/", notes_views.update_note_status, name="update_note_status"),
     path('api/add_status/', notes_views.add_status, name='add_status'),
     path('api/delete_status/<int:status_id>/', notes_views.delete_status, name='delete_status'),
+    path("api/save_note_order/", notes_views.save_note_order, name="save_note_order"),
 ]

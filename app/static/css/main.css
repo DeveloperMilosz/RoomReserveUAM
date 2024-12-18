@@ -613,6 +613,7 @@ table a:hover {
 }
 .kanban-board .status-column .note-container {
   min-height: 200px;
+  transition: height 1s ease-in-out;
 }
 .kanban-board .status-column .note-container .note {
   border-radius: 5px;
@@ -623,6 +624,10 @@ table a:hover {
   border: 1px solid #ccc;
   display: flex;
   flex-direction: column;
+  transition: transform 0.3s ease;
+}
+.kanban-board .status-column .note-container .note:hover {
+  transform: scale(1.02);
 }
 .kanban-board .status-column .note-container .note h1 {
   margin: 0;

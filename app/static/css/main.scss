@@ -672,14 +672,14 @@ table {
 }
 
 // board 
-.notes-top{
+.notes-top {
   display: flex;
   width: 1800px;
   margin: 0 auto;
   justify-content: space-between;
   align-items: center;
 
-  a.form-button{
+  a.form-button {
     padding: 15px 32px;
   }
 }
@@ -693,11 +693,11 @@ table {
     flex: 1;
     border-radius: 5px;
     padding: 10px;
-    
-    &:not(:first-child){
+
+    &:not(:first-child) {
       margin-left: 10px;
     }
-    
+
     .status-title {
       margin: 10px 0px 0px;
       text-align: center;
@@ -705,6 +705,7 @@ table {
 
     .note-container {
       min-height: 200px;
+      transition: height 1s ease-in-out;
 
       .note {
         border-radius: 5px;
@@ -715,30 +716,35 @@ table {
         border: 1px solid #ccc;
         display: flex;
         flex-direction: column;
+        transition: transform 0.3s ease;
+
+        &:hover {
+          transform: scale(1.02);
+        }
 
         h1 {
           margin: 0;
           text-align: center;
         }
 
-        p{
+        p {
           margin: 0px;
 
-          &.deadline-past>span {
+          &.deadline-past > span {
             color: #970000;
           }
         }
-      
-        .note-description{
+
+        .note-description {
           margin-top: 10px;
           min-height: 50px;
         }
 
-        .details-row{
+        .details-row {
           display: flex;
           justify-content: space-between;
           margin-top: 10px;
-          
+
           .note-edit-link {
             text-decoration: none;
             color: #007bff;
@@ -748,6 +754,7 @@ table {
     }
   }
 }
+
 // Popup
 .popup {
   display: none;

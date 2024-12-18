@@ -208,13 +208,16 @@ class Note(models.Model):
     title = models.CharField(_("Title"), max_length=100, null=True, blank=True)
     description = models.TextField(_("Description"), blank=True, null=True)
     color = ColorField(default="#FFFFFF", verbose_name=_("Note Color"))
-    owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name="notes", verbose_name=_("Owner"))
+    owner = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="notes", verbose_name=_("Owner")
+    )
     status = models.ForeignKey(
         Status, on_delete=models.SET_NULL, related_name="notes", null=True, blank=True, verbose_name=_("Status")
     )
     deadline = models.DateTimeField(_("Deadline"), null=True, blank=True)
     created_at = models.DateTimeField(_("Created At"), auto_now_add=True)
     modified_at = models.DateTimeField(_("Modified At"), auto_now=True)
+    order = models.PositiveIntegerField(_("Order"), default=0)
 
     def __str__(self):
         return self.title or f"Note {self.id}"
