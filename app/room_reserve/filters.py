@@ -1,5 +1,5 @@
 from django_filters import rest_framework as filters
-from room_reserve.models import Meeting, Event, Room
+from room_reserve.models import Meeting, Event, Room, Group
 from django.db.models import Q
 
 
@@ -77,3 +77,14 @@ class FreeRoomFilter(filters.FilterSet):
             queryset = queryset.exclude(id__in=busy_rooms)
 
         return queryset
+
+
+class GroupFilter(filters.FilterSet):
+    name = filters.CharFilter(field_name="name", lookup_expr="icontains", label="Nazwa grupy")
+    group_type = filters.ChoiceFilter(choices=Group.GROUP_TYPE_CHOICES, label="Typ grupy")
+    admin = filters.CharFilter(field_name="admins__email", lookup_expr="icontains", label="Email administratora")
+    member = filters.CharFilter(field_name="members__email", lookup_expr="icontains", label="Email członka")
+
+    class Meta:
+        model = Group
+        fields = ["name", "group_type", "admin", "member"]

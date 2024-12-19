@@ -23,8 +23,28 @@
     {% endfor %}
 </ul>
 
+<!-- Przyciski składania prośby o dołączenie -->
+{% if user not in group.members.all %}
+    <form method="post" action="{% url 'request_join_group' group.id %}">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-primary">Poproś o dołączenie</button>
+    </form>
+{% endif %}
+
+<!-- Wyświetlanie próśb o dołączenie dla administratorów -->
 {% if user in group.admins.all %}
-<a href="{% url 'edit_group' group.id %}" class="btn btn-primary">Edytuj grupę</a>
+    <h2>Prośby o dołączenie</h2>
+    <ul>
+        {% for request_user in group.join_requests.all %}
+        <li>
+            {{ request_user.get_full_name }} ({{ request_user.email }})
+            <a href="{% url 'handle_join_request' group.id request_user.id 'accept' %}" class="btn btn-success">Akceptuj</a>
+            <a href="{% url 'handle_join_request' group.id request_user.id 'reject' %}" class="btn btn-danger">Odrzuć</a>
+        </li>
+        {% empty %}
+        <li>Brak próśb o dołączenie.</li>
+        {% endfor %}
+    </ul>
 {% endif %}
 
 <a href="{% url 'my_groups' %}" class="btn btn-secondary">Wróć do listy grup</a>
