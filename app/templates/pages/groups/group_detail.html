@@ -32,7 +32,7 @@
 {% endif %}
 
 <!-- Wyświetlanie próśb o dołączenie dla administratorów -->
-{% if user in group.admins.all %}
+{% if user in group.admins.all or user.user_type == 'Admin' %}
     <h2>Prośby o dołączenie</h2>
     <ul>
         {% for request_user in group.join_requests.all %}
@@ -45,6 +45,11 @@
         <li>Brak próśb o dołączenie.</li>
         {% endfor %}
     </ul>
+{% endif %}
+
+<!-- Przycisk edycji grupy dla administratorów grupy lub użytkowników z typem konta Admin -->
+{% if user in group.admins.all or user.user_type == 'Admin' %}
+    <a href="{% url 'edit_group' group.id %}" class="btn btn-primary">Edytuj grupę</a>
 {% endif %}
 
 <a href="{% url 'my_groups' %}" class="btn btn-secondary">Wróć do listy grup</a>
