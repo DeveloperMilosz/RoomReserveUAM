@@ -166,6 +166,9 @@ class Group(models.Model):
     meetings = models.ManyToManyField(
         "Meeting", related_name="assigned_groups", verbose_name=_("assigned meetings"), blank=True
     )
+    join_requests = models.ManyToManyField(
+        User, related_name="join_requests", verbose_name=_("Join Requests"), blank=True
+    )
     invite_link = models.UUIDField(default=uuid.uuid4, unique=True)
     created_at = models.DateTimeField(_("created at"), auto_now_add=True)
     modified_at = models.DateTimeField(_("modified at"), auto_now=True)
@@ -205,6 +208,22 @@ class Group(models.Model):
         """
         self.invite_link = uuid.uuid4()
         self.save()
+
+    def add_join_request(self, user):
+        """Dodaj użytkownika do listy próśb o dołączenie."""
+        if user not in self.join_requests.all():
+            self.join_requests.add(user)
+
+    def accept_join_request(self, user):
+        """Zaakceptuj prośbę o dołączenie i dodaj użytkownika jako członka."""
+        if user in self.join_requests.all():
+            self.join_requests.remove(user)
+            self.members.add(user)
+
+    def reject_join_request(self, user):
+        """Odrzuć prośbę o dołączenie."""
+        if user in self.join_requests.all():
+            self.join_requests.remove(user)
 
 
 class Status(models.Model):

@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h1>Wyszukiwarka grup</h1>
+
+<form method="get">
+    {{ filter.form.as_p }}
+    <button type="submit" class="btn btn-primary">Szukaj</button>
+</form>
+
+<h2>Wyniki wyszukiwania:</h2>
+<ul>
+    {% for group in filter.qs %}
+    <li>
+        <a href="{% url 'group_detail' group.id %}">
+            <strong>{{ group.name }}</strong>
+        </a>
+        ({{ group.get_group_type_display }})<br>
+        Opis: {{ group.description|default:"Brak opisu" }}<br>
+        Administratorzy:
+        {% for admin in group.admins.all %}
+            {{ admin.get_full_name }} ({{ admin.email }})
+        {% empty %}
+            Brak administratorów
+        {% endfor %}
+        <br>
+        Liczba członków: {{ group.members.count }}
+    </li>
+    {% empty %}
+    <li>Brak wyników.</li>
+    {% endfor %}
+</ul>
+
+{% endblock %}

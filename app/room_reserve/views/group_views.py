@@ -171,3 +171,40 @@ def generate_invite_link(request, group_id):
 
     messages.success(request, f"Nowy link zaproszenia został wygenerowany: {invite_link}")
     return redirect("group_detail", group_id=group.id)
+
+
+@login_required
+def request_join_group(request, group_id):
+    """
+    Widok składania prośby o dołączenie do grupy.
+    """
+    group = get_object_or_404(Group, id=group_id)
+    if request.user not in group.members.all():
+        group.add_join_request(request.user)
+        messages.success(request, "Twoja prośba o dołączenie do grupy została wysłana.")
+    else:
+        messages.info(request, "Jesteś już członkiem tej grupy.")
+    return redirect("group_detail", group_id=group.id)
+
+
+@login_required
+def handle_join_request(request, group_id, user_id, action):
+    """
+    Widok obsługi próśb o dołączenie do grupy.
+    """
+    group = get_object_or_404(Group, id=group_id)
+    user = get_object_or_404(User, id=user_id)
+
+    # Sprawdzenie, czy użytkownik jest administratorem grupy
+    if request.user not in group.admins.all():
+        messages.error(request, "Nie masz uprawnień do zarządzania tą grupą.")
+        return redirect("group_detail", group_id=group.id)
+
+    if action == "accept":
+        group.accept_join_request(user)
+        messages.success(request, f"Prośba użytkownika {user.email} została zaakceptowana.")
+    elif action == "reject":
+        group.reject_join_request(user)
+        messages.info(request, f"Prośba użytkownika {user.email} została odrzucona.")
+
+    return redirect("group_detail", group_id=group.id)

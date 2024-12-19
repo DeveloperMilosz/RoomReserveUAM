@@ -76,6 +76,7 @@ urlpatterns = [
     path("search/events/", search_views.search_events, name="search_events"),
     path("search/rooms/", search_views.search_rooms, name="search_rooms"),
     path("search/free-rooms/", search_views.search_free_rooms, name="search_free_rooms"),
+    path("search/groups/", search_views.search_groups, name="search_groups"),
     path("admin-panel/", admin_views.admin_panel, name="admin_panel"),
     # notifications
     path("notifications/mark-read/", mark_views.mark_notifications_as_read, name="mark_notifications_as_read"),
@@ -98,4 +99,10 @@ urlpatterns = [
     path("group/<int:group_id>/add-admin/", group_views.add_admin_view, name="add_admin"),
     path("join-group/<uuid:invite_link>/", group_views.join_group_by_invite, name="join_group"),
     path("group/<int:group_id>/generate-invite/", group_views.generate_invite_link, name="generate_invite_link"),
+    path("group/<int:group_id>/request-join/", group_views.request_join_group, name="request_join_group"),
+    path(
+        "group/<int:group_id>/handle-request/<int:user_id>/<str:action>/",
+        group_views.handle_join_request,
+        name="handle_join_request",
+    ),
 ]
