@@ -2,6 +2,7 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 from colorfield.fields import ColorField
 from django.contrib.auth import get_user_model
+import uuid
 
 
 class Room(models.Model):
@@ -165,6 +166,7 @@ class Group(models.Model):
     meetings = models.ManyToManyField(
         "Meeting", related_name="assigned_groups", verbose_name=_("assigned meetings"), blank=True
     )
+    invite_link = models.UUIDField(default=uuid.uuid4, unique=True)
     created_at = models.DateTimeField(_("created at"), auto_now_add=True)
     modified_at = models.DateTimeField(_("modified at"), auto_now=True)
     is_active = models.BooleanField(_("is active"), default=True)
@@ -196,6 +198,13 @@ class Group(models.Model):
         """Remove a user as an admin if they're an admin."""
         if user in self.admins.all():
             self.admins.remove(user)
+
+    def generate_invite_link(self):
+        """
+        Generuj nowy unikalny link zaproszenia.
+        """
+        self.invite_link = uuid.uuid4()
+        self.save()
 
 
 class Status(models.Model):

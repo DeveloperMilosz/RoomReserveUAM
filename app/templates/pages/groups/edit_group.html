@@ -3,10 +3,45 @@
 
 <h1>Edytuj grupę: {{ group.name }}</h1>
 
+<!-- Formularz edycji grupy -->
 <form method="post">
     {% csrf_token %}
     {{ form.as_p }}
     <button type="submit" class="btn btn-success">Zapisz zmiany</button>
+</form>
+
+<!-- Formularz dodawania administratora -->
+<h2>Dodaj administratora</h2>
+<form method="post">
+    {% csrf_token %}
+    <input type="hidden" name="add_admin" value="1">
+    <label for="new_admin_email">Email nowego administratora:</label>
+    <input type="email" id="new_admin_email" name="new_admin_email" required>
+    <button type="submit" class="btn btn-primary">Dodaj administratora</button>
+</form>
+
+<!-- Formularz dodawania członka -->
+<h2>Dodaj członka</h2>
+<form method="post">
+    {% csrf_token %}
+    <input type="hidden" name="add_member" value="1">
+    <label for="new_member_email">Email nowego członka:</label>
+    <input type="email" id="new_member_email" name="new_member_email" required>
+    <button type="submit" class="btn btn-primary">Dodaj członka</button>
+</form>
+
+<!-- Generowanie i wyświetlanie linku zaproszenia -->
+<h2>Link zaproszenia</h2>
+{% if invite_link %}
+<p>
+    <strong>Aktualny link zaproszenia:</strong>
+    <a href="{{ invite_link }}" target="_blank">{{ invite_link }}</a>
+</p>
+{% endif %}
+<form method="post">
+    {% csrf_token %}
+    <input type="hidden" name="generate_invite_link" value="1">
+    <button type="submit" class="btn btn-warning">Generuj nowy link</button>
 </form>
 
 <a href="{% url 'group_detail' group.id %}" class="btn btn-secondary">Wróć do szczegółów grupy</a>

@@ -15,7 +15,6 @@ from room_reserve.views import mark_notifications as mark_views
 from room_reserve.views import notifications_history as history_views
 from room_reserve.views import notes as notes_views
 from room_reserve.views import group_views
-from room_reserve.views import group_edit_details
 
 urlpatterns = [
     # Home
@@ -94,7 +93,9 @@ urlpatterns = [
     # grupy
     path("my-groups/", group_views.my_groups_view, name="my_groups"),
     path("create-group/", group_views.create_group_view, name="create_group"),
-    path("group/<int:group_id>/", group_edit_details.group_detail_view, name="group_detail"),
-    path("group/<int:group_id>/edit/", group_edit_details.edit_group_view, name="edit_group"),
-    path("group/<int:group_id>/add-admin/", group_edit_details.add_admin_view, name="add_admin"),
+    path("group/<int:group_id>/", group_views.group_detail_view, name="group_detail"),
+    path("group/<int:group_id>/edit/", group_views.edit_group_view, name="edit_group"),
+    path("group/<int:group_id>/add-admin/", group_views.add_admin_view, name="add_admin"),
+    path("join-group/<uuid:invite_link>/", group_views.join_group_by_invite, name="join_group"),
+    path("group/<int:group_id>/generate-invite/", group_views.generate_invite_link, name="generate_invite_link"),
 ]
