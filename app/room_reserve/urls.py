@@ -16,6 +16,7 @@ from room_reserve.views import notifications_history as history_views
 from room_reserve.views import notes as notes_views
 from room_reserve.views import group_views
 
+
 urlpatterns = [
     # Home
     path("", home_views.HomeView.as_view(), name="home"),
@@ -90,7 +91,7 @@ urlpatterns = [
     path("api/update_note_status/", notes_views.update_note_status, name="update_note_status"),
     path("api/add_status/", notes_views.add_status, name="add_status"),
     path("api/delete_status/<int:status_id>/", notes_views.delete_status, name="delete_status"),
-    path("api/save_note_order/", notes_views.save_note_order, name="save_note_order"),
+    # path("api/save_note_order/", notes_views.save_note_order, name="save_note_order"),
     # grupy
     path("my-groups/", group_views.my_groups_view, name="my_groups"),
     path("create-group/", group_views.create_group_view, name="create_group"),
