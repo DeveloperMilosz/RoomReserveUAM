@@ -22,3 +22,5 @@ huey==2.5.2
 django-filter==24.3
 
 redis
+
+sentry-sdk[django]
