@@ -90,25 +90,4 @@ def delete_status(request):
         except Status.DoesNotExist:
             return JsonResponse({"success": False, "error": "Status not found"}, status=404)
     return JsonResponse({"success": False, "error": "Invalid request"}, status=400)
-
-def save_note_order(request):
-    if request.method == "POST":
-        try:
-            data = json.loads(request.body)
-            notes = data.get("notes", [])
-
-            for note_data in notes:
-                note_id = note_data.get("id")
-                status_id = note_data.get("status_id")
-                order = note_data.get("order")
-
-                note = Note.objects.get(id=note_id, owner=request.user)
-                note.status_id = status_id
-                note.order = order
-                note.save()
-
-            return JsonResponse({"success": True})
-        except Exception as e:
-            return JsonResponse({"success": False, "error": str(e)}, status=400)
-
-    return JsonResponse({"success": False, "error": "Invalid request"}, status=400)
+ 

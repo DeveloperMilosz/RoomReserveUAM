@@ -4,6 +4,7 @@ from colorfield.fields import ColorField
 from django.contrib.auth import get_user_model
 import uuid
 
+User = get_user_model()
 
 class Room(models.Model):
     room_number = models.CharField(_("room number"), max_length=30)
@@ -30,10 +31,6 @@ class Lecturers(models.Model):
 
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
-
-
-User = get_user_model()
-
 
 class Event(models.Model):
     LESSON_SCHEDULE = "lesson_schedule"
@@ -136,12 +133,6 @@ class Notification(models.Model):
 
     def __str__(self):
         return f"Notification for {self.user.username if self.user else 'Admin'} - {self.message[:20]}"
-
-
-from django.contrib.auth import get_user_model
-
-User = get_user_model()
-
 
 class Group(models.Model):
     ACADEMIC_YEAR = "academic_year"
