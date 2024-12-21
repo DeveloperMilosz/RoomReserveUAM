@@ -13,6 +13,8 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 import os
 from pathlib import Path
 from huey import RedisHuey
+import sentry_sdk
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -26,9 +28,11 @@ SECRET_KEY = os.environ.get("SECRET_KEY", "your-default-secret-key")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get("DEBUG", "True").lower() in ("true", "1", "yes")
 
-ALLOWED_HOSTS = [host for host in os.environ.get("ALLOWED_HOSTS", "").split(",") if host]
+# ALLOWED_HOSTS = [host for host in os.environ.get("ALLOWED_HOSTS", "").split(",") if host]
 
+ALLOWED_HOSTS = ["*"]
 # Application definition
+
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -194,3 +198,17 @@ HUEY = RedisHuey(
 
 
 CSRF_TRUSTED_ORIGINS = ["https://room-reserve.madeinpila.pl"]
+
+
+sentry_sdk.init(
+    dsn="https://d1aeb9fb0e7c549f81e0a9718d9065ba@o4508502300753920.ingest.de.sentry.io/4508502305341520",
+    # Set traces_sample_rate to 1.0 to capture 100%
+    # of transactions for tracing.
+    traces_sample_rate=1.0,
+    _experiments={
+        # Set continuous_profiling_auto_start to True
+        # to automatically start the profiler on when
+        # possible.
+        "continuous_profiling_auto_start": True,
+    },
+)

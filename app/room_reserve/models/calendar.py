@@ -2,7 +2,9 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 from colorfield.fields import ColorField
 from django.contrib.auth import get_user_model
+import uuid
 
+User = get_user_model()
 
 class Room(models.Model):
     room_number = models.CharField(_("room number"), max_length=30)
@@ -29,10 +31,6 @@ class Lecturers(models.Model):
 
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
-
-
-User = get_user_model()
-
 
 class Event(models.Model):
     LESSON_SCHEDULE = "lesson_schedule"
@@ -137,12 +135,6 @@ class Notification(models.Model):
     def __str__(self):
         return f"Notification for {self.user.username if self.user else 'Admin'} - {self.message[:20]}"
 
-
-from django.contrib.auth import get_user_model
-
-User = get_user_model()
-
-
 class Group(models.Model):
     ACADEMIC_YEAR = "academic_year"
     LECTURER_GROUP = "lecturer_group"
@@ -166,6 +158,10 @@ class Group(models.Model):
     meetings = models.ManyToManyField(
         "Meeting", related_name="assigned_groups", verbose_name=_("assigned meetings"), blank=True
     )
+    join_requests = models.ManyToManyField(
+        User, related_name="join_requests", verbose_name=_("Join Requests"), blank=True
+    )
+    invite_link = models.UUIDField(default=uuid.uuid4, unique=True)
     created_at = models.DateTimeField(_("created at"), auto_now_add=True)
     modified_at = models.DateTimeField(_("modified at"), auto_now=True)
     is_active = models.BooleanField(_("is active"), default=True)
@@ -197,6 +193,29 @@ class Group(models.Model):
         """Remove a user as an admin if they're an admin."""
         if user in self.admins.all():
             self.admins.remove(user)
+
+    def generate_invite_link(self):
+        """
+        Generuj nowy unikalny link zaproszenia.
+        """
+        self.invite_link = uuid.uuid4()
+        self.save()
+
+    def add_join_request(self, user):
+        """Dodaj użytkownika do listy próśb o dołączenie."""
+        if user not in self.join_requests.all():
+            self.join_requests.add(user)
+
+    def accept_join_request(self, user):
+        """Zaakceptuj prośbę o dołączenie i dodaj użytkownika jako członka."""
+        if user in self.join_requests.all():
+            self.join_requests.remove(user)
+            self.members.add(user)
+
+    def reject_join_request(self, user):
+        """Odrzuć prośbę o dołączenie."""
+        if user in self.join_requests.all():
+            self.join_requests.remove(user)
 
 
 class Status(models.Model):

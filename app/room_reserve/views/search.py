@@ -1,12 +1,12 @@
 from django.shortcuts import render
-from room_reserve.models import Meeting, Event, Room
-from room_reserve.filters import MeetingFilter, EventFilter, RoomFilter, FreeRoomFilter
+from room_reserve.models import Meeting, Event, Room, Group
+from room_reserve.filters import MeetingFilter, EventFilter, RoomFilter, FreeRoomFilter, GroupFilter
 
 
 def search_meetings(request):
     """Wyszukaj spotkania."""
     if request.GET:  # Wyświetl wyniki tylko, jeśli są parametry GET
-        meeting_filter = MeetingFilter(request.GET, queryset=Meeting.objects.all().order_by('start_time'))
+        meeting_filter = MeetingFilter(request.GET, queryset=Meeting.objects.all().order_by("start_time"))
     else:
         meeting_filter = MeetingFilter(queryset=Meeting.objects.none())  # Pusty queryset bez filtrów
     return render(request, "pages/search/search_meetings.html", {"filter": meeting_filter})
@@ -37,3 +37,12 @@ def search_free_rooms(request):
     else:
         room_filter = FreeRoomFilter(queryset=Room.objects.none())  # Pusty queryset bez filtrów
     return render(request, "pages/search/search_free_rooms.html", {"filter": room_filter})
+
+
+def search_groups(request):
+    """Wyszukaj grupy."""
+    if request.GET:  # Wyświetl wyniki tylko, jeśli są parametry GET
+        group_filter = GroupFilter(request.GET, queryset=Group.objects.all())
+    else:
+        group_filter = GroupFilter(queryset=Group.objects.none())  # Pusty queryset bez filtrów
+    return render(request, "pages/search/search_groups.html", {"filter": group_filter})

@@ -16,7 +16,7 @@ from room_reserve.views import mark_notifications as mark_views
 from room_reserve.views import notifications_history as history_views
 from room_reserve.views import notes as notes_views
 from room_reserve.views import group_views
-from room_reserve.views import group_edit_details
+
 
 
 urlpatterns = [
@@ -79,6 +79,7 @@ urlpatterns = [
     path("search/events/", search_views.search_events, name="search_events"),
     path("search/rooms/", search_views.search_rooms, name="search_rooms"),
     path("search/free-rooms/", search_views.search_free_rooms, name="search_free_rooms"),
+    path("search/groups/", search_views.search_groups, name="search_groups"),
     path("admin-panel/", admin_views.admin_panel, name="admin_panel"),
     # notifications
     path("notifications/mark-read/", mark_views.mark_notifications_as_read, name="mark_notifications_as_read"),
@@ -92,14 +93,20 @@ urlpatterns = [
     path("api/update_note_status/", notes_views.update_note_status, name="update_note_status"),
     path("api/add_status/", notes_views.add_status, name="add_status"),
     path("api/delete_status/<int:status_id>/", notes_views.delete_status, name="delete_status"),
-    path("api/save_note_order/", notes_views.save_note_order, name="save_note_order"),
+    # path("api/save_note_order/", notes_views.save_note_order, name="save_note_order"),
     # grupy
     path("my-groups/", group_views.my_groups_view, name="my_groups"),
     path("create-group/", group_views.create_group_view, name="create_group"),
-    path("group/<int:group_id>/", group_edit_details.group_detail_view, name="group_detail"),
-    path("group/<int:group_id>/edit/", group_edit_details.edit_group_view, name="edit_group"),
-    path("group/<int:group_id>/add-admin/", group_edit_details.add_admin_view, name="add_admin"),
-    #path("event/<int:event_id>/upload_logo/", calendar_views.upload_event_logo, name="upload_event_logo"),
-    #path("event/<int:event_id>/get_logo/", calendar_views.get_event_logo, name="get_event_logo"),
     path("create-event/", event_meeting.create_event_with_meetings, name="create_event_with_meetings"),
+    path("group/<int:group_id>/", group_views.group_detail_view, name="group_detail"),
+    path("group/<int:group_id>/edit/", group_views.edit_group_view, name="edit_group"),
+    path("group/<int:group_id>/add-admin/", group_views.add_admin_view, name="add_admin"),
+    path("join-group/<uuid:invite_link>/", group_views.join_group_by_invite, name="join_group"),
+    path("group/<int:group_id>/generate-invite/", group_views.generate_invite_link, name="generate_invite_link"),
+    path("group/<int:group_id>/request-join/", group_views.request_join_group, name="request_join_group"),
+    path(
+        "group/<int:group_id>/handle-request/<int:user_id>/<str:action>/",
+        group_views.handle_join_request,
+        name="handle_join_request",
+    ),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
