@@ -44,7 +44,7 @@ class Event(models.Model):
     name = models.CharField(_("Event Name"), max_length=50, null=True, blank=True)
     description = models.TextField(_("Description"), null=True, blank=True)
     organizer = models.ForeignKey(
-        Lecturers, on_delete=models.SET_NULL, verbose_name=_("Organizer"), null=True, blank=True
+        "Lecturers", on_delete=models.SET_NULL, verbose_name=_("Organizer"), null=True, blank=True
     )
     event_type = models.CharField(_("Event Type"), max_length=50, choices=EVENT_TYPE_CHOICES)
     start_date = models.DateTimeField(_("Start Date"))
@@ -52,10 +52,11 @@ class Event(models.Model):
     color = ColorField(default="#0f2d66")
     is_approved = models.BooleanField(_("is approved"), default=False)
     is_rejected = models.BooleanField(_("is rejected"), default=False)
+    logo = models.ImageField(_("Event Logo"), upload_to="event_logos/", null=True, blank=True)
     created_at = models.DateTimeField(_("Created At"), auto_now_add=True)
     modified_at = models.DateTimeField(_("Modified At"), auto_now=True)
     submitted_by = models.ForeignKey(
-        User, on_delete=models.SET_NULL, verbose_name=_("Submitted By"), null=True, blank=True
+        get_user_model(), on_delete=models.SET_NULL, verbose_name=_("Submitted By"), null=True, blank=True
     )
 
     def __str__(self):

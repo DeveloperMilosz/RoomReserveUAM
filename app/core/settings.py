@@ -151,8 +151,8 @@ AUTHENTICATION_BACKENDS = [
 ]
 
 
-EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-# EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+# EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
 # SMTP server settings
 EMAIL_HOST = "ssl0.ovh.net"
@@ -162,6 +162,10 @@ EMAIL_USE_SSL = True
 EMAIL_HOST_USER = "powiadomienia@roomreserveuam.pl"
 EMAIL_HOST_PASSWORD = "iZzXauocwNW6iM4UVZhG"
 DEFAULT_FROM_EMAIL = "powiadomienia@roomreserveuam.pl"
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
 
 # Allauth settings
 ACCOUNT_AUTHENTICATION_METHOD = "email"

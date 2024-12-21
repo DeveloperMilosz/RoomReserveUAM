@@ -12,7 +12,7 @@ def create_event_with_meetings(request):
         event_description = request.POST.get("eventdescription")
         event_start_date = request.POST.get("eventdatestart")
         event_end_date = request.POST.get("eventdateend")
-        event_participants = request.POST.get("participants")
+        event_logo = request.FILES.get("eventlogo")  # Get the uploaded logo
 
         # Create the event object
         event = Event.objects.create(
@@ -21,6 +21,7 @@ def create_event_with_meetings(request):
             start_date=event_start_date,
             end_date=event_end_date,
             event_type=Event.GENERAL_EVENT,
+            logo=event_logo,  # Save the logo
         )
 
         # Collect segment (meeting) data

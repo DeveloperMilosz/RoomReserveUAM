@@ -1,7 +1,8 @@
 # from http.client import NotConnected
 from django.urls import include, path
 from django.urls import re_path
-
+from django.conf import settings
+from django.conf.urls.static import static
 from room_reserve.views import home as home_views
 from room_reserve.views import auth as auth_views
 from room_reserve.views import calendar as calendar_views
@@ -15,6 +16,7 @@ from room_reserve.views import mark_notifications as mark_views
 from room_reserve.views import notifications_history as history_views
 from room_reserve.views import notes as notes_views
 from room_reserve.views import group_views
+
 
 
 urlpatterns = [
@@ -95,6 +97,7 @@ urlpatterns = [
     # grupy
     path("my-groups/", group_views.my_groups_view, name="my_groups"),
     path("create-group/", group_views.create_group_view, name="create_group"),
+    path("create-event/", event_meeting.create_event_with_meetings, name="create_event_with_meetings"),
     path("group/<int:group_id>/", group_views.group_detail_view, name="group_detail"),
     path("group/<int:group_id>/edit/", group_views.edit_group_view, name="edit_group"),
     path("group/<int:group_id>/add-admin/", group_views.add_admin_view, name="add_admin"),
@@ -106,4 +109,4 @@ urlpatterns = [
         group_views.handle_join_request,
         name="handle_join_request",
     ),
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
