@@ -3,7 +3,7 @@
 {% load static %}
 
 <div class="meeting-detail">
-    <img src="{% static 'img/logo_pl.png' %}" id="logo" alt="logo UAM" aria-hidden="true">
+    <!-- Dynamic logo display -->
 
     <p><strong>Nazwa Wydarzenia:</strong> <br>
         {{ event.name }}
@@ -21,6 +21,16 @@
         <p><strong>Czas rozpoczęcia:</strong> <br>{{ event.start_date }}</p>
         <p><strong>Czas zakończenia:</strong> <br>{{ event.end_date }}</p>
     </div>
+    {% if event.logo %}
+        <img src="{{ event.logo.url }}" alt="Event Logo" class="event-logo">
+    {% else %}
+        Wydarzenie nie posiada logo
+    {% endif %}
+    <p><strong>Nazwa Wydarzenia:</strong> <br>
+        {{ event.name }}
+    </p>
+
+    
 
     <div class="related-meetings">
         <h3>Powiązane spotkania</h3>
@@ -28,7 +38,8 @@
             <ul>
                 {% for meeting in meetings %}
                     <li>
-                        <strong>Nazwa spotkania:</strong> <a href="{% url 'meeting_details' meeting_id=meeting.id %}">{{ meeting.name_pl|default:"Brak" }}</a><br>
+                        <strong>Nazwa spotkania:</strong> 
+                        <a href="{% url 'meeting_details' meeting_id=meeting.id %}">{{ meeting.name_pl|default:"Brak" }}</a><br>
                     </li>
                 {% endfor %}
             </ul>
