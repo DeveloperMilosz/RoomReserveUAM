@@ -1,6 +1,8 @@
 from django.shortcuts import render
 from room_reserve.models import Meeting, Event, Room, Group
 from room_reserve.filters import MeetingFilter, EventFilter, RoomFilter, FreeRoomFilter, GroupFilter
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
 
 
 def search_meetings(request):
@@ -46,3 +48,44 @@ def search_groups(request):
     else:
         group_filter = GroupFilter(queryset=Group.objects.none())  # Pusty queryset bez filtrów
     return render(request, "pages/search/search_groups.html", {"filter": group_filter})
+
+
+# API Endpoints
+@api_view(["GET"])
+def api_search_meetings(request):
+    """API: Wyszukaj spotkania."""
+    meeting_filter = MeetingFilter(request.GET, queryset=Meeting.objects.all().order_by("start_time"))
+    data = meeting_filter.qs.values()  # Pobieramy przefiltrowane dane jako słowniki
+    return Response(data)
+
+
+@api_view(["GET"])
+def api_search_events(request):
+    """API: Wyszukaj wydarzenia."""
+    event_filter = EventFilter(request.GET, queryset=Event.objects.all())
+    data = event_filter.qs.values()
+    return Response(data)
+
+
+@api_view(["GET"])
+def api_search_rooms(request):
+    """API: Wyszukaj sale."""
+    room_filter = RoomFilter(request.GET, queryset=Room.objects.all())
+    data = room_filter.qs.values()
+    return Response(data)
+
+
+@api_view(["GET"])
+def api_search_free_rooms(request):
+    """API: Wyszukaj wolne sale."""
+    room_filter = FreeRoomFilter(request.GET, queryset=Room.objects.all())
+    data = room_filter.qs.values()
+    return Response(data)
+
+
+@api_view(["GET"])
+def api_search_groups(request):
+    """API: Wyszukaj grupy."""
+    group_filter = GroupFilter(request.GET, queryset=Group.objects.all())
+    data = group_filter.qs.values("id", "name", "group_type", "admins__email", "members__email")
+    return Response(data)

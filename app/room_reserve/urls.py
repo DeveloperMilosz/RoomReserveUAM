@@ -18,7 +18,6 @@ from room_reserve.views import notes as notes_views
 from room_reserve.views import group_views
 
 
-
 urlpatterns = [
     # Home
     path("", home_views.HomeView.as_view(), name="home"),
@@ -97,7 +96,6 @@ urlpatterns = [
     # grupy
     path("my-groups/", group_views.my_groups_view, name="my_groups"),
     path("create-group/", group_views.create_group_view, name="create_group"),
-    path("create-event/", event_meeting.create_event_with_meetings, name="create_event_with_meetings"),
     path("group/<int:group_id>/", group_views.group_detail_view, name="group_detail"),
     path("group/<int:group_id>/edit/", group_views.edit_group_view, name="edit_group"),
     path("group/<int:group_id>/add-admin/", group_views.add_admin_view, name="add_admin"),
@@ -109,4 +107,9 @@ urlpatterns = [
         group_views.handle_join_request,
         name="handle_join_request",
     ),
+    path("api/search/meetings/", search_views.api_search_meetings, name="api_search_meetings"),
+    path("api/search/events/", search_views.api_search_events, name="api_search_events"),
+    path("api/search/rooms/", search_views.api_search_rooms, name="api_search_rooms"),
+    path("api/search/free-rooms/", search_views.api_search_free_rooms, name="api_search_free_rooms"),
+    path("api/search/groups/", search_views.api_search_groups, name="api_search_groups"),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
