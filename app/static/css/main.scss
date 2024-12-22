@@ -600,6 +600,8 @@ form > a {
   .meeting-detail-row {
     display: flex;
     justify-content: space-between;
+    margin-block-start: 1em;
+    margin-block-end: 1em;
   
     > p {
       width: 50%;

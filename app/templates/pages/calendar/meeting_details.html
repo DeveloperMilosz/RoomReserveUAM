@@ -29,7 +29,7 @@
     <p><strong>Sala:</strong> 
         <br>
         {% if meeting.room %}
-            <a href="/room/{{ meeting.room.room_number }}">{{ meeting.room.room_number }}
+            <a href="/room/{{ meeting.room.room_number }}">{{ meeting.room.room_number }}</a>
         {% else %}
             Brak
         {% endif %}
@@ -54,7 +54,7 @@
     
     {% if event %}
         <hr>
-        <h3>Szczegóły Wydarzenia</h3>
+        <h3><a href="{% url 'event_details' event_id=meeting.event.id %}">Szczegóły Wydarzenia</a></h3>
         <p><strong>Nazwa wydarzenia:</strong> <br><a href="{% url 'event_details' event_id=meeting.event.id %}">{{ event.name|default:"Brak" }}</a>
         <p><strong>Typ wydarzenia:</strong> <br>{{ event.get_event_type_display|default:"Brak" }}</p>
         <p><strong>Opis wydarzenia:</strong> <br>{{ event.description|default:"Brak" }}</p>
