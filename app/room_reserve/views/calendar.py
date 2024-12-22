@@ -19,10 +19,10 @@ def new_meeting(request):
         form = MeetingForm(request.POST)
         if form.is_valid():
             meeting = form.save(commit=False)
-            meeting.is_approved = False  # Domyślnie wniosek niezatwierdzony
-            meeting.submitted_by = request.user  # Zapisz obecnie zalogowanego użytkownika
+            meeting.is_approved = False
+            meeting.submitted_by = request.user
             meeting.save()
-            form.save_m2m()  # Zapisz powiązania Many-to-Many
+            form.save_m2m()
             return redirect("home")
     else:
         form = MeetingForm()
@@ -32,11 +32,16 @@ def new_meeting(request):
         {"form": form, "rooms": rooms, "events": events, "lecturers": lecturers},
     )
 
-
 def get_meetings(request):
-    meetings = Meeting.objects.select_related("room", "event").prefetch_related("lecturers").filter(is_approved=True).order_by("start_time")
-    events = [
-        {
+    meetings = (
+        Meeting.objects.select_related("room", "event")
+        .prefetch_related("lecturers")
+        .filter(is_approved=True)
+        .order_by("start_time")
+    )
+    events = []
+    for meeting in meetings:
+        event_data = {
             "id": meeting.id,
             "start_time": meeting.start_time.isoformat(),
             "end_time": meeting.end_time.isoformat(),
@@ -44,9 +49,16 @@ def get_meetings(request):
             "color": meeting.color,
             "room": meeting.room.room_number if meeting.room else None,
         }
-        for meeting in meetings
-    ]
+        
+        if meeting.event and meeting.event.logo:
+            event_data["logo"] = request.build_absolute_uri(meeting.event.logo.url)
+        else:
+            event_data["logo"] = None
+
+        events.append(event_data)
+
     return JsonResponse(events, safe=False)
+
 
 
 def room_schedule(request, room_id):
@@ -56,17 +68,14 @@ def room_schedule(request, room_id):
     """
     room = get_object_or_404(Room, id=room_id)
 
-    # Fetch the current meeting (if one is ongoing)
     current_meeting = (
         Meeting.objects.filter(start_time__lte=now(), end_time__gte=now(), room=room).select_related("event").first()
     )
 
-    # Fetch the next meeting (if one is scheduled in the future)
     next_meeting = (
         Meeting.objects.filter(start_time__gt=now(), room=room).select_related("event").order_by("start_time").first()
     )
 
-    # Render the template with the meetings and room context
     return render(
         request,
         "pages/calendar/room_schedule.html",
@@ -151,7 +160,6 @@ def new_meeting(request):
                             is_approved=False,
                             event=meeting_data.get("event"),
                         )
-                        # Dodajemy wykładowców do każdego utworzonego spotkania
                         if selected_lecturers:
                             meeting.lecturers.set(selected_lecturers)
 
@@ -162,7 +170,6 @@ def new_meeting(request):
                         current_date = current_date.replace(month=next_month)
 
             else:
-                # Single meeting
                 meeting = form.save(commit=False)
                 meeting.is_approved = False
                 meeting.save()
@@ -183,23 +190,19 @@ def new_meeting(request):
 
 @login_required
 def edit_meeting(request, meeting_id):
-    # Pobierz obiekt spotkania dla zalogowanego użytkownika
     meeting = get_object_or_404(Meeting, pk=meeting_id)
     rooms = Room.objects.all()
     events = Event.objects.all()
     lecturers = Lecturers.objects.all()
 
     if request.method == "POST":
-        # Przekaż dane z formularza oraz instancję spotkania
         form = EditMeetingForm(request.POST, instance=meeting)
         if form.is_valid():
             form.save()
-            # Po zapisaniu przekieruj do "Moje Rezerwacje"
             return redirect("my_reservations")
         else:
             print(form.errors)
     else:
-        # Przy pierwszym załadowaniu formularza wypełnij go istniejącymi danymi
         form = EditMeetingForm(instance=meeting)
 
     # Renderuj stronę edycji z formularzem
@@ -251,7 +254,7 @@ def search_view(request):
         room_capacity = request.GET.get("room_capacity", "")
         event_id = request.GET.get("event", "").strip()
 
-        meeting_filters = Q(is_approved=True)  # Ensure only approved meetings are fetched
+        meeting_filters = Q(is_approved=True)
         if meeting_query:
             meeting_filters &= Q(name_pl__icontains=meeting_query) | Q(name_en__icontains=meeting_query)
         if meeting_type:
