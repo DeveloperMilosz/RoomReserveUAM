@@ -26,7 +26,7 @@ a {
 }
 a.event:hover {
   font-weight: 750;
-  padding: 5px 0px;
+  padding: 5px 2px;
 }
 
 #logo {
@@ -523,8 +523,6 @@ form > a {
 .meeting-detail .meeting-detail-row {
   display: flex;
   justify-content: space-between;
-  margin-block-start: 1em;
-  margin-block-end: 1em;
 }
 .meeting-detail .meeting-detail-row > p {
   width: 50%;

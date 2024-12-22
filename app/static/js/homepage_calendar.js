@@ -39,6 +39,7 @@ const updateWeekdaysWithDates = () => {
     for (let i = 0; i < 7; i++) {
         const currentDay = new Date(weekStart);
         currentDay.setDate(weekStart.getDate() + i);
+
         const dayEl = document.createElement('div');
         dayEl.innerHTML = `<strong>${daysOfWeek[i]}</strong> ${formatDate(currentDay)}`;
         weekdaysEl.appendChild(dayEl);
@@ -48,6 +49,7 @@ const updateWeekdaysWithDates = () => {
 const generateMonthlyCalendar = () => {
     const calendarEl = document.getElementById('calendar');
     calendarEl.innerHTML = '';
+
     const year = currentDate.getFullYear();
     const month = currentDate.getMonth();
     const daysInMonth = new Date(year, month + 1, 0).getDate();
@@ -61,6 +63,7 @@ const generateMonthlyCalendar = () => {
         const dayEl = document.createElement('div');
         dayEl.classList.add('day');
         dayEl.dataset.day = day;
+
         dayEl.innerHTML = `<strong>${day}</strong><div class="events"></div>`;
         calendarEl.appendChild(dayEl);
     }
@@ -69,31 +72,29 @@ const generateMonthlyCalendar = () => {
 function generateWeeklyCalendar(year, month, day) {
     const calendarEl = document.getElementById('calendar');
     calendarEl.innerHTML = '';
+
     const currentDate = new Date(year, month, day);
     const startOfWeek = currentDate.getDate() - getMondayFirstDay(currentDate.getDay());
 
     const hourColumn = document.createElement('div');
     hourColumn.classList.add('hour');
-    
-    // Pętla od 0 do 23.5 (0.5 oznacza pół godziny)
+
     for (let i = 0; i < 24; i += 0.5) {
         const timeLabel = document.createElement('div');
         timeLabel.classList.add('time-label');
-    
-        // Jeśli i jest liczbą całkowitą, dodaj ":00", w przeciwnym razie dodaj ":30"
-        const hour = Math.floor(i); // Całkowita część godziny
-        const minutes = (i % 1 === 0) ? '00' : '30'; // Dodanie minut
-    
+
+        const hour = Math.floor(i);
+        const minutes = (i % 1 === 0) ? '00' : '30';
         timeLabel.textContent = `${String(hour).padStart(2, '0')}:${minutes}`;
         hourColumn.appendChild(timeLabel);
     }
-    
     calendarEl.appendChild(hourColumn);
 
     for (let i = 0; i < 7; i++) {
         const weekDay = new Date(year, month, startOfWeek + i - 1);
         const dayEl = document.createElement('div');
         dayEl.classList.add('day', 'weekly');
+
         const formattedDate = weekDay.toLocaleDateString('pl-PL').replace(/\//g, '.');
         dayEl.innerHTML = `<strong>${formattedDate}</strong>`;
         calendarEl.appendChild(dayEl);
@@ -103,18 +104,26 @@ function generateWeeklyCalendar(year, month, day) {
 const displayMeetings = meetings => {
     const calendarEl = document.getElementById('calendar');
 
+    // --- Widok miesięczny ---
     if (currentView === 'monthly') {
         const days = calendarEl.querySelectorAll('.day');
         days.forEach(day => {
             const eventsContainer = day.querySelector('.events');
-            if (eventsContainer) eventsContainer.innerHTML = '';
+            if (eventsContainer) {
+                eventsContainer.innerHTML = '';
+            }
         });
 
         meetings.forEach(meeting => {
             const startDate = new Date(meeting.start_time);
-            if (startDate.getMonth() === currentDate.getMonth() && startDate.getFullYear() === currentDate.getFullYear()) {
+            if (
+                startDate.getMonth() === currentDate.getMonth() &&
+                startDate.getFullYear() === currentDate.getFullYear()
+            ) {
                 const dayIndex = startDate.getDate();
-                const firstDayOffset = getMondayFirstDay(new Date(currentDate.getFullYear(), currentDate.getMonth(), 1).getDay());
+                const firstDayOffset = getMondayFirstDay(
+                    new Date(currentDate.getFullYear(), currentDate.getMonth(), 1).getDay()
+                );
 
                 const dayEl = calendarEl.querySelector(`.day:nth-child(${dayIndex + firstDayOffset})`);
 
@@ -129,12 +138,28 @@ const displayMeetings = meetings => {
                     const eventEl = document.createElement('a');
                     eventEl.href = `/meeting/${meeting.id}`;
                     eventEl.classList.add('event');
-                    eventEl.style.backgroundColor = meeting.color;
                     eventEl.textContent = meeting.title;
+
+                    eventEl.style.boxShadow = `inset 0 0 0 2px ${meeting.color}`;
+
+                    if (meeting.logo) {
+                        eventEl.style.backgroundImage = `url(${meeting.logo})`;
+                        eventEl.style.backgroundPosition = 'center center';
+                        eventEl.style.backgroundRepeat = 'no-repeat';
+                        eventEl.style.backgroundSize = 'cover';
+
+                        eventEl.style.backgroundColor = 'rgba(255, 255, 255, 0.5)';
+                        eventEl.style.backgroundBlendMode = 'lighten';
+                    } else {
+                        eventEl.style.backgroundColor = meeting.color;
+                    }
+
                     eventsContainer.appendChild(eventEl);
                 }
             }
         });
+
+    // --- Widok tygodniowy ---
     } else if (currentView === 'weekly') {
         displayWeeklyMeetings(meetings);
     }
@@ -166,7 +191,6 @@ const displayWeeklyMeetings = meetings => {
         if (!dayEl) return;
 
         const meetingsForDay = meetingsByDay[dayIndex];
-
         meetingsForDay.sort((a, b) => a.start - b.start);
 
         const overlappingGroups = [];
@@ -188,10 +212,13 @@ const displayWeeklyMeetings = meetings => {
 
         overlappingGroups.forEach(group => {
             const columns = [];
+
             group.forEach(meeting => {
                 let placed = false;
                 for (let col = 0; col < columns.length; col++) {
-                    if (columns[col].every(otherMeeting => otherMeeting.end <= meeting.start || otherMeeting.start >= meeting.end)) {
+                    if (
+                        columns[col].every(otherMeeting => otherMeeting.end <= meeting.start || otherMeeting.start >= meeting.end)
+                    ) {
                         columns[col].push(meeting);
                         placed = true;
                         break;
@@ -203,22 +230,37 @@ const displayWeeklyMeetings = meetings => {
             });
 
             const totalColumns = columns.length;
+
             columns.forEach((col, colIndex) => {
                 col.forEach(meeting => {
                     const eventEl = document.createElement('a');
                     eventEl.href = `/meeting/${meeting.id}`;
-                    eventEl.title = `${meeting.title}`
+                    eventEl.title = `${meeting.title}`;
                     eventEl.classList.add('event', 'weekly');
                     eventEl.textContent = meeting.title;
 
                     const position = timeToPosition(meeting.start, meeting.end);
-                    eventEl.style.backgroundColor = meeting.color;
                     eventEl.style.position = 'absolute';
                     eventEl.style.top = position.top + 'px';
                     eventEl.style.height = position.height + 'px';
 
                     eventEl.style.width = `${100 / totalColumns}%`;
                     eventEl.style.left = `${(colIndex * 100) / totalColumns}%`;
+
+                    eventEl.style.boxShadow = `inset 0 0 0 2px ${meeting.color}`;
+
+                    if (meeting.logo) {
+                        eventEl.style.backgroundImage = `url(${meeting.logo})`;
+                        eventEl.style.backgroundPosition = 'center center';
+                        eventEl.style.backgroundRepeat = 'no-repeat';
+                        eventEl.style.backgroundSize = 'cover';
+
+                        eventEl.style.backgroundColor = 'rgba(255, 255, 255, 0.5)';
+                        eventEl.style.backgroundBlendMode = 'lighten';
+
+                    } else {
+                        eventEl.style.backgroundColor = meeting.color;
+                    }
 
                     dayEl.appendChild(eventEl);
                 });
@@ -227,70 +269,31 @@ const displayWeeklyMeetings = meetings => {
     });
 };
 
-
-function getMeetingFromTable() {
-    // Znajdź tabelę HTML na podstawie klasy
-    const table = document.querySelector('.tabela');
-    const rows = table.querySelectorAll('tbody tr');
-    // Tablica, która przechowa wyniki
-    const result = [];
-
-    // Iteruj przez każdy wiersz tabeli
-    rows.forEach(row => {
-        const cells = row.querySelectorAll('td');
-        
-        const title = cells[0].querySelector('.link').textContent.trim();
-
-        const startDate = cells[3].textContent.trim();
-        const startTime = cells[4].textContent.trim();
-        const endDate = cells[5].textContent.trim();
-        const endTime = cells[6].textContent.trim();
-        const id = parseInt(cells[8].textContent.trim(), 10);
-        const color = cells[9].textContent.trim();
-        cells[5].style.display="none";
-        cells[8].style.display="none";
-        cells[9].style.display="none";
-        const start_time = `${startDate}T${startTime}:00+00:00`;
-        const end_time = `${endDate}T${endTime}:00+00:00`;
-        
-        // Dodaj obiekt do wyników
-        result.push({
-            id: id,
-            title: title,
-            start_time: start_time,
-            end_time: end_time,
-            name_en: title,
-            color: color
-        });
-    });
-    
-    return result;
-}
-
 async function processAndDisplayMeetings() {
-    const meetings = await importMeetings();
+    const meetings = await importMeetings();  // z fetch.js
     console.log(meetings);
 
     if (currentView === 'monthly') {
         displayMeetings(meetings);
     } else if (currentView === 'weekly') {
+        // Wyliczamy zakres tygodnia
         const weekStart = new Date(currentDate);
         weekStart.setDate(currentDate.getDate() - getMondayFirstDay(currentDate.getDay()));
         const weekEnd = new Date(weekStart);
         weekEnd.setDate(weekStart.getDate() + 6);
 
+        // Filtrujemy spotkania, aby wczytać tylko z aktualnego tygodnia
         const weeklyMeetings = meetings.filter(meeting => {
             const startDate = new Date(meeting.start_time);
             return startDate >= weekStart && startDate <= weekEnd;
         });
-
         displayMeetings(weeklyMeetings);
     }
 }
 
-
 document.getElementById('toggleView').addEventListener('click', () => {
-    currentView = currentView === 'monthly' ? 'weekly' : 'monthly';
+    currentView = (currentView === 'monthly') ? 'weekly' : 'monthly';
+
     if (currentView === 'monthly') {
         generateMonthlyCalendar(currentDate.getFullYear(), currentDate.getMonth());
     } else {
@@ -351,6 +354,7 @@ document.getElementById('arrow-right').addEventListener('click', function () {
     processAndDisplayMeetings();
 });
 
+// Inicjalizacja widoku na starcie
 updateDateRange();
 generateMonthlyCalendar();
 processAndDisplayMeetings();
