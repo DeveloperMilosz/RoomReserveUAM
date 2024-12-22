@@ -44,6 +44,23 @@
     <button type="submit" class="btn btn-warning">Generuj nowy link</button>
 </form>
 
+<!-- Formularz przypisywania spotkań -->
+<h2>Przypisz spotkania</h2>
+<form method="post">
+    {% csrf_token %}
+    <input type="hidden" name="assign_meeting" value="1">
+    <label for="meeting_id">Wybierz spotkanie:</label>
+    <select id="meeting_id" name="meeting_id" required>
+        <option value="" disabled selected>Wybierz spotkanie</option>
+        {% for meeting in available_meetings %}
+        <option value="{{ meeting.id }}">{{ meeting.name_pl }} ({{ meeting.start_time }} - {{ meeting.end_time }})</option>
+        {% empty %}
+        <option value="" disabled>Brak dostępnych spotkań</option>
+        {% endfor %}
+    </select>
+    <button type="submit" class="btn btn-primary">Przypisz spotkanie</button>
+</form>
+
 <a href="{% url 'group_detail' group.id %}" class="btn btn-secondary">Wróć do szczegółów grupy</a>
 
 {% endblock %}

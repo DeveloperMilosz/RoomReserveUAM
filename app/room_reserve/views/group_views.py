@@ -2,7 +2,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.contrib.auth import get_user_model
-from room_reserve.models import Group
+from room_reserve.models import Group, Meeting
 from room_reserve.forms.groups import GroupForm
 
 User = get_user_model()
@@ -54,10 +54,12 @@ def group_detail_view(request, group_id):
 @login_required
 def edit_group_view(request, group_id):
     """
-    Widok edycji grupy z możliwością dodawania administratorów, członków i generowania linku zaproszenia.
+    Widok edycji grupy z możliwością dodawania administratorów, członków, generowania linku zaproszenia
+    i przypisywania spotkań.
     """
     group = get_object_or_404(Group, id=group_id)
     invite_link = None  # Domyślny link, jeśli nie zostanie wygenerowany
+    available_meetings = Meeting.objects.exclude(assigned_groups=group)  # Spotkania nieprzypisane do grupy
 
     # Sprawdzenie, czy użytkownik jest jednym z administratorów
     if request.user not in group.admins.all():
@@ -67,32 +69,15 @@ def edit_group_view(request, group_id):
     if request.method == "POST":
         form = GroupForm(request.POST, instance=group)
 
-        if "add_admin" in request.POST:
-            # Dodanie administratora
-            new_admin_email = request.POST.get("new_admin_email")
+        if "assign_meeting" in request.POST:
+            # Przypisanie spotkania
+            meeting_id = request.POST.get("meeting_id")
             try:
-                new_admin = User.objects.get(email=new_admin_email)
-                group.add_admin(new_admin)
-                group.add_member(new_admin)  # Nowy administrator automatycznie staje się członkiem
-                messages.success(request, f"Użytkownik {new_admin.email} został dodany jako administrator.")
-            except User.DoesNotExist:
-                messages.error(request, "Podany użytkownik nie istnieje.")
-
-        elif "add_member" in request.POST:
-            # Dodanie członka
-            new_member_email = request.POST.get("new_member_email")
-            try:
-                new_member = User.objects.get(email=new_member_email)
-                group.add_member(new_member)
-                messages.success(request, f"Użytkownik {new_member.email} został dodany jako członek grupy.")
-            except User.DoesNotExist:
-                messages.error(request, "Podany użytkownik nie istnieje.")
-
-        elif "generate_invite_link" in request.POST:
-            # Generowanie nowego linku zaproszenia
-            group.generate_invite_link()
-            invite_link = request.build_absolute_uri(f"/join-group/{group.invite_link}/")
-            messages.success(request, "Nowy link zaproszenia został wygenerowany.")
+                meeting = Meeting.objects.get(id=meeting_id)
+                group.meetings.add(meeting)
+                messages.success(request, f"Spotkanie '{meeting.name_pl}' zostało przypisane do grupy.")
+            except Meeting.DoesNotExist:
+                messages.error(request, "Wybrane spotkanie nie istnieje.")
 
         elif form.is_valid():
             form.save()
@@ -106,7 +91,11 @@ def edit_group_view(request, group_id):
         if group.invite_link:
             invite_link = request.build_absolute_uri(f"/join-group/{group.invite_link}/")
 
-    return render(request, "pages/groups/edit_group.html", {"form": form, "group": group, "invite_link": invite_link})
+    return render(
+        request,
+        "pages/groups/edit_group.html",
+        {"form": form, "group": group, "invite_link": invite_link, "available_meetings": available_meetings},
+    )
 
 
 @login_required
@@ -206,5 +195,51 @@ def handle_join_request(request, group_id, user_id, action):
     elif action == "reject":
         group.reject_join_request(user)
         messages.info(request, f"Prośba użytkownika {user.email} została odrzucona.")
+
+    return redirect("group_detail", group_id=group.id)
+
+
+@login_required
+def remove_member(request, group_id, user_id):
+    """
+    Widok usuwania członka z grupy.
+    """
+    group = get_object_or_404(Group, id=group_id)
+    member = get_object_or_404(User, id=user_id)
+
+    # Sprawdzenie, czy użytkownik ma uprawnienia do usuwania członków
+    if request.user not in group.admins.all() and request.user.user_type != "Admin":
+        messages.error(request, "Nie masz uprawnień do usuwania członków z tej grupy.")
+        return redirect("group_detail", group_id=group.id)
+
+    # Usunięcie członka
+    if member in group.members.all():
+        group.remove_member(member)
+        messages.success(request, f"Użytkownik {member.email} został usunięty z grupy.")
+    else:
+        messages.error(request, "Ten użytkownik nie jest członkiem tej grupy.")
+
+    return redirect("group_detail", group_id=group.id)
+
+
+@login_required
+def remove_meeting(request, group_id, meeting_id):
+    """
+    Widok usuwania spotkania z grupy.
+    """
+    group = get_object_or_404(Group, id=group_id)
+    meeting = get_object_or_404(Meeting, id=meeting_id)
+
+    # Sprawdzenie, czy użytkownik ma uprawnienia do usuwania spotkań
+    if request.user not in group.admins.all() and request.user.user_type != "Admin":
+        messages.error(request, "Nie masz uprawnień do usuwania spotkań z tej grupy.")
+        return redirect("group_detail", group_id=group.id)
+
+    # Usunięcie spotkania
+    if meeting in group.meetings.all():
+        group.meetings.remove(meeting)
+        messages.success(request, f"Spotkanie '{meeting.name_pl}' zostało usunięte z grupy.")
+    else:
+        messages.error(request, "Wybrane spotkanie nie jest przypisane do tej grupy.")
 
     return redirect("group_detail", group_id=group.id)
