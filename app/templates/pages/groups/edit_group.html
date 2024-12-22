@@ -61,6 +61,24 @@
     <button type="submit" class="btn btn-primary">Przypisz spotkanie</button>
 </form>
 
+
+<!-- Formularz przypisywania wydarzeń -->
+<h2>Przypisz wydarzenie</h2>
+<form method="post">
+    {% csrf_token %}
+    <input type="hidden" name="assign_event" value="1">
+    <label for="event_id">Wybierz wydarzenie:</label>
+    <select id="event_id" name="event_id" required>
+        <option value="" disabled selected>Wybierz wydarzenie</option>
+        {% for event in available_events %}
+        <option value="{{ event.id }}">{{ event.name }} ({{ event.start_date }} - {{ event.end_date }})</option>
+        {% empty %}
+        <option value="" disabled>Brak dostępnych wydarzeń</option>
+        {% endfor %}
+    </select>
+    <button type="submit" class="btn btn-primary">Przypisz wydarzenie</button>
+</form>
+
 <a href="{% url 'group_detail' group.id %}" class="btn btn-secondary">Wróć do szczegółów grupy</a>
 
 {% endblock %}

@@ -2,7 +2,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.contrib.auth import get_user_model
-from room_reserve.models import Group, Meeting
+from room_reserve.models import Group, Meeting, Event
 from room_reserve.forms.groups import GroupForm
 
 User = get_user_model()
@@ -54,12 +54,12 @@ def group_detail_view(request, group_id):
 @login_required
 def edit_group_view(request, group_id):
     """
-    Widok edycji grupy z możliwością dodawania administratorów, członków, generowania linku zaproszenia
-    i przypisywania spotkań.
+    Widok edycji grupy z przypisywaniem spotkań i wydarzeń.
     """
     group = get_object_or_404(Group, id=group_id)
     invite_link = None  # Domyślny link, jeśli nie zostanie wygenerowany
     available_meetings = Meeting.objects.exclude(assigned_groups=group)  # Spotkania nieprzypisane do grupy
+    available_events = Event.objects.exclude(assigned_groups=group).distinct()  # Wydarzenia nieprzypisane do grupy
 
     # Sprawdzenie, czy użytkownik jest jednym z administratorów
     if request.user not in group.admins.all():
@@ -79,6 +79,17 @@ def edit_group_view(request, group_id):
             except Meeting.DoesNotExist:
                 messages.error(request, "Wybrane spotkanie nie istnieje.")
 
+        elif "assign_event" in request.POST:
+            # Przypisanie wydarzenia i jego spotkań
+            event_id = request.POST.get("event_id")
+            try:
+                event = Event.objects.get(id=event_id)
+                group.events.add(event)  # Przypisz wydarzenie do grupy
+                group.meetings.add(*event.meetings.all())  # Dodaj wszystkie spotkania z wydarzenia
+                messages.success(request, f"Wydarzenie '{event.name}' i jego spotkania zostały przypisane do grupy.")
+            except Event.DoesNotExist:
+                messages.error(request, "Wybrane wydarzenie nie istnieje.")
+
         elif form.is_valid():
             form.save()
             messages.success(request, "Grupa została pomyślnie zaktualizowana.")
@@ -94,7 +105,13 @@ def edit_group_view(request, group_id):
     return render(
         request,
         "pages/groups/edit_group.html",
-        {"form": form, "group": group, "invite_link": invite_link, "available_meetings": available_meetings},
+        {
+            "form": form,
+            "group": group,
+            "invite_link": invite_link,
+            "available_meetings": available_meetings,
+            "available_events": available_events,
+        },
     )
 
 
@@ -241,5 +258,29 @@ def remove_meeting(request, group_id, meeting_id):
         messages.success(request, f"Spotkanie '{meeting.name_pl}' zostało usunięte z grupy.")
     else:
         messages.error(request, "Wybrane spotkanie nie jest przypisane do tej grupy.")
+
+    return redirect("group_detail", group_id=group.id)
+
+
+@login_required
+def remove_event(request, group_id, event_id):
+    """
+    Widok usuwania wydarzenia z grupy.
+    """
+    group = get_object_or_404(Group, id=group_id)
+    event = get_object_or_404(Event, id=event_id)
+
+    # Sprawdzenie, czy użytkownik ma uprawnienia do usuwania wydarzeń
+    if request.user not in group.admins.all() and request.user.user_type != "Admin":
+        messages.error(request, "Nie masz uprawnień do usuwania wydarzeń z tej grupy.")
+        return redirect("group_detail", group_id=group.id)
+
+    # Usunięcie wydarzenia
+    if event in group.events.all():
+        group.events.remove(event)
+        group.meetings.remove(*event.meetings.all())  # Usunięcie wszystkich powiązanych spotkań
+        messages.success(request, f"Wydarzenie '{event.name}' oraz jego spotkania zostały usunięte z grupy.")
+    else:
+        messages.error(request, "Wybrane wydarzenie nie jest przypisane do tej grupy.")
 
     return redirect("group_detail", group_id=group.id)
