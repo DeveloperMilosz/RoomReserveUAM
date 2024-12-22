@@ -179,7 +179,7 @@ class NotificationAdmin(admin.ModelAdmin):
 
 @admin.register(Status)
 class StatusAdmin(admin.ModelAdmin):
-    list_display = ("name", "created_by")
+    list_display = ("id", "name", "created_by")
     search_fields = ("name", "created_by__username")
 
 

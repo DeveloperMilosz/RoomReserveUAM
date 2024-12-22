@@ -1,6 +1,7 @@
 {% extends "base.html" %}
+{% load static %}
 {% block content %}
-<!-- Pasek nawigacyjny -->
+
 <div class="notes-top">
     <div class="navbar-title">
         <h1>To-Do</h1>
@@ -11,7 +12,6 @@
     </div>
 </div>
 
-<!-- Kolumny typu Kanban dla statusów -->
 <div class="kanban-board">
     {% for status in statuses %}
         <div class="status-column" style="background-color: {{ status.color }}50;" data-status-id="{{ status.id }}">
@@ -36,7 +36,6 @@
     {% endfor %}
 </div>
 
-<!-- Popup do zarządzania statusami -->
 <div id="manage-statuses-popup" class="form-form popup ">
     <h1>Zarządzaj statusami</h1>
     <div id="statuses-list">
@@ -63,97 +62,6 @@
         </div>
 </div>
 
-<!-- Tło dla popupa -->
 <div id="popup-overlay" class="popup-overlay"></div>
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const notes = document.querySelectorAll('.note');
-        const columns = document.querySelectorAll('.status-column');
-    
-        let draggedNote = null;
-    
-        notes.forEach(note => {
-            note.addEventListener('dragstart', (e) => {
-                draggedNote = note;
-                setTimeout(() => note.style.display = 'none', 0);
-            });
-    
-            note.addEventListener('dragend', (e) => {
-                setTimeout(() => {
-                    draggedNote.style.display = 'flex';
-                    draggedNote = null;
-                }, 0);
-            });
-        });
-    
-        columns.forEach(column => {
-            const noteContainer = column.querySelector('.note-container');
-    
-            column.addEventListener('dragover', (e) => {
-                e.preventDefault();
-                const afterElement = getDragAfterElement(noteContainer, e.clientY);
-                if (afterElement == null) {
-                    noteContainer.appendChild(draggedNote);
-                } else {
-                    noteContainer.insertBefore(draggedNote, afterElement);
-                }
-            });
-    
-            column.addEventListener('drop', (e) => {
-                e.preventDefault();
-                const statusId = column.getAttribute('data-status-id');
-                saveNoteOrder(statusId);
-            });
-        });
-    
-        function getDragAfterElement(container, y) {
-            const draggableElements = [...container.querySelectorAll('.note:not(.dragging)')];
-    
-            return draggableElements.reduce((closest, child) => {
-                const box = child.getBoundingClientRect();
-                const offset = y - box.top - box.height / 2;
-                if (offset < 0 && offset > closest.offset) {
-                    return { offset: offset, element: child };
-                } else {
-                    return closest;
-                }
-            }, { offset: Number.NEGATIVE_INFINITY }).element;
-        }
-    
-        function saveNoteOrder() {
-            const columns = document.querySelectorAll('.status-column');
-        
-            const updatedNotes = [];
-            columns.forEach(column => {
-                const statusId = column.getAttribute('data-status-id');
-                const notes = column.querySelectorAll('.note');
-                
-                notes.forEach((note, index) => {
-                    updatedNotes.push({
-                        id: note.getAttribute('data-note-id'),
-                        status_id: statusId,
-                        order: index
-                    });
-                });
-            });
-        
-            fetch(`/api/save_note_order/`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': '{{ csrf_token }}',
-                },
-                body: JSON.stringify({ notes: updatedNotes }),
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (!data.success) {
-                    alert('Failed to save note positions: ' + (data.error || 'Unknown error'));
-                }
-            })
-            .catch(error => console.error('Error:', error));
-        }
-    });
-    
-</script>
+<script src="{% static 'js/notes.js' %}"></script>
 {% endblock %}

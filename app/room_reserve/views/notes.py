@@ -79,17 +79,20 @@ def add_status(request):
             return JsonResponse({"success": True})
     return JsonResponse({"success": False, "error": "Invalid data"}, status=400)
 
-def delete_status(request):
+def delete_status(request, status_id):
     if request.method == "POST":
-        data = json.loads(request.body)
-        status_id = data.get("status_id")
         try:
             status = Status.objects.get(id=status_id, created_by=request.user)
+            
+            Note.objects.filter(status=status).delete()
+            
             status.delete()
+            
             return JsonResponse({"success": True})
         except Status.DoesNotExist:
             return JsonResponse({"success": False, "error": "Status not found"}, status=404)
     return JsonResponse({"success": False, "error": "Invalid request"}, status=400)
+
  
 def save_note_order(request):
     if request.method == "POST":
