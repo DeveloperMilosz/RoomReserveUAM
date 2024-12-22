@@ -4,95 +4,125 @@
 <div class="form-container form-segments">
     <img src="{% static 'img/logo_pl.png' %}" id="logo" alt="logo UAM" aria-hidden="true">
 
-    <h1>Create Event with Meetings</h1>
-    <p>Enter the details for the event and its meetings below.</p>
+    <h1>Utwórz wydarzenie ze spotkaniami</h1>
+    <p>Wprowadź poniżej szczegóły wydarzenia oraz jego spotkań.</p>
 
     <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
 
         <div id="segments-container" style="display: flex; flex-wrap: wrap; justify-content: center; width: 100%;">
             <div class="form-form">
-                <h2>Event Details</h2>
+                <h2>Szczegóły wydarzenia</h2>
                 <div class="input-box">
-                    <label for="event-name">Event Name:</label>
-                    <input type="text" id="event-name" name="eventname" placeholder="Enter event name" required>
+                    <label for="event-name">Nazwa wydarzenia:</label>
+                    <input type="text" id="event-name" name="eventname" placeholder="Wpisz nazwę wydarzenia" required>
                 </div>
                 <div class="input-box">
-                    <label for="event-description">Event Description:</label>
-                    <textarea id="event-description" name="eventdescription" placeholder="Enter event description" required></textarea>
+                    <label for="event-description">Opis wydarzenia:</label>
+                    <textarea id="event-description" name="eventdescription" placeholder="Wpisz opis wydarzenia" required></textarea>
                 </div>
                 <div class="input-box">
-                    <label for="event-date-start">Start Date:</label>
+                    <label for="event-date-start">Data rozpoczęcia:</label>
                     <input type="datetime-local" id="event-date-start" name="eventdatestart" required>
                 </div>
                 <div class="input-box">
-                    <label for="event-date-end">End Date:</label>
+                    <label for="event-date-end">Data zakończenia:</label>
                     <input type="datetime-local" id="event-date-end" name="eventdateend" required>
                 </div>
                 <div class="input-box">
-                    <label for="event-logo">Event Logo:</label>
-                    <input type="file" id="event-logo" name="eventlogo" accept="image/*">
+                    <label for="event-logo">Logo wydarzenia:</label>
+                    <input type="file" id="event-logo" name="eventlogo" placeholder="Wybierz logo" accept="image/*">
                 </div>
-                <button type="button" id="add-segment-btn" class="form-button">Add Segment</button>
-                <button type="submit" class="form-button">Submit</button>
+                <button type="button" id="add-segment-btn" class="form-button">Dodaj spotkanie</button>
+                <button type="submit" class="form-button">Zatwierdź</button>
             </div>
-        </div> 
+        </div>
     </form>
 </div>
 
 <script>
-    // Add new segment dynamically
     document.getElementById('add-segment-btn').addEventListener('click', function () {
         const segmentsContainer = document.getElementById('segments-container');
-        const segmentCount = segmentsContainer.getElementsByClassName('segment').length + 1;
+        const segmentCount = segmentsContainer.getElementsByClassName('segment').length;
+        const newSegmentNumber = segmentCount + 1;
+
         const newSegment = document.createElement('div');
         newSegment.classList.add('form-form', 'segment');
+
         newSegment.innerHTML = `
-            <h2>Segment ${segmentCount}</h2>
+            <h2>Spotkanie ${newSegmentNumber}</h2>
             <div class="input-box">
-                <label for="segment-name-${segmentCount}">Segment Name:</label>
-                <input type="text" id="segment-name-${segmentCount}" name="segmentname[]" required>
+                <label for="segment-name-${newSegmentNumber}">Nazwa Spotkania:</label>
+                <input type="text" id="segment-name-${newSegmentNumber}" name="segmentname[]" required>
             </div>
             <div class="input-box">
-                <label for="segment-lecturer-${segmentCount}">Lecturer:</label>
-                <select id="segment-lecturer-${segmentCount}" name="segmentlecturer[]" required>
-                    <option value="" disabled selected>Select Lecturer</option>
+                <label for="segment-lecturer-${newSegmentNumber}">Prelegent:</label>
+                <select id="segment-lecturer-${newSegmentNumber}" name="segmentlecturer[]" required>
+                    <option value="" disabled selected>Wybierz prelegenta</option>
                     {% for lecturer in lecturers %}
                     <option value="{{ lecturer.id }}">{{ lecturer.first_name }} {{ lecturer.last_name }}</option>
                     {% endfor %}
                 </select>
             </div>
             <div class="input-box">
-                <label for="segment-room-${segmentCount}">Room:</label>
-                <select id="segment-room-${segmentCount}" name="segmentroom[]" required>
-                    <option value="" disabled selected>Select Room</option>
+                <label for="segment-room-${newSegmentNumber}">Sala:</label>
+                <select id="segment-room-${newSegmentNumber}" name="segmentroom[]" required>
+                    <option value="" disabled selected>Wybierz salę</option>
                     {% for room in rooms %}
-                    <option value="{{ room.id }}">Room {{ room.room_number }} ({{ room.building_name_pl }})</option>
+                    <option value="{{ room.id }}">Sala {{ room.room_number }} ({{ room.building_name_pl }})</option>
                     {% endfor %}
                 </select>
             </div>
             <div class="input-box">
-                <label for="segment-description-${segmentCount}">Description:</label>
-                <textarea id="segment-description-${segmentCount}" name="segmentdescription[]" rows="3" required></textarea>
+                <label for="segment-description-${newSegmentNumber}">Opis:</label>
+                <textarea id="segment-description-${newSegmentNumber}" name="segmentdescription[]" rows="3" required></textarea>
             </div>
             <div class="input-box">
-                <label for="segment-date-${segmentCount}">Date:</label>
-                <input type="date" id="segment-date-${segmentCount}" name="segmentdate[]" required>
+                <label for="segment-date-${newSegmentNumber}">Data:</label>
+                <input type="date" id="segment-date-${newSegmentNumber}" name="segmentdate[]" required>
             </div>
             <div class="input-box">
-                <label for="segment-time-start-${segmentCount}">Start Time:</label>
-                <input type="time" id="segment-time-start-${segmentCount}" name="segmenttimestart[]" required>
+                <label for="segment-time-start-${newSegmentNumber}">Czas rozpoczęcia:</label>
+                <input type="time" id="segment-time-start-${newSegmentNumber}" name="segmenttimestart[]" required>
             </div>
             <div class="input-box">
-                <label for="segment-time-end-${segmentCount}">End Time:</label>
-                <input type="time" id="segment-time-end-${segmentCount}" name="segmenttimeend[]" required>
+                <label for="segment-time-end-${newSegmentNumber}">Czas zakończenia:</label>
+                <input type="time" id="segment-time-end-${newSegmentNumber}" name="segmenttimeend[]" required>
             </div>
             <div class="input-box">
-                <label for="segment-participants-${segmentCount}">Participants:</label>
-                <input type="number" id="segment-participants-${segmentCount}" name="segmentparticipants[]" min="1" required>
+                <label for="segment-participants-${newSegmentNumber}">Liczba uczestników:</label>
+                <input type="number" id="segment-participants-${newSegmentNumber}" name="segmentparticipants[]" min="1" required>
             </div>
         `;
+
         segmentsContainer.appendChild(newSegment);
+
+         if (segmentCount > 0) {
+            const prevSegmentNumber = segmentCount; // ostatni segment, czyli numer = segmentCount
+            const prevSegment = segmentsContainer.querySelector(`#segment-name-${prevSegmentNumber}`)?.closest('.segment');
+            
+            if (prevSegment) {
+                const fieldsToCopy = [
+                    [`segment-name-${prevSegmentNumber}`, `segment-name-${newSegmentNumber}`],
+                    [`segment-lecturer-${prevSegmentNumber}`, `segment-lecturer-${newSegmentNumber}`],
+                    [`segment-room-${prevSegmentNumber}`, `segment-room-${newSegmentNumber}`],
+                    [`segment-description-${prevSegmentNumber}`, `segment-description-${newSegmentNumber}`],
+                    [`segment-date-${prevSegmentNumber}`, `segment-date-${newSegmentNumber}`],
+                    [`segment-time-start-${prevSegmentNumber}`, `segment-time-start-${newSegmentNumber}`],
+                    [`segment-time-end-${prevSegmentNumber}`, `segment-time-end-${newSegmentNumber}`],
+                    [`segment-participants-${prevSegmentNumber}`, `segment-participants-${newSegmentNumber}`]
+                ];
+
+                fieldsToCopy.forEach(([oldId, newId]) => {
+                    const sourceElement = document.getElementById(oldId);
+                    const targetElement = document.getElementById(newId);
+
+                    if (sourceElement && targetElement && sourceElement.value) {
+                        targetElement.value = sourceElement.value;
+                    }
+                });
+            }
+        }
     });
 </script>
 {% endblock content %}

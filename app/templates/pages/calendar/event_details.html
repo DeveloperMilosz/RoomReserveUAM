@@ -4,7 +4,11 @@
 
 <div class="meeting-detail">
     <!-- Dynamic logo display -->
-
+    {% if event.logo %}
+        <img src="{{ event.logo.url }}" alt="Event Logo" id="logo" class="event-logo">
+    {% else %}
+        <p>Wydarzenie nie posiada logo</p>
+    {% endif %}
     <p><strong>Nazwa Wydarzenia:</strong> <br>
         {{ event.name }}
     </p>
@@ -12,25 +16,15 @@
     <p><strong>Prowadzący:</strong><br>
         {{ event.organizer }}
     </p>
-
-    <div class="color-display"><strong>Kolor:</strong> 
-        <span style="display: inline-block; width: 20px; height: 20px; background-color: {{ event.color }}; border-radius: 50%;"></span>
-    </div>
     
     <div class="meeting-detail-row">
         <p><strong>Czas rozpoczęcia:</strong> <br>{{ event.start_date }}</p>
         <p><strong>Czas zakończenia:</strong> <br>{{ event.end_date }}</p>
     </div>
-    {% if event.logo %}
-        <img src="{{ event.logo.url }}" alt="Event Logo" class="event-logo">
-    {% else %}
-        Wydarzenie nie posiada logo
-    {% endif %}
-    <p><strong>Nazwa Wydarzenia:</strong> <br>
-        {{ event.name }}
-    </p>
-
     
+    <div class="color-display"><strong>Kolor:</strong> 
+        <span style="display: inline-block; width: 20px; height: 20px; background-color: {{ event.color }}; border-radius: 50%;"></span>
+    </div>
 
     <div class="related-meetings">
         <h3>Powiązane spotkania</h3>
