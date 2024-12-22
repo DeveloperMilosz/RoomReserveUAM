@@ -3,6 +3,7 @@ from huey.contrib.djhuey import periodic_task, task
 from room_reserve.models import Notification, User
 from room_reserve.handlers.UAMApiRoom import UAMApiHandler as RoomHandler
 from room_reserve.handlers.UAMApiMeeting import UAMApiHandler as MeetingHandler
+from room_reserve.handlers.UAMApiEquipment import UAMApiHandler as EquipmentHandler
 from room_reserve.notifications import notify_user
 
 
@@ -81,6 +82,39 @@ def update_meeting_data():
             2702,
             2703,
             2704,
+            2777,
+        ]
+    )
+    handler.main()  # Wywołaj metodę główną do pobrania i zapisania danych
+
+
+@periodic_task(crontab(minute="*/10"))  # Uruchamiane co 10 minut
+def update_equipment_data():
+    handler = EquipmentHandler(
+        room_ids=[
+            2488,
+            2489,
+            2490,
+            2684,
+            2685,
+            2686,
+            2687,
+            2688,
+            2689,
+            2690,
+            2691,
+            2692,
+            2693,
+            2694,
+            2695,
+            2696,
+            2697,
+            2698,
+            2699,
+            2700,
+            2701,
+            2702,
+            2703,
             2777,
         ]
     )
