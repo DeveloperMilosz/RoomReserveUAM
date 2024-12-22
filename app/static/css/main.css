@@ -523,6 +523,8 @@ form > a {
 .meeting-detail .meeting-detail-row {
   display: flex;
   justify-content: space-between;
+  margin-block-start: 1em;
+  margin-block-end: 1em;
 }
 .meeting-detail .meeting-detail-row > p {
   width: 50%;
