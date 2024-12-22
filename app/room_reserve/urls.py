@@ -107,6 +107,10 @@ urlpatterns = [
         group_views.handle_join_request,
         name="handle_join_request",
     ),
+    path("group/<int:group_id>/remove-member/<int:user_id>/", group_views.remove_member, name="remove_member"),
+    path("group/<int:group_id>/remove-meeting/<int:meeting_id>/", group_views.remove_meeting, name="remove_meeting"),
+    path("group/<int:group_id>/remove-event/<int:event_id>/", group_views.remove_event, name="remove_event"),
+    # api wyszukiwarka
     path("api/search/meetings/", search_views.api_search_meetings, name="api_search_meetings"),
     path("api/search/events/", search_views.api_search_events, name="api_search_events"),
     path("api/search/rooms/", search_views.api_search_rooms, name="api_search_rooms"),

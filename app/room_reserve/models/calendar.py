@@ -6,6 +6,7 @@ import uuid
 
 User = get_user_model()
 
+
 class Room(models.Model):
     room_number = models.CharField(_("room number"), max_length=30)
     building_id = models.IntegerField(_("building id"))
@@ -31,6 +32,7 @@ class Lecturers(models.Model):
 
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
+
 
 class Event(models.Model):
     LESSON_SCHEDULE = "lesson_schedule"
@@ -135,6 +137,7 @@ class Notification(models.Model):
     def __str__(self):
         return f"Notification for {self.user.username if self.user else 'Admin'} - {self.message[:20]}"
 
+
 class Group(models.Model):
     ACADEMIC_YEAR = "academic_year"
     LECTURER_GROUP = "lecturer_group"
@@ -157,6 +160,9 @@ class Group(models.Model):
     )
     meetings = models.ManyToManyField(
         "Meeting", related_name="assigned_groups", verbose_name=_("assigned meetings"), blank=True
+    )
+    events = models.ManyToManyField(
+        "Event", related_name="assigned_groups", verbose_name=_("assigned events"), blank=True
     )
     join_requests = models.ManyToManyField(
         User, related_name="join_requests", verbose_name=_("Join Requests"), blank=True
@@ -181,6 +187,8 @@ class Group(models.Model):
 
     def remove_member(self, user):
         """Remove a user from the group if they're a member."""
+        if user in self.admins.all():
+            self.admins.remove(user)  # Automatyczne usunięcie z administratorów
         if user in self.members.all():
             self.members.remove(user)
 
@@ -188,6 +196,7 @@ class Group(models.Model):
         """Add a user as an admin if they're not already an admin."""
         if user not in self.admins.all():
             self.admins.add(user)
+            self.add_member(user)  # Automatyczne dodanie jako członka
 
     def remove_admin(self, user):
         """Remove a user as an admin if they're an admin."""
@@ -195,25 +204,23 @@ class Group(models.Model):
             self.admins.remove(user)
 
     def generate_invite_link(self):
-        """
-        Generuj nowy unikalny link zaproszenia.
-        """
+        """Generate a new unique invite link."""
         self.invite_link = uuid.uuid4()
         self.save()
 
     def add_join_request(self, user):
-        """Dodaj użytkownika do listy próśb o dołączenie."""
+        """Add a user to the join requests."""
         if user not in self.join_requests.all():
             self.join_requests.add(user)
 
     def accept_join_request(self, user):
-        """Zaakceptuj prośbę o dołączenie i dodaj użytkownika jako członka."""
+        """Accept a join request and add the user as a member."""
         if user in self.join_requests.all():
             self.join_requests.remove(user)
             self.members.add(user)
 
     def reject_join_request(self, user):
-        """Odrzuć prośbę o dołączenie."""
+        """Reject a join request."""
         if user in self.join_requests.all():
             self.join_requests.remove(user)
 

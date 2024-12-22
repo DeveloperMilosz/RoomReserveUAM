@@ -17,7 +17,15 @@
 <h2>Członkowie:</h2>
 <ul>
     {% for member in group.members.all %}
-    <li>{{ member.get_full_name }} ({{ member.email }})</li>
+    <li>
+        {{ member.get_full_name }} ({{ member.email }})
+        {% if user in group.admins.all or user.user_type == 'Admin' %}
+        <form method="post" action="{% url 'remove_member' group.id member.id %}" style="display: inline;">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger btn-sm">Usuń</button>
+        </form>
+        {% endif %}
+    </li>
     {% empty %}
     <li>Brak członków w tej grupie.</li>
     {% endfor %}
@@ -46,6 +54,47 @@
         {% endfor %}
     </ul>
 {% endif %}
+
+<h2>Przypisane spotkania</h2>
+<ul>
+    {% for meeting in group.meetings.all %}
+    <li>
+        {{ meeting.name_pl }} ({{ meeting.start_time }} - {{ meeting.end_time }})
+        {% if user in group.admins.all or user.user_type == 'Admin' %}
+        <form method="post" action="{% url 'remove_meeting' group.id meeting.id %}" style="display: inline;">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger btn-sm">Usuń</button>
+        </form>
+        {% endif %}
+    </li>
+    {% empty %}
+    <li>Brak przypisanych spotkań.</li>
+    {% endfor %}
+</ul>
+
+<h2>Przypisane wydarzenia</h2>
+<ul>
+    {% for event in group.events.all %}
+    <li>
+        <strong>{{ event.name }}</strong> ({{ event.start_date }} - {{ event.end_date }})
+        {% if user in group.admins.all or user.user_type == 'Admin' %}
+        <form method="post" action="{% url 'remove_event' group.id event.id %}" style="display: inline;">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger btn-sm">Usuń</button>
+        </form>
+        {% endif %}
+        <ul>
+            {% for meeting in event.meetings.all %}
+            <li>{{ meeting.name_pl }} ({{ meeting.start_time }} - {{ meeting.end_time }})</li>
+            {% endfor %}
+        </ul>
+    </li>
+    {% empty %}
+    <li>Brak przypisanych wydarzeń.</li>
+    {% endfor %}
+</ul>
+
+
 
 <!-- Przycisk edycji grupy dla administratorów grupy lub użytkowników z typem konta Admin -->
 {% if user in group.admins.all or user.user_type == 'Admin' %}

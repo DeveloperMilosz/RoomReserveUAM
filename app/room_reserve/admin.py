@@ -192,18 +192,18 @@ class NoteAdmin(admin.ModelAdmin):
 
 @admin.register(Group)
 class GroupAdmin(admin.ModelAdmin):
-    list_display = ("name", "group_type", "created_at", "is_active")
-    list_filter = ("group_type", "is_active")
-    search_fields = ("name", "description", "admins__email", "members__email")
+    list_display = ("name", "group_type", "created_at", "is_active", "get_admins", "get_members", "get_meetings")
+    list_filter = ("group_type", "is_active", "created_at")
+    search_fields = ("name", "description", "admins__email", "members__email", "meetings__name_pl")
     ordering = ("-created_at",)
-    filter_horizontal = ("admins", "members", "meetings")  # Dodaje możliwość łatwego zarządzania wieloma polami
+    filter_horizontal = ("admins", "members", "meetings", "join_requests")  # Dodano join_requests
 
     fieldsets = (
         (None, {"fields": ("name", "description", "group_type", "is_active")}),
         (
             "Relacje",
             {
-                "fields": ("admins", "members", "meetings"),
+                "fields": ("admins", "members", "meetings", "join_requests"),  # Dodano join_requests
             },
         ),
         (
@@ -212,5 +212,29 @@ class GroupAdmin(admin.ModelAdmin):
                 "fields": ("created_at", "modified_at"),
             },
         ),
+        (
+            "Zaproszenia",
+            {
+                "fields": ("invite_link",),
+            },
+        ),
     )
-    readonly_fields = ("created_at", "modified_at")
+    readonly_fields = ("created_at", "modified_at", "invite_link")
+
+    def get_admins(self, obj):
+        """Wyświetla listę administratorów grupy w panelu admina."""
+        return ", ".join([admin.email for admin in obj.admins.all()])
+
+    get_admins.short_description = "Administratorzy"
+
+    def get_members(self, obj):
+        """Wyświetla listę członków grupy w panelu admina."""
+        return ", ".join([member.email for member in obj.members.all()])
+
+    get_members.short_description = "Członkowie"
+
+    def get_meetings(self, obj):
+        """Wyświetla listę przypisanych spotkań w panelu admina."""
+        return ", ".join([meeting.name_pl for meeting in obj.meetings.all()])
+
+    get_meetings.short_description = "Spotkania"
