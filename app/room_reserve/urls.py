@@ -79,7 +79,8 @@ urlpatterns = [
     path("search/rooms/", search_views.search_rooms, name="search_rooms"),
     path("search/free-rooms/", search_views.search_free_rooms, name="search_free_rooms"),
     path("search/groups/", search_views.search_groups, name="search_groups"),
-    path("admin-panel/", admin_views.admin_panel, name="admin_panel"),
+    path("api/search/meetings/", search_views.api_search_meetings, name="api_search_meetings"),
+
     # notifications
     path("notifications/mark-read/", mark_views.mark_notifications_as_read, name="mark_notifications_as_read"),
     path("notifications/history/", history_views.notification_history, name="notification_history"),
@@ -110,10 +111,5 @@ urlpatterns = [
     path("group/<int:group_id>/remove-member/<int:user_id>/", group_views.remove_member, name="remove_member"),
     path("group/<int:group_id>/remove-meeting/<int:meeting_id>/", group_views.remove_meeting, name="remove_meeting"),
     path("group/<int:group_id>/remove-event/<int:event_id>/", group_views.remove_event, name="remove_event"),
-    # api wyszukiwarka
-    path("api/search/meetings/", search_views.api_search_meetings, name="api_search_meetings"),
-    path("api/search/events/", search_views.api_search_events, name="api_search_events"),
-    path("api/search/rooms/", search_views.api_search_rooms, name="api_search_rooms"),
-    path("api/search/free-rooms/", search_views.api_search_free_rooms, name="api_search_free_rooms"),
-    path("api/search/groups/", search_views.api_search_groups, name="api_search_groups"),
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    path("admin-panel/", admin_views.admin_panel, name="admin_panel"),
+ ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -205,7 +205,6 @@ def edit_meeting(request, meeting_id):
     else:
         form = EditMeetingForm(instance=meeting)
 
-    # Renderuj stronę edycji z formularzem
     return render(
         request,
         "pages/calendar/edit_meeting.html",

@@ -34,36 +34,26 @@
 </div>
 
 {% if filter.qs %}
-<table>
-    <thead>
-        <tr>
-            <th>Nazwa</th>
-            <th>Opis</th>
-            <th>Czas rozpoczęcia</th>
-            <th>Czas zakończenia</th>
-            <th>Organizator</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for event in filter.qs %}
-        <tr>
-            <td style="display:none">{{ event.id }}</td>
-            <td>
-                <a href="{% url 'event_details' event.id %}">
-                    {{ event.name }}
-                </a>
-            </td>
-            <td>{{ event.description }}</td>
-            <td>{{ event.start_date }}</td>
-            <td>{{ event.end_date }}</td>
-            <td>
-                {{ event.organizer.first_name }} {{ event.organizer.last_name }}
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+<div class="tiles_container">
+    {% for event in filter.qs %}
+    <a href="{% url 'event_details' event.id %}" class="tile" style="
+        background-image: {% if event.logo %}
+            url('{{ event.logo.url }}');
+        {% else %}
+            none;
+        {% endif %}
+        background-color: {% if not event.logo %}
+            {{ event.color }};
+        {% endif %}
+        background-size: cover;
+        background-position: center;">
+        <div class="event-name">
+            {{ event.name }}
+        </div>
+    </a>
+    {% endfor %}
+</div>
 {% else %}
-<p class="no-results">Brak dostępnych sal w podanym przedziale czasu.</p>
+<p class="no-results">Nie znaleziono wydarzeń pasujących do kryteriów wyszukiwania.</p>
 {% endif %}
 {% endblock %}

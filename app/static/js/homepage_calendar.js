@@ -104,7 +104,6 @@ function generateWeeklyCalendar(year, month, day) {
 const displayMeetings = meetings => {
     const calendarEl = document.getElementById('calendar');
 
-    // --- Widok miesięczny ---
     if (currentView === 'monthly') {
         const days = calendarEl.querySelectorAll('.day');
         days.forEach(day => {
@@ -159,7 +158,6 @@ const displayMeetings = meetings => {
             }
         });
 
-    // --- Widok tygodniowy ---
     } else if (currentView === 'weekly') {
         displayWeeklyMeetings(meetings);
     }
@@ -270,19 +268,17 @@ const displayWeeklyMeetings = meetings => {
 };
 
 async function processAndDisplayMeetings() {
-    const meetings = await importMeetings();  // z fetch.js
+    const meetings = await importMeetings();
     console.log(meetings);
 
     if (currentView === 'monthly') {
         displayMeetings(meetings);
     } else if (currentView === 'weekly') {
-        // Wyliczamy zakres tygodnia
         const weekStart = new Date(currentDate);
         weekStart.setDate(currentDate.getDate() - getMondayFirstDay(currentDate.getDay()));
         const weekEnd = new Date(weekStart);
         weekEnd.setDate(weekStart.getDate() + 6);
 
-        // Filtrujemy spotkania, aby wczytać tylko z aktualnego tygodnia
         const weeklyMeetings = meetings.filter(meeting => {
             const startDate = new Date(meeting.start_time);
             return startDate >= weekStart && startDate <= weekEnd;
@@ -354,7 +350,6 @@ document.getElementById('arrow-right').addEventListener('click', function () {
     processAndDisplayMeetings();
 });
 
-// Inicjalizacja widoku na starcie
 updateDateRange();
 generateMonthlyCalendar();
 processAndDisplayMeetings();
