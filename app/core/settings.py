@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     "django_htmx",
     "colorfield",
     "django_filters",
+    "rest_framework",
 ]
 
 MIDDLEWARE = [
@@ -163,8 +164,8 @@ EMAIL_HOST_USER = "powiadomienia@roomreserveuam.pl"
 EMAIL_HOST_PASSWORD = "iZzXauocwNW6iM4UVZhG"
 DEFAULT_FROM_EMAIL = "powiadomienia@roomreserveuam.pl"
 
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = "/media/"
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
 
 # Allauth settings
