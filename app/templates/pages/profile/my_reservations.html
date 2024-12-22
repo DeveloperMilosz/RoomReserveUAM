@@ -51,7 +51,7 @@
                         <strong>Wydarzenie: {{ event.name }}</strong><br>
                         Data rozpoczęcia: {{ event.start_date }}<br>
                         Data zakończenia: {{ event.end_date }}<br>
-                        <a href="{% url 'edit_event' event.id %}">Edytuj</a>
+                        {% comment %} <a href="{% url 'edit_event' event.id %}">Edytuj</a> {% endcomment %}
                     </li>
                 {% endfor %}
             </ul>

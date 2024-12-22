@@ -15,7 +15,7 @@ class AttributeDescription(BaseModel):
 class RoomAttributeIn(BaseModel):
     id: str
     description: AttributeDescription
-    count: int
+    count: Optional[int] = 0  # Domyślna wartość to 0
 
 
 class RoomDataIn(BaseModel):
@@ -57,7 +57,6 @@ room_ids = [
     2703,
     2704,
     2777,
-    354,
 ]
 
 
@@ -117,7 +116,7 @@ class UAMApiHandler:
                         attribute_id=attr.id,
                         description_pl=attr.description.pl,
                         description_en=attr.description.en,
-                        count=attr.count,
+                        count=attr.count or 0,  # Domyślna wartość to 0
                     )
                 logger.info(f"Attributes for room {room_id} saved.")
 
