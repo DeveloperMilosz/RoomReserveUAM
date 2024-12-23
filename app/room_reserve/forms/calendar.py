@@ -66,26 +66,16 @@ class EditMeetingForm(forms.ModelForm):
     groups = forms.ModelMultipleChoiceField(
         queryset=Group.objects.all(),
         required=False,
-        label="Groups",
-        help_text="Select groups associated with this meeting.",
-        widget=forms.SelectMultiple(attrs={'id': 'id_groups', 'size': 5})  # Multi-select dropdown
+        widget=forms.SelectMultiple(attrs={'size': 5}),
+        label="Associated Groups",
+        help_text="Select all groups associated with this meeting."
     )
 
     class Meta:
         model = Meeting
         fields = [
-            'name_pl',
-            'name_en',
-            'start_time',
-            'end_time',
-            'meeting_type',
-            'description',
-            'room',
-            'lecturers',
-            'event',
-            'color',
-            'capacity',
-            'groups',  # Include groups field
+            'name_pl', 'name_en', 'start_time', 'end_time', 'meeting_type',
+            'description', 'room', 'lecturers', 'event', 'color', 'capacity', 'groups'
         ]
         widgets = {
             'name_pl': forms.TextInput(attrs={'id': 'id_name_pl'}),
@@ -99,7 +89,7 @@ class EditMeetingForm(forms.ModelForm):
                 'oninput': "this.style.height = '';this.style.height = this.scrollHeight + 'px'"
             }),
             'room': forms.Select(attrs={'id': 'id_room'}),
-            'lecturers': forms.SelectMultiple(attrs={'id': 'id_lecturer'}),
+            'lecturers': forms.SelectMultiple(attrs={'id': 'id_lecturers'}),
             'event': forms.Select(attrs={'id': 'id_event'}),
             'color': forms.TextInput(attrs={'type': 'color', 'id': 'id_color'}),
             'capacity': forms.NumberInput(attrs={'id': 'capacity', 'maxlength': 4}),
@@ -110,8 +100,7 @@ class EditMeetingForm(forms.ModelForm):
         self.fields['room'].queryset = Room.objects.all()
         self.fields['lecturers'].queryset = Lecturers.objects.all()
         self.fields['event'].queryset = Event.objects.all()
-        self.fields['meeting_type'].choices = Meeting.MEETING_TYPE_CHOICES
-        self.fields['groups'].queryset = Group.objects.all()  # Load all available groups
+        self.fields['groups'].queryset = Group.objects.all()
 
 class EventForm(forms.ModelForm):
     class Meta:

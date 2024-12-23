@@ -88,6 +88,17 @@
             <div class="input-box">
                 <input type="text" name="capacity" value="{{ meeting.capacity }}" maxlength="4" required id="capacity" placeholder="Liczba miejsc">
             </div>
+
+            <div class="input-box">
+                <label for="id_groups">Groups:</label>
+                <select name="groups" id="id_groups" multiple>
+                    {% for group in form.fields.groups.queryset %}
+                    <option value="{{ group.id }}" {% if group in meeting.groups.all %}selected{% endif %}>
+                        {{ group.name }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
             
             <button type="submit" class="form-button">Edytuj spotkanie</button>
         </form>

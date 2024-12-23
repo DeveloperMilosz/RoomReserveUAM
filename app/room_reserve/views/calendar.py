@@ -217,14 +217,20 @@ def edit_meeting(request, meeting_id):
     rooms = Room.objects.all()
     events = Event.objects.all()
     lecturers = Lecturers.objects.all()
+    groups = Group.objects.all()
 
     if request.method == "POST":
         form = EditMeetingForm(request.POST, instance=meeting)
         if form.is_valid():
-            form.save()
-            return redirect("my_reservations")
+            meeting = form.save(commit=False)
+            selected_groups = form.cleaned_data.get('groups')
+            meeting.groups.set(selected_groups)  # Updates Many-to-Many relationship for groups
+            meeting.save()
+            form.save_m2m()  # Save many-to-many fields
+            messages.success(request, "Meeting updated successfully.")
+            return redirect('meeting_details', meeting_id=meeting.id)
         else:
-            print(form.errors)
+            messages.error(request, "There was an error updating the meeting.")
     else:
         form = EditMeetingForm(instance=meeting)
 
@@ -235,8 +241,9 @@ def edit_meeting(request, meeting_id):
             "form": form,
             "meeting": meeting,
             "rooms": rooms,
-            "lecturers": lecturers,
             "events": events,
+            "lecturers": lecturers,
+            "groups": groups,
         },
     )
 
