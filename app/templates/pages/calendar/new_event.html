@@ -12,10 +12,12 @@
         <form method="post">
             {% csrf_token %}
             
+            <!-- Event Name -->
             <div class="input-box">
                 <input type="text" name="name" placeholder="Nazwa wydarzenia" maxlength="50" required id="id_name">
             </div>
             
+            <!-- Event Type -->
             <div class="input-box">
                 <select name="event_type" required id="id_event_type">
                     <option value="" disabled selected>Wybierz typ wydarzenia</option>
@@ -24,19 +26,25 @@
                 </select>
             </div>
 
+            <!-- Start Date -->
             <div class="input-box">
                 <input type="datetime-local" name="start_date" placeholder="Data rozpoczęcia" required id="id_start_date">
             </div>
             
+            <!-- End Date -->
             <div class="input-box">
                 <input type="datetime-local" name="end_date" placeholder="Data zakończenia" required id="id_end_date">
             </div>
 
+            <!-- Description -->
             <div class="input-box">
-                <textarea name="description" placeholder="Opis wydarzenia" id="id_description" oninput='this.style.height = "";this.style.height = this.scrollHeight + "px"'></textarea>
+                <textarea name="description" placeholder="Opis wydarzenia" id="id_description" 
+                    oninput='this.style.height = "";this.style.height = this.scrollHeight + "px"'></textarea>
             </div>
 
+            <!-- Organizer -->
             <div class="input-box">
+                <label for="id_organizer">Organizator:</label>
                 <select name="organizer" required id="id_organizer">
                     <option value="" disabled selected>Wybierz organizatora</option>
                     {% for lecturer in lecturers %}
@@ -45,17 +53,26 @@
                 </select>
             </div>
 
-            <!-- Wybór Koloru -->
+            <!-- Group Selection -->
+            <div class="input-box">
+                <label for="id_group">Grupy:</label>
+                <select name="groups[]" id="id_group" multiple>
+                    {% for group in groups %}
+                    <option value="{{ group.id }}">{{ group.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Color Picker -->
             <div class="input-box">
                 <label for="id_color">Wybierz kolor:</label>
-
                 <input type="color" name="color" value="#0f2d66" id="id_color">
             </div>
             
-            
+            <!-- Submit Button -->
             <button type="submit" class="form-button">Dodaj wydarzenie</button>
         </form>
     </div>
 </div>
 
-{% endblock content %}
+{% endblock %}

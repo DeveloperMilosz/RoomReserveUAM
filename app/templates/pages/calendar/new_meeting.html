@@ -75,6 +75,15 @@
                 </select>
             </div>
 
+            <div class="input-box">
+                <label for="id_groups">Wybierz grupy:</label>
+                <select name="groups[]" id="id_groups" multiple>
+                    {% for group in groups %}
+                    <option value="{{ group.id }}">{{ group.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
             <!-- Liczba Uczestników -->
             <div class="input-box">
                 <label for="id_capacity">Liczba uczestników:</label>
