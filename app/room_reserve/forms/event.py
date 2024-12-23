@@ -1,16 +1,15 @@
 from django import forms
 from django.forms import inlineformset_factory
-from room_reserve.models import Event, Meeting
+from room_reserve.models import Event, Meeting, Group
 
 class EventForm(forms.ModelForm):
+    groups = forms.ModelMultipleChoiceField(
+        queryset=Group.objects.all(),
+        required=False,
+        widget=forms.SelectMultiple,
+        label="Groups"
+    )
+
     class Meta:
         model = Event
-        fields = ['name', 'description', 'organizer', 'event_type', 'start_date', 'end_date', 'color']
-
-MeetingFormSet = inlineformset_factory(
-    Event,
-    Meeting,
-    fields=['meeting_type', 'start_time', 'end_time', 'name_pl', 'name_en', 'room', 'description', 'lecturers', 'capacity', 'color'],
-    extra=1,
-    can_delete=True,
-)
+        fields = ['name', 'description', 'organizer', 'event_type', 'start_date', 'end_date', 'color', 'groups']

@@ -33,6 +33,14 @@
                     <label for="event-logo">Logo wydarzenia:</label>
                     <input type="file" id="event-logo" name="eventlogo" placeholder="Wybierz logo" accept="image/*">
                 </div>
+                <div class="input-box">
+                    <label for="event-groups">Groups:</label>
+                    <select id="event-groups" name="eventgroups[]" multiple>
+                        {% for group in groups %}
+                        <option value="{{ group.id }}">{{ group.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
                 <button type="button" id="add-segment-btn" class="form-button">Dodaj spotkanie</button>
                 <button type="submit" class="form-button">Zatwierdź</button>
             </div>

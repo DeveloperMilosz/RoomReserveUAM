@@ -4,7 +4,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.utils.dateparse import parse_date
 from django.db.models import Q
-from room_reserve.models import Meeting, Event, Room, Lecturers, RoomAttribute
+from room_reserve.models import Meeting, Event, Room, Lecturers, RoomAttribute, Group
 from room_reserve.forms.calendar import MeetingForm, EventForm, EditMeetingForm
 from datetime import datetime, timedelta
 import json
@@ -113,6 +113,7 @@ def room_details(request, room_number):
 def new_meeting(request):
     rooms = Room.objects.all()
     events = Event.objects.all()
+    groups = Group.objects.all()
     lecturers = Lecturers.objects.all()
 
     if request.method == "POST":
@@ -120,6 +121,7 @@ def new_meeting(request):
         if form.is_valid():
             meeting_data = form.cleaned_data
 
+            # Extract form fields
             is_recurring = meeting_data.get("is_recurring")
             frequency_select = meeting_data.get("frequency_select")
             days_of_week = meeting_data.get("days_of_week")
@@ -127,11 +129,14 @@ def new_meeting(request):
             start_time = meeting_data.get("start_time")
             end_time = meeting_data.get("end_time")
             selected_lecturers = meeting_data.get("lecturers")
+            selected_groups = meeting_data.get("groups")
 
+            # Handle recurring meetings
             if is_recurring and frequency_select and cycle_end_date:
                 current_date = start_time.date()
-
                 while current_date <= cycle_end_date:
+                    should_add = False
+
                     if frequency_select == "daily":
                         should_add = True
                     elif frequency_select == "weekly":
@@ -142,8 +147,6 @@ def new_meeting(request):
                         should_add = current_date.day == start_time.date().day
                     elif frequency_select == "custom_days":
                         should_add = str(current_date.weekday()) in days_of_week
-                    else:
-                        should_add = False
 
                     if should_add:
                         meeting = Meeting.objects.create(
@@ -159,32 +162,52 @@ def new_meeting(request):
                             is_updated=False,
                             is_approved=False,
                             event=meeting_data.get("event"),
+                            submitted_by=request.user,
                         )
+
+                        # Add lecturers and groups
                         if selected_lecturers:
                             meeting.lecturers.set(selected_lecturers)
 
+                        if selected_groups:
+                            for group in selected_groups:
+                                group.meetings.add(meeting)
+
+                    # Advance to the next date
                     if frequency_select in ["daily", "weekly", "biweekly", "custom_days"]:
                         current_date += timedelta(days=1)
                     elif frequency_select == "monthly":
+                        # Advance to the next month
                         next_month = (current_date.month % 12) + 1
                         current_date = current_date.replace(month=next_month)
 
+            # Handle a single meeting
             else:
                 meeting = form.save(commit=False)
                 meeting.is_approved = False
+                meeting.submitted_by = request.user
                 meeting.save()
                 form.save_m2m()
+
+                # Add selected groups
+                if selected_groups:
+                    for group in selected_groups:
+                        group.meetings.add(meeting)
 
             return redirect("home")
     else:
         form = MeetingForm()
 
-        form.fields["event"].queryset = events
-
     return render(
         request,
         "pages/calendar/new_meeting.html",
-        {"form": form, "rooms": rooms, "events": events, "lecturers": lecturers},
+        {
+            "form": form,
+            "rooms": rooms,
+            "events": events,
+            "groups": groups,
+            "lecturers": lecturers,
+        },
     )
 
 
@@ -220,14 +243,30 @@ def edit_meeting(request, meeting_id):
 
 def new_event(request):
     lecturers = Lecturers.objects.all()
+    groups = Group.objects.all()  # Fetch all groups for the dropdown
+
     if request.method == "POST":
         form = EventForm(request.POST)
         if form.is_valid():
-            form.save()
+            event = form.save(commit=False)
+            event.save()
+
+            # Associate the event with a group if selected
+            group_id = form.cleaned_data.get("group")
+            if group_id:
+                group = Group.objects.filter(id=group_id).first()
+                if group:
+                    group.events.add(event)
+
             return redirect("home")
     else:
         form = EventForm()
-    return render(request, "pages/calendar/new_event.html", {"form": form, "lecturers": lecturers})
+
+    return render(
+        request,
+        "pages/calendar/new_event.html",
+        {"form": form, "lecturers": lecturers, "groups": groups},
+    )
 
 
 def delete_meeting(request, meeting_id):

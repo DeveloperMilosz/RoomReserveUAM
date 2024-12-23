@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
-from room_reserve.models import Event, Meeting, Lecturers, Room
+from room_reserve.models import Event, Meeting, Lecturers, Room, Group
 from django.utils.dateparse import parse_datetime
 from room_reserve.notifications import notify_event_submission_with_meetings
 
@@ -13,6 +13,7 @@ def create_event_with_meetings(request):
         event_start_date = request.POST.get("eventdatestart")
         event_end_date = request.POST.get("eventdateend")
         event_logo = request.FILES.get("eventlogo")  # Get the uploaded logo
+        selected_group_ids = request.POST.getlist("eventgroups[]")  # Get selected groups
 
         # Create the event object
         event = Event.objects.create(
@@ -23,6 +24,11 @@ def create_event_with_meetings(request):
             event_type=Event.GENERAL_EVENT,
             logo=event_logo,  # Save the logo
         )
+
+        # Associate event with selected groups
+        selected_groups = Group.objects.filter(id__in=selected_group_ids)
+        for group in selected_groups:
+            group.events.add(event)
 
         # Collect segment (meeting) data
         segment_names = request.POST.getlist("segmentname[]")
@@ -59,6 +65,10 @@ def create_event_with_meetings(request):
             if lecturer:
                 meeting.lecturers.add(lecturer)
 
+            # Assign the same groups to the meeting as the event
+            for group in selected_groups:
+                group.meetings.add(meeting)
+
         # Notify administrators about the new event with meetings
         notify_event_submission_with_meetings(event_name=event_name, user=request.user)
 
@@ -69,11 +79,13 @@ def create_event_with_meetings(request):
     # Prepare data for the form
     rooms = Room.objects.all()
     lecturers = Lecturers.objects.all()
+    groups = Group.objects.all()  # Load all available groups
     return render(
         request,
         "pages/calendar/create_event_with_meetings.html",
         {
             "rooms": rooms,
             "lecturers": lecturers,
+            "groups": groups,
         },
     )
