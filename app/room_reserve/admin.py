@@ -75,6 +75,21 @@ class LecturersAdmin(admin.ModelAdmin):
     search_fields = ("first_name", "last_name", "email", "department")
 
 
+from django.contrib import admin
+from room_reserve.models import Meeting, Group
+
+
+class GroupInline(admin.TabularInline):
+    """
+    Inline pozwalający na dodawanie i edycję grup powiązanych ze spotkaniem.
+    """
+
+    model = Group.meetings.through  # Powiązanie przez model pośredni
+    extra = 1
+    verbose_name = "Powiązana grupa"
+    verbose_name_plural = "Powiązane grupy"
+
+
 @admin.register(Meeting)
 class MeetingAdmin(admin.ModelAdmin):
     list_display = (
@@ -92,12 +107,21 @@ class MeetingAdmin(admin.ModelAdmin):
         "is_rejected",
         "is_updated",
         "submitted_by",
+        "list_groups",  # Wyświetlanie powiązanych grup
     )
     search_fields = ("name_pl", "name_en", "description", "submitted_by__username", "submitted_by__email")
     list_filter = ("meeting_type", "is_approved", "is_rejected", "is_updated", "submitted_by")
     autocomplete_fields = ("lecturers", "room", "event")
     readonly_fields = ("submitted_by",)
     actions = ["approve_meetings", "reject_meetings"]
+    filter_horizontal = ("assigned_groups",)
+    inlines = [GroupInline]  # Dodajemy inline do zarządzania grupami
+
+    def list_groups(self, obj):
+        """Wyświetla przypisane grupy jako listę."""
+        return ", ".join([group.name for group in obj.assigned_groups.all()])
+
+    list_groups.short_description = _("Groups")
 
     def approve_meetings(self, request, queryset):
         count = queryset.update(is_approved=True, is_rejected=False)
@@ -138,13 +162,30 @@ class MeetingInline(admin.TabularInline):
     show_change_link = True
 
 
+class GroupInline(admin.TabularInline):
+    """
+    Inline dla zarządzania grupami powiązanymi z wydarzeniem.
+    """
+
+    model = Group.events.through  # Powiązanie przez model pośredni
+    extra = 1
+    verbose_name = "Powiązana grupa"
+    verbose_name_plural = "Powiązane grupy"
+
+
 @admin.register(Event)
 class EventAdmin(admin.ModelAdmin):
-    list_display = ("name", "event_type", "organizer", "start_date", "end_date", "is_approved")
+    list_display = ("name", "event_type", "organizer", "start_date", "end_date", "is_approved", "list_groups")
     search_fields = ("name", "description")
     list_filter = ("event_type", "organizer", "is_approved")
-    inlines = [MeetingInline]
+    inlines = [GroupInline]  # Inline dla zarządzania grupami
     actions = ["approve_events", "reject_events"]
+
+    def list_groups(self, obj):
+        """Wyświetla przypisane grupy jako lista nazw."""
+        return ", ".join([group.name for group in obj.assigned_groups.all()])
+
+    list_groups.short_description = _("Groups")
 
     def approve_events(self, request, queryset):
         count = queryset.update(is_approved=True)
