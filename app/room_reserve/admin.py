@@ -75,10 +75,6 @@ class LecturersAdmin(admin.ModelAdmin):
     search_fields = ("first_name", "last_name", "email", "department")
 
 
-from django.contrib import admin
-from room_reserve.models import Meeting, Group
-
-
 class GroupInline(admin.TabularInline):
     """
     Inline pozwalający na dodawanie i edycję grup powiązanych ze spotkaniem.
@@ -162,7 +158,7 @@ class MeetingInline(admin.TabularInline):
     show_change_link = True
 
 
-class GroupInline(admin.TabularInline):
+class GroupInline1(admin.TabularInline):
     """
     Inline dla zarządzania grupami powiązanymi z wydarzeniem.
     """
@@ -178,7 +174,7 @@ class EventAdmin(admin.ModelAdmin):
     list_display = ("name", "event_type", "organizer", "start_date", "end_date", "is_approved", "list_groups")
     search_fields = ("name", "description")
     list_filter = ("event_type", "organizer", "is_approved")
-    inlines = [GroupInline]  # Inline dla zarządzania grupami
+    inlines = [GroupInline1]  # Inline dla zarządzania grupami
     actions = ["approve_events", "reject_events"]
 
     def list_groups(self, obj):
