@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="form-container form-segments">
+    <h1>Edytuj wydarzenie i spotkania</h1>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div id="segments-container">
+            <div class="form-form">
+                <h2>Szczegóły wydarzenia</h2>
+                <div class="input-box">
+                    <label for="event-name">Nazwa wydarzenia:</label>
+                    <input type="text" id="event-name" name="eventname" value="{{ event.name }}" required>
+                </div>
+                <div class="input-box">
+                    <label for="event-description">Opis wydarzenia:</label>
+                    <textarea id="event-description" name="eventdescription" required>{{ event.description }}</textarea>
+                </div>
+                <div class="input-box">
+                    <label for="event-date-start">Data rozpoczęcia:</label>
+                    <input type="datetime-local" id="event-date-start" name="eventdatestart" value="{{ event.start_date|date:"Y-m-d\TH:i" }}" required>
+                </div>
+                <div class="input-box">
+                    <label for="event-date-end">Data zakończenia:</label>
+                    <input type="datetime-local" id="event-date-end" name="eventdateend" value="{{ event.end_date|date:"Y-m-d\TH:i" }}" required>
+                </div>
+                <div class="input-box">
+                    <label for="event-logo">Logo wydarzenia:</label>
+                    <input type="file" id="event-logo" name="eventlogo" accept="image/*">
+                </div>
+                <div class="input-box">
+                    <label for="event-groups">Grupy:</label>
+                    <select id="event-groups" name="eventgroups[]" multiple>
+                        {% for group in groups %}
+                        <option value="{{ group.id }}" {% if group.id in event.groups.values_list('id', flat=True) %}selected{% endif %}>
+                            {{ group.name }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <button type="submit" class="form-button">Zapisz zmiany</button>
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}

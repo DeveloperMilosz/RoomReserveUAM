@@ -12,17 +12,17 @@
     <p><strong>Nazwa Wydarzenia:</strong> <br>
         {{ event.name }}
     </p>
-    
+
     <p><strong>Prowadzący:</strong><br>
         {{ event.organizer }}
     </p>
-    
+
     <div class="meeting-detail-row">
         <p><strong>Czas rozpoczęcia:</strong> <br>{{ event.start_date }}</p>
         <p><strong>Czas zakończenia:</strong> <br>{{ event.end_date }}</p>
     </div>
-    
-    <div class="color-display"><strong>Kolor:</strong> 
+
+    <div class="color-display"><strong>Kolor:</strong>
         <span style="display: inline-block; width: 20px; height: 20px; background-color: {{ event.color }}; border-radius: 50%;"></span>
     </div>
 
@@ -32,7 +32,7 @@
             <ul>
                 {% for meeting in meetings %}
                     <li>
-                        <strong>Nazwa spotkania:</strong> 
+                        <strong>Nazwa spotkania:</strong>
                         <a href="{% url 'meeting_details' meeting_id=meeting.id %}">{{ meeting.name_pl|default:"Brak" }}</a><br>
                     </li>
                 {% endfor %}
@@ -40,6 +40,11 @@
         {% else %}
             <p><em>Brak powiązanych spotkań z tym wydarzeniem.</em></p>
         {% endif %}
+    </div>
+
+    <!-- Edit button -->
+    <div style="margin-top: 20px; text-align: center;">
+        <a href="{% url 'edit_event_with_meetings' event_id=event.id %}" class="form-button">Edytuj Wydarzenie</a>
     </div>
 </div>
 
