@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from room_reserve.models import Event, Meeting, Lecturers, Room, Group
 from django.utils.dateparse import parse_datetime
@@ -84,6 +84,70 @@ def create_event_with_meetings(request):
         request,
         "pages/calendar/create_event_with_meetings.html",
         {
+            "rooms": rooms,
+            "lecturers": lecturers,
+            "groups": groups,
+        },
+    )
+
+
+def edit_event_with_meetings(request, event_id):
+    event = get_object_or_404(Event, id=event_id)
+    meetings = event.meetings.all()
+    rooms = Room.objects.all()
+    lecturers = Lecturers.objects.all()
+    groups = Group.objects.all()
+
+    if request.method == "POST":
+        # Aktualizacja wydarzenia
+        event.name = request.POST.get("eventname")
+        event.description = request.POST.get("eventdescription")
+        event.start_date = request.POST.get("eventdatestart")
+        event.end_date = request.POST.get("eventdateend")
+        if request.FILES.get("eventlogo"):
+            event.logo = request.FILES.get("eventlogo")
+
+        selected_group_ids = request.POST.getlist("eventgroups[]")
+        event.groups.set(Group.objects.filter(id__in=selected_group_ids))
+        event.save()
+
+        # Aktualizacja spotkań
+        segment_ids = request.POST.getlist("segmentid[]")
+        segment_names = request.POST.getlist("segmentname[]")
+        segment_lecturers = request.POST.getlist("segmentlecturer[]")
+        segment_rooms = request.POST.getlist("segmentroom[]")
+        segment_descriptions = request.POST.getlist("segmentdescription[]")
+        segment_dates = request.POST.getlist("segmentdate[]")
+        segment_start_times = request.POST.getlist("segmenttimestart[]")
+        segment_end_times = request.POST.getlist("segmenttimeend[]")
+        segment_participants = request.POST.getlist("segmentparticipants[]")
+
+        for i, segment_id in enumerate(segment_ids):
+            if segment_id:  # Istniejące spotkanie
+                meeting = get_object_or_404(Meeting, id=segment_id)
+            else:  # Nowe spotkanie
+                meeting = Meeting(event=event)
+
+            meeting.name_pl = segment_names[i]
+            meeting.description = segment_descriptions[i]
+            meeting.start_time = parse_datetime(f"{segment_dates[i]}T{segment_start_times[i]}")
+            meeting.end_time = parse_datetime(f"{segment_dates[i]}T{segment_end_times[i]}")
+            meeting.capacity = segment_participants[i]
+            meeting.room = Room.objects.filter(id=segment_rooms[i]).first()
+            lecturer = Lecturers.objects.filter(id=segment_lecturers[i]).first()
+            if lecturer:
+                meeting.lecturers.set([lecturer])
+            meeting.save()
+
+        messages.success(request, "Wydarzenie i spotkania zostały pomyślnie zaktualizowane.")
+        return redirect("event_details", event_id=event.id)
+
+    return render(
+        request,
+        "pages/calendar/edit_event_with_meetings.html",
+        {
+            "event": event,
+            "meetings": meetings,
             "rooms": rooms,
             "lecturers": lecturers,
             "groups": groups,

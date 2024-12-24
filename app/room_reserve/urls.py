@@ -61,6 +61,7 @@ urlpatterns = [
         auth_views.password_reset_from_key_done,
         name="account_reset_password_from_key_done",
     ),
+    path("edit-event/<int:event_id>/", event_meeting.edit_event_with_meetings, name="edit_event_with_meetings"),
     path("room/<str:room_number>/schedule/", rosberrypi_views.room_schedule_view, name="room_schedule"),
     path("create-event/", event_meeting.create_event_with_meetings, name="create_event_with_meetings"),
     path("get_meetings/", calendar_views.get_meetings, name="get_meetings"),
@@ -80,7 +81,6 @@ urlpatterns = [
     path("search/free-rooms/", search_views.search_free_rooms, name="search_free_rooms"),
     path("search/groups/", search_views.search_groups, name="search_groups"),
     path("api/search/meetings/", search_views.api_search_meetings, name="api_search_meetings"),
-
     # notifications
     path("notifications/mark-read/", mark_views.mark_notifications_as_read, name="mark_notifications_as_read"),
     path("notifications/history/", history_views.notification_history, name="notification_history"),
@@ -112,4 +112,4 @@ urlpatterns = [
     path("group/<int:group_id>/remove-meeting/<int:meeting_id>/", group_views.remove_meeting, name="remove_meeting"),
     path("group/<int:group_id>/remove-event/<int:event_id>/", group_views.remove_event, name="remove_event"),
     path("admin-panel/", admin_views.admin_panel, name="admin_panel"),
- ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
