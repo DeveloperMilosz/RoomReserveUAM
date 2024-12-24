@@ -572,17 +572,33 @@ table a:hover {
 .tiles_container a {
   width: 160px;
   color: white;
-  height: 160px;
+  height: 100px;
   background-color: rgb(40, 115, 255);
   margin: 12px;
   display: flex;
-  font-size: 24px;
+  font-size: 16px;
+  font-weight: 800;
   justify-content: center;
   padding-top: 12px;
-  border-radius: 24px;
+  border-radius: 12px;
+  position: relative;
+  margin-top: 48px;
+}
+.tiles_container a .tile-image {
+  position: absolute;
+  bottom: 25px;
+  left: 15px;
+  z-index: 99;
+  width: 130px;
+  height: 130px;
+  border-radius: 12px;
+}
+.tiles_container a .event-name {
+  position: absolute;
+  bottom: 2px;
 }
 .tiles_container a:hover {
-  font-size: 32px;
+  transform: translateY(-16px);
 }
 
 .notes-top {
