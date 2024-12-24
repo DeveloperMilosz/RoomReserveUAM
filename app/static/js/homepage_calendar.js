@@ -147,8 +147,8 @@ const displayMeetings = meetings => {
                         eventEl.style.backgroundRepeat = 'no-repeat';
                         eventEl.style.backgroundSize = 'cover';
 
-                        eventEl.style.backgroundColor = 'rgba(255, 255, 255, 0.5)';
-                        eventEl.style.backgroundBlendMode = 'lighten';
+                        eventEl.style.backgroundColor = 'rgba(0, 0, 0, 0.3)';
+                        eventEl.style.backgroundBlendMode = 'darken';
                     } else {
                         eventEl.style.backgroundColor = meeting.color;
                     }
@@ -253,8 +253,8 @@ const displayWeeklyMeetings = meetings => {
                         eventEl.style.backgroundRepeat = 'no-repeat';
                         eventEl.style.backgroundSize = 'cover';
 
-                        eventEl.style.backgroundColor = 'rgba(255, 255, 255, 0.5)';
-                        eventEl.style.backgroundBlendMode = 'lighten';
+                        eventEl.style.backgroundColor = 'rgba(0, 0, 0, 0.3)';
+                        eventEl.style.backgroundBlendMode = 'darken';
 
                     } else {
                         eventEl.style.backgroundColor = meeting.color;
