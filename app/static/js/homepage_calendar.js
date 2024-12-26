@@ -38,7 +38,7 @@ const updateWeekdaysWithDates = () => {
 
     for (let i = 0; i < 7; i++) {
         const currentDay = new Date(weekStart);
-        currentDay.setDate(weekStart.getDate() + i);
+        currentDay.setDate(weekStart.getDate());
 
         const dayEl = document.createElement('div');
         dayEl.innerHTML = `<strong>${daysOfWeek[i]}</strong> ${formatDate(currentDay)}`;
@@ -147,8 +147,8 @@ const displayMeetings = meetings => {
                         eventEl.style.backgroundRepeat = 'no-repeat';
                         eventEl.style.backgroundSize = 'cover';
 
-                        eventEl.style.backgroundColor = 'rgba(0, 0, 0, 0.3)';
-                        eventEl.style.backgroundBlendMode = 'darken';
+                        eventEl.style.backgroundColor = 'rgba(255, 255, 255, 0.5)';
+                        eventEl.style.backgroundBlendMode = 'lighten';
                     } else {
                         eventEl.style.backgroundColor = meeting.color;
                     }
@@ -276,13 +276,20 @@ async function processAndDisplayMeetings() {
     } else if (currentView === 'weekly') {
         const weekStart = new Date(currentDate);
         weekStart.setDate(currentDate.getDate() - getMondayFirstDay(currentDate.getDay()));
+        weekStart.setHours(0, 0, 0, 0);
+
         const weekEnd = new Date(weekStart);
         weekEnd.setDate(weekStart.getDate() + 6);
+        weekEnd.setHours(23, 59, 59, 999);
 
         const weeklyMeetings = meetings.filter(meeting => {
             const startDate = new Date(meeting.start_time);
             return startDate >= weekStart && startDate <= weekEnd;
         });
+
+        console.log("test tydzien");
+        console.log(weeklyMeetings);
+
         displayMeetings(weeklyMeetings);
     }
 }
