@@ -98,6 +98,7 @@ class Meeting(models.Model):
     event = models.ForeignKey(
         Event, on_delete=models.CASCADE, verbose_name=_("Event"), related_name="meetings", null=True, blank=True
     )
+    is_canceled = models.BooleanField(_("Is Canceled"), default=False)
     is_approved = models.BooleanField(_("is approved"), default=False)
     is_rejected = models.BooleanField(_("is rejected"), default=False)
     created_at = models.DateTimeField(_("created at"), auto_now_add=True, null=True, blank=True)
