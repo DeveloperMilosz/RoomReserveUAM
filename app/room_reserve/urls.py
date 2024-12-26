@@ -81,6 +81,11 @@ urlpatterns = [
     path("search/free-rooms/", search_views.search_free_rooms, name="search_free_rooms"),
     path("search/groups/", search_views.search_groups, name="search_groups"),
     path("api/search/meetings/", search_views.api_search_meetings, name="api_search_meetings"),
+    path("meeting/<int:meeting_id>/cancel/", calendar_views.cancel_meeting, name="cancel_meeting"),
+    # odwolanie spotkan
+    path("meeting/<int:meeting_id>/cancel/", calendar_views.cancel_meeting, name="cancel_meeting"),
+    path("meeting/<int:meeting_id>/restore/", calendar_views.restore_meeting, name="restore_meeting"),
+    path("meeting/<int:meeting_id>/edit/", calendar_views.edit_meeting, name="edit_meeting"),
     # notifications
     path("notifications/mark-read/", mark_views.mark_notifications_as_read, name="mark_notifications_as_read"),
     path("notifications/history/", history_views.notification_history, name="notification_history"),

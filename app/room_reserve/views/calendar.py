@@ -32,6 +32,7 @@ def new_meeting(request):
         {"form": form, "rooms": rooms, "events": events, "lecturers": lecturers},
     )
 
+
 def get_meetings(request):
     meetings = (
         Meeting.objects.select_related("room", "event")
@@ -49,7 +50,7 @@ def get_meetings(request):
             "color": meeting.color,
             "room": meeting.room.room_number if meeting.room else None,
         }
-        
+
         if meeting.event and meeting.event.logo:
             event_data["logo"] = request.build_absolute_uri(meeting.event.logo.url)
         else:
@@ -58,7 +59,6 @@ def get_meetings(request):
         events.append(event_data)
 
     return JsonResponse(events, safe=False)
-
 
 
 def room_schedule(request, room_id):
@@ -92,23 +92,30 @@ def meeting_details(request, meeting_id):
     event = meeting.event
     return render(request, "pages/calendar/meeting_details.html", {"meeting": meeting, "event": event})
 
+
 def event_details(request, event_id):
     event = get_object_or_404(Event, pk=event_id)
     meetings = event.meetings.all()
     return render(request, "pages/calendar/event_details.html", {"event": event, "meetings": meetings})
 
+
 def room_details(request, room_number):
     room = get_object_or_404(Room, room_number=room_number)
     attributes = room.attributes.all()
-    
+
     room_number_parts = room.room_number.split(".")
     floor = "parter" if room_number_parts[0] == "0" else room_number_parts[0]
-    
-    return render(request, "pages/calendar/room_details.html", {
-        "room": room,
-        "attributes": attributes,
-        "floor": floor,
-    })
+
+    return render(
+        request,
+        "pages/calendar/room_details.html",
+        {
+            "room": room,
+            "attributes": attributes,
+            "floor": floor,
+        },
+    )
+
 
 def new_meeting(request):
     rooms = Room.objects.all()
@@ -223,12 +230,12 @@ def edit_meeting(request, meeting_id):
         form = EditMeetingForm(request.POST, instance=meeting)
         if form.is_valid():
             meeting = form.save(commit=False)
-            selected_groups = form.cleaned_data.get('groups')
+            selected_groups = form.cleaned_data.get("groups")
             meeting.groups.set(selected_groups)  # Updates Many-to-Many relationship for groups
             meeting.save()
             form.save_m2m()  # Save many-to-many fields
             messages.success(request, "Meeting updated successfully.")
-            return redirect('meeting_details', meeting_id=meeting.id)
+            return redirect("meeting_details", meeting_id=meeting.id)
         else:
             messages.error(request, "There was an error updating the meeting.")
     else:
@@ -383,3 +390,39 @@ def search_view(request):
             "event": request.GET.get("event", ""),
         },
     )
+
+
+@login_required
+def cancel_meeting(request, meeting_id):
+    """
+    Widok odwoływania spotkania.
+    """
+    meeting = get_object_or_404(Meeting, pk=meeting_id)
+
+    # Sprawdzenie, czy użytkownik może odwołać spotkanie
+    if request.user != meeting.submitted_by and not request.user.is_staff:
+        return JsonResponse({"error": "Nie masz uprawnień do odwołania tego spotkania."}, status=403)
+
+    meeting.is_canceled = True
+    meeting.save()
+
+    # Przekierowanie na stronę edycji spotkania
+    return redirect("edit_meeting", meeting_id=meeting.id)
+
+
+@login_required
+def restore_meeting(request, meeting_id):
+    """
+    Widok przywracania odwołanego spotkania.
+    """
+    meeting = get_object_or_404(Meeting, pk=meeting_id)
+
+    # Sprawdzenie, czy użytkownik może przywrócić spotkanie
+    if request.user != meeting.submitted_by and not request.user.is_staff:
+        return JsonResponse({"error": "Nie masz uprawnień do przywrócenia tego spotkania."}, status=403)
+
+    meeting.is_canceled = False
+    meeting.save()
+
+    # Przekierowanie na stronę edycji spotkania
+    return redirect("edit_meeting", meeting_id=meeting.id)
