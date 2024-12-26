@@ -147,8 +147,8 @@ const displayMeetings = meetings => {
                         eventEl.style.backgroundRepeat = 'no-repeat';
                         eventEl.style.backgroundSize = 'cover';
 
-                        eventEl.style.backgroundColor = 'rgba(255, 255, 255, 0.5)';
-                        eventEl.style.backgroundBlendMode = 'lighten';
+                        eventEl.style.backgroundColor = 'rgba(0, 0, 0, 0.3)';
+                        eventEl.style.backgroundBlendMode = 'darken';
                     } else {
                         eventEl.style.backgroundColor = meeting.color;
                     }
@@ -286,9 +286,6 @@ async function processAndDisplayMeetings() {
             const startDate = new Date(meeting.start_time);
             return startDate >= weekStart && startDate <= weekEnd;
         });
-
-        console.log("test tydzien");
-        console.log(weeklyMeetings);
 
         displayMeetings(weeklyMeetings);
     }
