@@ -7,30 +7,31 @@ from django.db.models import Q
 from room_reserve.models import Meeting, Event, Room, Lecturers, RoomAttribute, Group
 from room_reserve.forms.calendar import MeetingForm, EventForm, EditMeetingForm
 from datetime import datetime, timedelta
+from django.contrib import messages
 import json
 
 
-@login_required
-def new_meeting(request):
-    rooms = Room.objects.all()
-    events = Event.objects.all()
-    lecturers = Lecturers.objects.all()
-    if request.method == "POST":
-        form = MeetingForm(request.POST)
-        if form.is_valid():
-            meeting = form.save(commit=False)
-            meeting.is_approved = False
-            meeting.submitted_by = request.user
-            meeting.save()
-            form.save_m2m()
-            return redirect("home")
-    else:
-        form = MeetingForm()
-    return render(
-        request,
-        "pages/calendar/new_meeting.html",
-        {"form": form, "rooms": rooms, "events": events, "lecturers": lecturers},
-    )
+# @login_required
+# def new_meeting(request):
+#     rooms = Room.objects.all()
+#     events = Event.objects.all()
+#     lecturers = Lecturers.objects.all()
+#     if request.method == "POST":
+#         form = MeetingForm(request.POST)
+#         if form.is_valid():
+#             meeting = form.save(commit=False)
+#             meeting.is_approved = False
+#             meeting.submitted_by = request.user
+#             meeting.save()
+#             form.save_m2m()
+#             return redirect("home")
+#     else:
+#         form = MeetingForm()
+#     return render(
+#         request,
+#         "pages/calendar/new_meeting.html",
+#         {"form": form, "rooms": rooms, "events": events, "lecturers": lecturers},
+#     )
 
 
 def get_meetings(request):
@@ -88,10 +89,24 @@ def room_schedule(request, room_id):
     )
 
 
+@login_required
 def meeting_details(request, meeting_id):
     meeting = get_object_or_404(Meeting, pk=meeting_id)
     event = meeting.event
-    return render(request, "pages/calendar/meeting_details.html", {"meeting": meeting, "event": event})
+    all_groups = Group.objects.all()  # Pobierz wszystkie grupy
+
+    if request.method == "POST":
+        selected_group_ids = request.POST.getlist("groups")  # Pobierz wybrane grupy z formularza
+        selected_groups = Group.objects.filter(id__in=selected_group_ids)
+        meeting.assigned_groups.set(selected_groups)  # Przypisz grupy do spotkania
+        meeting.save()
+        return redirect("meeting_details", meeting_id=meeting.id)
+
+    return render(
+        request,
+        "pages/calendar/meeting_details.html",
+        {"meeting": meeting, "event": event, "all_groups": all_groups},
+    )
 
 
 def event_details(request, event_id):

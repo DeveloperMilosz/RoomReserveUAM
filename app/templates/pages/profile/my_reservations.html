@@ -11,7 +11,7 @@
             <ul>
                 {% for meeting in pending_meetings %}
                     <li>
-                        <strong>Spotkanie: {{ meeting.name_pl }}</strong><br>
+                        <strong>Spotkanie: <a href="{% url 'meeting_details' meeting.id %}">{{ meeting.name_pl }}</a></strong><br>
                         Data rozpoczęcia: {{ meeting.start_time }}<br>
                         Data zakończenia: {{ meeting.end_time }}<br>
                         Sala: {{ meeting.room.room_number }}<br>
@@ -20,7 +20,7 @@
                 {% endfor %}
                 {% for event in pending_events %}
                     <li>
-                        <strong>Wydarzenie: {{ event.name }}</strong><br>
+                        <strong>Wydarzenie: <a href="{% url 'event_details' event.id %}">{{ event.name }}</a></strong><br>
                         Data rozpoczęcia: {{ event.start_date }}<br>
                         Data zakończenia: {{ event.end_date }}<br>
                         <a href="{% url 'edit_event' event.id %}">Edytuj</a>
@@ -39,7 +39,7 @@
             <ul>
                 {% for meeting in approved_meetings %}
                     <li>
-                        <strong>Spotkanie: {{ meeting.name_pl }}</strong><br>
+                        <strong>Spotkanie: <a href="{% url 'meeting_details' meeting.id %}">{{ meeting.name_pl }}</a></strong><br>
                         Data rozpoczęcia: {{ meeting.start_time }}<br>
                         Data zakończenia: {{ meeting.end_time }}<br>
                         Sala: {{ meeting.room.room_number }}<br>
@@ -48,10 +48,9 @@
                 {% endfor %}
                 {% for event in approved_events %}
                     <li>
-                        <strong>Wydarzenie: {{ event.name }}</strong><br>
+                        <strong>Wydarzenie: <a href="{% url 'event_details' event.id %}">{{ event.name }}</a></strong><br>
                         Data rozpoczęcia: {{ event.start_date }}<br>
                         Data zakończenia: {{ event.end_date }}<br>
-                        {% comment %} <a href="{% url 'edit_event' event.id %}">Edytuj</a> {% endcomment %}
                     </li>
                 {% endfor %}
             </ul>
@@ -67,7 +66,7 @@
             <ul>
                 {% for meeting in rejected_meetings %}
                     <li>
-                        <strong>Spotkanie: {{ meeting.name_pl }}</strong><br>
+                        <strong>Spotkanie: <a href="{% url 'meeting_details' meeting.id %}">{{ meeting.name_pl }}</a></strong><br>
                         Data rozpoczęcia: {{ meeting.start_time }}<br>
                         Data zakończenia: {{ meeting.end_time }}<br>
                         Sala: {{ meeting.room.room_number }}<br>
@@ -76,7 +75,7 @@
                 {% endfor %}
                 {% for event in rejected_events %}
                     <li>
-                        <strong>Wydarzenie: {{ event.name }}</strong><br>
+                        <strong>Wydarzenie: <a href="{% url 'event_details' event.id %}">{{ event.name }}</a></strong><br>
                         Data rozpoczęcia: {{ event.start_date }}<br>
                         Data zakończenia: {{ event.end_date }}<br>
                         <a href="{% url 'edit_event' event.id %}">Edytuj</a>

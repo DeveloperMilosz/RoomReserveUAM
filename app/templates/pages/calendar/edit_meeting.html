@@ -77,18 +77,7 @@
                 <input type="text" name="capacity" value="{{ meeting.capacity }}" maxlength="4" required id="capacity" placeholder="Liczba miejsc">
             </div>
 
-            <!-- Dodano sekcję przypisania do grup -->
-            <div class="input-box">
-                <label for="id_groups">Przypisz do grupy:</label>
-                <select name="groups" id="id_groups" multiple>
-                    {% for group in all_groups %}
-                        <option value="{{ group.id }}"
-                            {% if group in meeting.assigned_groups.all %}selected{% endif %}>
-                            {{ group.name }}
-                        </option>
-                    {% endfor %}
-                </select>
-            </div>
+
 
             <button type="submit" class="form-button">Edytuj spotkanie</button>
         </form>
