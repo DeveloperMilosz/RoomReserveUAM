@@ -6,42 +6,30 @@
     <img src="{% static 'img/logo_pl.png' %}" id="logo" alt="logo UAM" aria-hidden="true">
 
     <h1>Edytuj Spotkanie</h1>
-    <p>Wprowadź szczegóły wydarzenia poniżej, aby edytowac wydarzenie.</p>
+    <p>Wprowadź szczegóły wydarzenia poniżej, aby edytować wydarzenie.</p>
 
     <div class="form-form">
         <form method="post">
             {% csrf_token %}
-            
+
             <div class="input-box">
                 <input type="text" name="name_pl" value="{{ meeting.name_pl }}" maxlength="255" required id="id_name_pl" placeholder="Nazwa spotkania (PL)">
             </div>
-            
+
             <div class="input-box">
                 <input type="text" name="name_en" value="{{ meeting.name_en }}" maxlength="255" required id="id_name_en" placeholder="Nazwa spotkania (EN)">
             </div>
-            
+
             <div class="input-box">
                 <input type="datetime-local" name="start_time" value="{{ meeting.start_time|date:'Y-m-d\\TH:i' }}" required id="id_start_time" placeholder="Czas rozpoczęcia">
             </div>
-            
+
             <div class="input-box">
                 <input type="datetime-local" name="end_time" value="{{ meeting.end_time|date:'Y-m-d\\TH:i' }}" required id="id_end_time" placeholder="Czas zakończenia">
             </div>
-            
-            <div class="input-box">
-                <select name="meeting_type" id="id_meeting_type" required>
-                    <option value="" disabled>Wybierz typ spotkania</option>
-                    {% for choice in form.fields.meeting_type.choices %}
-                        <option value="{{ choice.0 }}" 
-                            {% if choice.0 == meeting.meeting_type %}selected{% endif %}>
-                            {{ choice.1 }}
-                        </option>
-                    {% endfor %}
-                </select>
-            </div>
 
             <div class="input-box">
-                <textarea name="description" placeholder="{{ meeting.description }}" id="id_description" 
+                <textarea name="description" placeholder="{{ meeting.description }}" id="id_description"
                     oninput='this.style.height = "";this.style.height = this.scrollHeight + "px"'></textarea>
             </div>
 
@@ -49,7 +37,7 @@
                 <select name="room" id="id_room" required>
                     <option value="" disabled>Wybierz salę</option>
                     {% for room in rooms %}
-                        <option value="{{ room.id }}" 
+                        <option value="{{ room.id }}"
                             {% if room == meeting.room %}selected{% endif %}>
                             {{ room.room_number }} ({{ room.building_name_pl }})
                         </option>
@@ -60,7 +48,7 @@
             <div class="input-box">
                 <select name="lecturers" id="id_lecturers" multiple>
                     {% for lecturer in lecturers %}
-                        <option value="{{ lecturer.id }}" 
+                        <option value="{{ lecturer.id }}"
                             {% if lecturer.id|stringformat:"s" in form.data.lecturers or lecturer in meeting.lecturers.all %}selected{% endif %}>
                             {{ lecturer.first_name }} {{ lecturer.last_name }}
                         </option>
@@ -72,7 +60,7 @@
                 <select name="event" id="id_event">
                     <option value="" selected>Bez wydarzenia</option>
                     {% for event in events %}
-                        <option value="{{ event.id }}" 
+                        <option value="{{ event.id }}"
                             {% if event == meeting.event %}selected{% endif %}>
                             {{ event.name }}
                         </option>
@@ -89,19 +77,36 @@
                 <input type="text" name="capacity" value="{{ meeting.capacity }}" maxlength="4" required id="capacity" placeholder="Liczba miejsc">
             </div>
 
+            <!-- Dodano sekcję przypisania do grup -->
             <div class="input-box">
-                <label for="id_groups">Groups:</label>
+                <label for="id_groups">Przypisz do grupy:</label>
                 <select name="groups" id="id_groups" multiple>
-                    {% for group in form.fields.groups.queryset %}
-                    <option value="{{ group.id }}" {% if group in meeting.groups.all %}selected{% endif %}>
-                        {{ group.name }}
-                    </option>
+                    {% for group in all_groups %}
+                        <option value="{{ group.id }}"
+                            {% if group in meeting.assigned_groups.all %}selected{% endif %}>
+                            {{ group.name }}
+                        </option>
                     {% endfor %}
                 </select>
             </div>
-            
+
             <button type="submit" class="form-button">Edytuj spotkanie</button>
         </form>
+
+        <!-- Sekcja "Odwołaj Spotkanie" i "Przywróć Spotkanie" -->
+        <div class="input-box">
+            {% if meeting.is_canceled %}
+                <form method="post" action="{% url 'restore_meeting' meeting.id %}" onsubmit="return confirm('Czy na pewno chcesz przywrócić to spotkanie?');">
+                    {% csrf_token %}
+                    <button type="submit" class="form-button" style="background-color: green;">Przywróć spotkanie</button>
+                </form>
+            {% else %}
+                <form method="post" action="{% url 'cancel_meeting' meeting.id %}" onsubmit="return confirm('Czy na pewno chcesz odwołać to spotkanie?');">
+                    {% csrf_token %}
+                    <button type="submit" class="form-button" style="background-color: red;">Odwołaj spotkanie</button>
+                </form>
+            {% endif %}
+        </div>
     </div>
 </div>
 

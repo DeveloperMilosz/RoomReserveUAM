@@ -9,8 +9,8 @@
         <p><strong>Nazwa spotkania:</strong> <br>{{ meeting.name_pl }}</p>
         <p><strong>Meeting name:</strong> <br>{{ meeting.name_en }}</p>
     </div>
-    
-    <p><strong>Prowadzący:</strong> 
+
+    <p><strong>Prowadzący:</strong>
         <br>
         {% for lecturer in meeting.lecturers.all %}
             {{ lecturer.first_name }} {{ lecturer.last_name }}{% if not forloop.last %}, {% endif %}
@@ -18,7 +18,7 @@
             Brak prowadzących
         {% endfor %}
     </p>
-    
+
     <div class="meeting-detail-row">
         <p><strong>Czas rozpoczęcia:</strong> <br>{{ meeting.start_time }}</p>
         <p><strong>Czas zakończenia:</strong> <br>{{ meeting.end_time }}</p>
@@ -26,7 +26,7 @@
 
     <p><strong>Opis:</strong> <br>{{ meeting.description|default:"Brak opisu" }}</p>
 
-    <p><strong>Sala:</strong> 
+    <p><strong>Sala:</strong>
         <br>
         {% if meeting.room %}
             <a href="/room/{{ meeting.room.room_number }}">{{ meeting.room.room_number }}</a>
@@ -34,24 +34,15 @@
             Brak
         {% endif %}
     </p>
-    
-    <p><strong>Budynek:</strong> 
-        <br>
-        {% if meeting.room %}
-            {{ meeting.room.building_name_pl|default:"Brak" }}
-        {% else %}
-            Brak
-        {% endif %}
-    </p>
 
     <p><strong>Liczba miejsc:</strong> <br>{{ meeting.capacity|default:"Brak" }}</p>
-    
-    <p class="color-display"><strong>Kolor:</strong> 
+
+    <p class="color-display"><strong>Kolor:</strong>
         <span style="display: inline-block; width: 20px; height: 20px; background-color: {{ meeting.color }}; border-radius: 50%;"></span>
     </p>
-    
+
     <p><strong>Zaktualizowane:</strong> <br>{{ meeting.is_updated|yesno:"Tak,Nie" }}</p>
-    
+
     {% if event %}
         <hr>
         <h3><a href="{% url 'event_details' event_id=meeting.event.id %}">Szczegóły Wydarzenia</a></h3>
@@ -60,7 +51,7 @@
         <p><strong>Opis wydarzenia:</strong> <br>{{ event.description|default:"Brak" }}</p>
         <p><strong>Data rozpoczęcia wydarzenia:</strong> <br>{{ event.start_date|default:"Brak" }}</p>
         <p><strong>Data zakończenia wydarzenia:</strong> <br>{{ event.end_date|default:"Brak" }}</p>
-        <p><strong>Organizator:</strong> 
+        <p><strong>Organizator:</strong>
             <br>
             {% if event.organizer %}
                 {{ event.organizer.first_name }} {{ event.organizer.last_name }}
@@ -71,7 +62,28 @@
     {% else %}
         <p><em>To spotkanie nie jest przypisane do żadnego wydarzenia.</em></p>
     {% endif %}
-<a href="{% url 'edit_meeting' meeting_id=meeting.id %}" class="btn btn-primary">Edytuj</a>
+
+    <!-- Grupy przypisane do spotkania -->
+    <p><strong>Grupy:</strong></p>
+    {% if meeting.assigned_groups.exists %}
+        <ul>
+            {% for group in meeting.assigned_groups.all %}
+                <li><a href="{% url 'group_detail' group.id %}">{{ group.name }}</a></li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>To spotkanie nie jest przypisane do żadnej grupy.</p>
+    {% endif %}
+
+    <p>Szczegóły Spotkania</p>
+
+    {% if meeting.is_canceled %}
+        <p style="color: red; font-weight: bold;">To spotkanie zostało odwołane.</p>
+    {% else %}
+        <p style="color: green; font-weight: bold;">To spotkanie jest aktywne.</p>
+    {% endif %}
+
+    <a href="{% url 'edit_meeting' meeting_id=meeting.id %}" class="btn btn-primary">Edytuj</a>
 </div>
 
 {% endblock content %}
