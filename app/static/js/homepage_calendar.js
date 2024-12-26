@@ -134,12 +134,34 @@ const displayMeetings = meetings => {
                         dayEl.appendChild(eventsContainer);
                     }
 
+                    const startDate = meeting.start_time ? new Date(meeting.start_time) : null;
+  
+                    const endDate = meeting.end_time ? new Date(meeting.end_time) : null;
+                  
+                    const startTimeString = startDate 
+                        ? startDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                        : '---';
+                    const endTimeString = endDate
+                        ? endDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                        : '---';
+                    
+                    const titleHolder = `
+                      Tytuł: ${meeting.title}
+Godziny: ${startTimeString} – ${endTimeString}
+Sala: ${meeting.room || 'Nieznana'}
+Organizator: ${meeting.organizer || 'Brak danych'}`;
+
+                    
                     const eventEl = document.createElement('a');
                     eventEl.href = `/meeting/${meeting.id}`;
-                    eventEl.classList.add('event');
+                    eventEl.classList.add('event', 'weekly');
+                    
+                    eventEl.title = titleHolder;
                     eventEl.textContent = meeting.title;
 
                     eventEl.style.boxShadow = `inset 0 0 0 2px ${meeting.color}`;
+
+
 
                     if (meeting.logo) {
                         eventEl.style.backgroundImage = `url(${meeting.logo})`;
@@ -233,7 +255,11 @@ const displayWeeklyMeetings = meetings => {
                 col.forEach(meeting => {
                     const eventEl = document.createElement('a');
                     eventEl.href = `/meeting/${meeting.id}`;
-                    eventEl.title = `${meeting.title}`;
+                    eventEl.title = `
+                    Nazwa: ${meeting.title}
+Sala: ${meeting.room || 'Nieznana'}
+Organizator: ${meeting.organizer || 'Brak danych'}
+Godziny: ${meeting.start.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})} – ${meeting.end.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}`
                     eventEl.classList.add('event', 'weekly');
                     eventEl.textContent = meeting.title;
 
