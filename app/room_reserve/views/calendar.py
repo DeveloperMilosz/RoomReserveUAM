@@ -48,6 +48,7 @@ def get_meetings(request):
             "title": meeting.name_pl,
             "color": meeting.color,
             "room": meeting.room.room_number if meeting.room else None,
+            "lecturer": [f"{lecturer.first_name} {lecturer.last_name}" for lecturer in meeting.lecturers.all()],
         }
         
         if meeting.event and meeting.event.logo:

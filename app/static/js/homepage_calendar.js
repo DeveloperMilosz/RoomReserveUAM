@@ -149,9 +149,8 @@ const displayMeetings = meetings => {
                       Tytuł: ${meeting.title}
 Godziny: ${startTimeString} – ${endTimeString}
 Sala: ${meeting.room || 'Nieznana'}
-Organizator: ${meeting.organizer || 'Brak danych'}`;
+Prowadzący: ${meeting.lecturer || 'Brak danych'}`;
 
-                    
                     const eventEl = document.createElement('a');
                     eventEl.href = `/meeting/${meeting.id}`;
                     eventEl.classList.add('event', 'weekly');
@@ -258,7 +257,7 @@ const displayWeeklyMeetings = meetings => {
                     eventEl.title = `
                     Nazwa: ${meeting.title}
 Sala: ${meeting.room || 'Nieznana'}
-Organizator: ${meeting.organizer || 'Brak danych'}
+Prowadzący: ${meeting.lecturer || 'Brak danych'}
 Godziny: ${meeting.start.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})} – ${meeting.end.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}`
                     eventEl.classList.add('event', 'weekly');
                     eventEl.textContent = meeting.title;
