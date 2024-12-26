@@ -159,7 +159,7 @@ nav ul li:hover .submenu {
   box-sizing: border-box;
 }
 .form-container.form-segments {
-  width: 100%;
+  width: 98%;
   border: 0;
 }
 .form-container.form-segments form #segments-container .form-form {
