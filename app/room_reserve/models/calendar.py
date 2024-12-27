@@ -232,6 +232,9 @@ class Status(models.Model):
     created_by = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name="statuses", verbose_name=_("Created By")
     )
+    group = models.ForeignKey(
+        Group, on_delete=models.CASCADE, related_name="statuses", verbose_name=_("Group")
+    )
 
     def __str__(self):
         return self.name
@@ -249,6 +252,9 @@ class Note(models.Model):
     created_at = models.DateTimeField(_("Created At"), auto_now_add=True)
     modified_at = models.DateTimeField(_("Modified At"), auto_now=True)
     order = models.PositiveIntegerField(_("Order"), default=0)
+    group = models.ForeignKey(
+        Group, on_delete=models.CASCADE, related_name="notes", verbose_name=_("Group")
+    )
 
     def __str__(self):
         return self.title or f"Note {self.id}"

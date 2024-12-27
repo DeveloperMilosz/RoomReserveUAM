@@ -1,14 +1,51 @@
+<!-- templates/pages/notes/notes.html -->
+
 {% extends "base.html" %}
 {% load static %}
 {% block content %}
 
+{% comment %} <div class="group-selection">
+    <h2>Wybierz Grupę:</h2>
+    <div class="group-buttons">
+        {% for group in groups %}
+            <a href="{% url 'notes_list' %}?group_id={{ group.id }}" class="form-button {% if group == current_group %}active{% endif %}">
+                {{ group.name }}
+            </a>
+        {% endfor %}
+    </div>
+</div>
+
 <div class="notes-top">
     <div class="navbar-title">
-        <h1>To-Do</h1>
+        <h1>To-Do - {{ current_group.name }}</h1>
     </div>
     <div class="navbar-buttons">
-        <a href="{% url 'add_note' %}" class="form-button">Dodaj nową notatkę</a>
+        <a href="{% url 'add_note' %}?group_id={{ current_group.id }}" class="form-button">Dodaj nową notatkę</a>
         <button id="manage-statuses-btn" class="form-button">Zarządzaj statusami</button>
+    </div>
+</div> {% endcomment %}
+
+<div class="notes-top">
+    <div class="notes-top-left">
+        <form method="GET" action="{% url 'notes_list' %}">
+            <div class="input-box">
+                <input type="hidden" name="group_id" value="{{ current_group.id }}">
+                <select name="group_id" onchange="this.form.submit()" class="form-select">
+                    {% for group in groups %}
+                        <option value="{{ group.id }}" {% if group == current_group %}selected{% endif %}>
+                            {{ group.name }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+        </form>
+    </div>
+    <div class="notes-top-center">
+        <h1>{{ current_group.name }}</h1>
+    </div>
+    <div class="notes-top-right">
+        <a href="{% url 'add_note' %}?group_id={{ current_group.id }}" class="form-button">Dodaj nową notatkę</a>
+        <a id="manage-statuses-btn" class="form-button">Zarządzaj statusami</a>
     </div>
 </div>
 
@@ -26,8 +63,9 @@
                         <h1>{{ note.title }}</h1>
                         <p class="note-description">Opis: {{ note.description }}</p>
                         <div class="details-row">
-                        <p class="note-deadline {% if note.deadline and note.deadline|date:'U' < now|date:'U' %}deadline-past{% endif %}">Termin: <span>{{ note.deadline }}</span></p>
-                        <a href="{% url 'edit_note' note.id %}" class="note-edit-link">Edytuj</a></div>
+                            <p class="note-deadline {% if note.deadline and note.deadline|date:'U' < now|date:'U' %}deadline-past{% endif %}">Termin: <span>{{ note.deadline }}</span></p>
+                            <a href="{% url 'edit_note' note.id %}?group_id={{ current_group.id }}" class="note-edit-link">Edytuj</a>
+                        </div>
                     </div>
                     {% endif %}
                 {% endfor %}
@@ -43,7 +81,7 @@
             {% for status in statuses %}
                 <li class="status-item">
                     <span class="status-name" style="color: {{ status.color }};">{{ status.name }}</span>
-                    <button class="form-button btn-delete-status" data-status-id="{{ status.id }}">Usuń</button>
+                    <button class="form-button btn-delete-status" data-status-id="{{ status.id }}" data-group-id="{{ current_group.id }}">Usuń</button>
                 </li>
             {% endfor %}
         </ul>
@@ -56,12 +94,15 @@
         <input type="color" id="status-color" name="color" value="#CCCCCC">
 
         <div class="popup-btns">
-        <button type="submit" class="form-button">Dodaj</button>
+            <button type="submit" class="form-button">Dodaj</button>
     </form>
     <button id="close-popup-btn" class="form-button">Zamknij</button>
         </div>
 </div>
 
 <div id="popup-overlay" class="popup-overlay"></div>
+<script>
+    const CURRENT_GROUP_ID = "{{ current_group.id }}";
+</script>
 <script src="{% static 'js/notes.js' %}"></script>
 {% endblock %}
