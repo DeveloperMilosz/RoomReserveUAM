@@ -607,9 +607,19 @@ table a:hover {
   margin: 0 auto;
   justify-content: space-between;
   align-items: center;
+  margin-top: 32px;
 }
-.notes-top a.form-button {
+.notes-top .navbar-buttons {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+.notes-top .navbar-buttons a.form-button {
   padding: 15px 32px;
+}
+.notes-top .navbar-buttons a.form-button:not(:first-child) {
+  margin-left: 10px;
 }
 
 .kanban-board {

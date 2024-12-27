@@ -698,9 +698,21 @@ table {
   margin: 0 auto;
   justify-content: space-between;
   align-items: center;
+  margin-top: 32px;
 
-  a.form-button {
-    padding: 15px 32px;
+  .navbar-buttons {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    
+    a.form-button {
+      padding: 15px 32px;
+      
+      &:not(:first-child){
+        margin-left: 10px;
+      }
+    }
   }
 }
 
