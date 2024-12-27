@@ -37,5 +37,6 @@ createsuperuser:
 	docker exec -it django_app python manage.py createsuperuser
 
 dropdatabase:
-	docker exec -it db psql -U postgres -c "DROP DATABASE IF EXISTS mydatabase;"
+	docker exec -it db psql -U postgres -c "SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = 'mydatabase' AND pid <> pg_backend_pid();"
+	docker exec -it db psql -U postgres -c "DROP DATABASE mydatabase;"
 	docker exec -it db psql -U postgres -c "CREATE DATABASE mydatabase;"
