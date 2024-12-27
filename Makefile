@@ -39,8 +39,8 @@ createsuperuser:
 showmigrations:
 	docker exec -it django_app python manage.py showmigrations
 
-undomigrations:
-	docker exec -it django_app python manage.py migrate 0033
+revertmigration:
+	docker exec -it django_app python manage.py migrate room_reserve 0027
 
 dropdatabase:
 	docker exec -it db psql -U postgres -c "SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = 'mydatabase' AND pid <> pg_backend_pid();"
