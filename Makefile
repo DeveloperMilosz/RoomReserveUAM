@@ -35,3 +35,7 @@ migrations:
 
 createsuperuser:
 	docker exec -it django_app python manage.py createsuperuser
+
+dropdatabase:
+	docker exec -it db psql -U postgres -c "DROP DATABASE IF EXISTS mydatabase;"
+	docker exec -it db psql -U postgres -c "CREATE DATABASE mydatabase;"
