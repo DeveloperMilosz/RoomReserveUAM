@@ -45,40 +45,37 @@ def create_event_with_meetings(request):
 
         # Iterate over each segment and create meetings
         for i in range(len(segment_names)):
-            # Get the related objects (lecturer and room)
             room = Room.objects.filter(id=segment_rooms[i]).first()
             lecturer = Lecturers.objects.filter(id=segment_lecturers[i]).first()
-
-            # Parse datetime fields
             start_datetime = parse_datetime(f"{segment_dates[i]}T{segment_start_times[i]}")
             end_datetime = parse_datetime(f"{segment_dates[i]}T{segment_end_times[i]}")
 
-            # Create the meeting
             meeting = Meeting.objects.create(
                 name_pl=segment_names[i],
                 description=segment_descriptions[i],
                 start_time=start_datetime,
                 end_time=end_datetime,
                 capacity=segment_participants[i],
-                event=event,  # Link the meeting to the event
-                room=room,  # Link the meeting to the room
+                event=event,
+                room=room,
             )
 
-            # Add lecturer to the meeting
             if lecturer:
                 meeting.lecturers.add(lecturer)
 
-            # Assign the same groups to the meeting as the event
             for group in selected_groups:
                 group.meetings.add(meeting)
 
-        # Notify user and administrators about the new event with meetings
+        # Notify user and administrators
         notify_event_with_meetings_submission(user=request.user, event_name=event_name, submitted_by=request.user)
         notify_admin_event_with_meetings_submission(event_name=event_name, submitted_by=request.user)
 
-        # Success message and redirect
         messages.success(request, "Event and its segments have been successfully created.")
         return redirect("home")
+    else:
+        # Obsługa dla metody GET
+        groups = Group.objects.all()
+        return render(request, "pages/calendar/create_event_with_meetings.html", {"groups": groups})
 
 
 def edit_event_with_meetings(request, event_id):
