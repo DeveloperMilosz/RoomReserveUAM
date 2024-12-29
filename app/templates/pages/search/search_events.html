@@ -35,7 +35,7 @@
     {% for event in filter.qs %}
         <a href="{% url 'event_details' event.id %}" class="event-tile" style="background-color:{{ event.color }}">
             <div class="tile-image" 
-                 style="background-image: url('{% if event.logo %}{{ event.logo.url }}{% else %}{% static 'img/no_logo.jpg' %}{% endif %}'); 
+                 style="background-image: url('{% if event.logo %}{{ event.logo.url }}{% else %}{% static 'img/logo.png' %}{% endif %}'); 
                         background-size: cover; 
                         background-position: center; 
                         background-repeat: no-repeat;">
