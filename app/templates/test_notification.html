@@ -1,48 +1,44 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Wyślij Powiadomienie</title>
-</head>
-<body>
-    <h1>Wyślij Powiadomienie</h1>
+{% extends "base.html" %}
 
-    <!-- Wyświetlanie błędów -->
+{% block content %}
+<div class="container">
+    <h1>Testowanie Powiadomień</h1>
+
     {% if error %}
-        <p style="color: red;">{{ error }}</p>
+        <div class="alert alert-danger">{{ error }}</div>
     {% endif %}
 
-    <form method="post" action="{% url 'test_notification' %}">
+    <form method="post">
         {% csrf_token %}
+
+        <!-- Wybór użytkownika -->
         <label for="user">Wybierz użytkownika:</label>
-        <select id="user" name="user" onchange="clearGroupSelection()">
+        <select name="user" id="user" required>
             <option value="">-- Wybierz użytkownika --</option>
             {% for user in users %}
-                <option value="{{ user.id }}">{{ user.first_name }} {{ user.last_name }} ({{ user.email }})</option>
+                <option value="{{ user.id }}">{{ user.email }}</option>
             {% endfor %}
         </select>
-        <br><br>
 
-        <label for="group">Wybierz grupę:</label>
-        <select id="group" name="group" onchange="clearUserSelection()">
-            <option value="">-- Wybierz grupę --</option>
-            {% for group in groups %}
-                <option value="{{ group.id }}">{{ group.name }}</option>
-            {% endfor %}
-        </select>
-        <br><br>
+        <!-- Treść powiadomienia -->
+        <label for="message">Treść powiadomienia:</label>
+        <textarea name="message" id="message" rows="5" placeholder="Treść powiadomienia"></textarea>
 
-        <label for="message">Treść powiadomienia:</label><br>
-        <textarea id="message" name="message" rows="4" cols="50"></textarea><br><br>
-        <button type="submit">Wyślij Powiadomienie</button>
+        <!-- Opcje e-mail -->
+        <h2>Opcjonalnie: Wyślij e-mail</h2>
+        <label for="email_subject">Temat wiadomości e-mail:</label>
+        <input type="text" id="email_subject" name="email_subject" placeholder="Temat wiadomości e-mail">
+
+        <label for="email_content">Treść wiadomości e-mail:</label>
+        <textarea name="email_content" id="email_content" rows="5" placeholder="Treść wiadomości e-mail"></textarea>
+
+        <div>
+            <label>
+                <input type="checkbox" name="send_email"> Wyślij jako wiadomość e-mail
+            </label>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Wyślij Powiadomienie</button>
     </form>
-
-    <script>
-        function clearUserSelection() {
-            document.getElementById('user').value = '';
-        }
-        function clearGroupSelection() {
-            document.getElementById('group').value = '';
-        }
-    </script>
-</body>
-</html>
+</div>
+{% endblock %}

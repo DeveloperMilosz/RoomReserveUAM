@@ -1,20 +1,41 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Historia powiadomień</title>
-</head>
-<body>
-    <h1>Twoje powiadomienia</h1>
-    <ul>
-        {% for notification in notifications %}
-            <li>
-                <strong>{{ notification.created_at|date:"Y-m-d H:i" }}</strong>:
-                {{ notification.message }}
-                {% if not notification.is_read %}
-                    <em>(Nieprzeczytane)</em>
-                {% endif %}
-            </li>
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<h1>Historia Powiadomień</h1>
+
+<!-- Formularz filtrowania -->
+<form method="get">
+    <label for="start_date">Data początkowa:</label>
+    <input type="date" id="start_date" name="start_date" value="{{ start_date }}">
+
+    <label for="end_date">Data końcowa:</label>
+    <input type="date" id="end_date" name="end_date" value="{{ end_date }}">
+
+    <label for="search_name">Szukaj w nazwie:</label>
+    <input type="text" id="search_name" name="search_name" placeholder="Wpisz słowo kluczowe" value="{{ search_name }}">
+
+    <label for="group">Grupa:</label>
+    <select id="group" name="group">
+        <option value="">Wszystkie</option>
+        {% for group in groups %}
+            <option value="{{ group.id }}" {% if group.id|stringformat:"s" == selected_group %}selected{% endif %}>{{ group.name }}</option>
         {% endfor %}
-    </ul>
-</body>
-</html>
+    </select>
+
+    <button type="submit">Filtruj</button>
+</form>
+
+<!-- Lista powiadomień -->
+<ul>
+    {% for notification in notifications %}
+        <li>
+            <p><strong>{{ notification.message }}</strong></p>
+            <p><em>{{ notification.created_at }}</em></p>
+            <p>Status: {{ notification.is_read|yesno:"Przeczytane,Nieprzeczytane" }}</p>
+        </li>
+    {% empty %}
+        <p>Brak powiadomień do wyświetlenia.</p>
+    {% endfor %}
+</ul>
+{% endblock content %}
