@@ -13,6 +13,7 @@ def notification_history(request):
     end_date = request.GET.get("end_date")
     search_name = request.GET.get("search_name")
     selected_group = request.GET.get("group")
+    notification_type = request.GET.get("type")
 
     # Filtrowanie powiadomień
     notifications = Notification.objects.filter(user=request.user).order_by("-created_at")
@@ -25,6 +26,9 @@ def notification_history(request):
 
     if selected_group:
         notifications = notifications.filter(user__group_memberships__id=selected_group)
+
+    if notification_type:
+        notifications = notifications.filter(notification_type=notification_type)
 
     groups = Group.objects.all()
 

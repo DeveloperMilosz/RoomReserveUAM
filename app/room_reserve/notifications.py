@@ -2,6 +2,8 @@ from room_reserve.models import Notification, Group
 from django.contrib.auth import get_user_model
 from django.utils.timezone import now
 
+User = get_user_model()
+
 
 def notify_user(user=None, message="", submitted_by=None, is_admin_notification=False, user_type=None):
     """
@@ -10,13 +12,23 @@ def notify_user(user=None, message="", submitted_by=None, is_admin_notification=
     if is_admin_notification:
         admins = get_user_model().objects.filter(is_staff=True, is_superuser=True)
         for admin in admins:
-            Notification.objects.create(user=admin, message=message, submitted_by=submitted_by)
+            Notification.objects.create(
+                user=admin, message=message, submitted_by=submitted_by, notification_type="notification"
+            )
     elif user_type:
         users = get_user_model().objects.filter(user_type=user_type)
         for user in users:
-            Notification.objects.create(user=user, message=message, submitted_by=submitted_by, user_type=user_type)
+            Notification.objects.create(
+                user=user,
+                message=message,
+                submitted_by=submitted_by,
+                user_type=user_type,
+                notification_type="notification",
+            )
     elif user:
-        Notification.objects.create(user=user, message=message, submitted_by=submitted_by)
+        Notification.objects.create(
+            user=user, message=message, submitted_by=submitted_by, notification_type="notification"
+        )
 
 
 # do rezerwacji spotkania
@@ -60,8 +72,6 @@ def notify_admin_event_submission(event_name, submitted_by):
 
 
 # powiadomienie o nowym wydarzeniu ze spotkaniami
-
-
 def notify_event_with_meetings_submission(user, event_name, submitted_by=None):
     """
     Powiadomienie o złożeniu wniosku o wydarzenie ze spotkaniami dla użytkownika.
@@ -84,17 +94,12 @@ def notify_admin_event_with_meetings_submission(event_name, submitted_by):
 
 
 # powiadomieniu o prosbie o zmiane typu konta
-
-
-User = get_user_model()
-
-
 def notify_account_type_request(user, requested_type, reason):
     """
     Tworzy powiadomienie dla wszystkich administratorów o prośbie zmiany typu konta.
     """
     message = (
-        f"Użytkownik {user.first_name} {user.last_name} ({user.email}) prosi o zmianę typu konta na '{requested_type}'."
+        f"Użytkownik {user.first_name} {user.last_name} ({user.email}) prosi o zmianę typu konta na '{requested_type}'. "
         f"Powód: {reason}."
     )
     admins = User.objects.filter(is_staff=True, is_superuser=True)
@@ -103,4 +108,5 @@ def notify_account_type_request(user, requested_type, reason):
             user=admin,
             message=message,
             submitted_by=user,
+            notification_type="notification",
         )
