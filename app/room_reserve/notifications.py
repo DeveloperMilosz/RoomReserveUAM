@@ -81,3 +81,26 @@ def notify_admin_event_with_meetings_submission(event_name, submitted_by):
         f"Użytkownik {user_info} złożył wniosek o wydarzenie ze spotkaniami '{event_name}' w dniu {submission_date}."
     )
     notify_user(None, message, submitted_by=submitted_by, is_admin_notification=True)
+
+
+# powiadomieniu o prosbie o zmiane typu konta
+
+
+User = get_user_model()
+
+
+def notify_account_type_request(user, requested_type, reason):
+    """
+    Tworzy powiadomienie dla wszystkich administratorów o prośbie zmiany typu konta.
+    """
+    message = (
+        f"Użytkownik {user.first_name} {user.last_name} ({user.email}) prosi o zmianę typu konta na '{requested_type}'."
+        f"Powód: {reason}."
+    )
+    admins = User.objects.filter(is_staff=True, is_superuser=True)
+    for admin in admins:
+        Notification.objects.create(
+            user=admin,
+            message=message,
+            submitted_by=user,
+        )
