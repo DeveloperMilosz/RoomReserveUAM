@@ -26,14 +26,17 @@
           </li>
 
           <li>
-            <a href="{% url 'notes_list' %}">To-Do</a>
-          </li>
+            <a href="{% url 'my_groups' %}">Grupy</a>
+            <ul class="submenu">
+              <li><a href="{% url 'my_groups' %}">Moje grupy</a></li>
+              <li><a href="{% url 'create_group' %}">Stwórz nową grupę</a></li>
+              <li><a href="{% url 'notes_list' %}">To-Do</a></li>
+            </ul>
+        </li>
 
           <li>
               <a href="{% url 'home' %}">Profil</a>
               <ul class="submenu">
-                <li><a href="{% url 'my_groups' %}">Moje grupy</a></li>
-                <li><a href="{% url 'create_group' %}">Stwórz nową grupę</a></li>
                 <li><a href="{% url 'my_profile' %}">Mój profil</a></li>
                 <li><a href="{% url 'my_reservations' %}">Moje rezerwacje</a></li>
                 <li><a href="{% url 'account_password_change' %}">Reset hasła</a></li>
