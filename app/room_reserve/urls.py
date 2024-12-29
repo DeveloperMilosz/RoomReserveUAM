@@ -118,4 +118,6 @@ urlpatterns = [
     path("group/<int:group_id>/remove-meeting/<int:meeting_id>/", group_views.remove_meeting, name="remove_meeting"),
     path("group/<int:group_id>/remove-event/<int:event_id>/", group_views.remove_event, name="remove_event"),
     path("admin-panel/", admin_views.admin_panel, name="admin_panel"),
+    # regulamin
+    path("regulamin/", profile_views.terms_conditions_view, name="terms_conditions"),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
