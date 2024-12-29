@@ -1,6 +1,10 @@
-from room_reserve.models import Notification, Group
+from room_reserve.models import Notification, Group, Meeting
 from django.contrib.auth import get_user_model
 from django.utils.timezone import now
+from datetime import timedelta
+from huey import crontab
+from huey.contrib.djhuey import task
+from django.core.mail import send_mail
 
 User = get_user_model()
 
@@ -109,4 +113,38 @@ def notify_account_type_request(user, requested_type, reason):
             message=message,
             submitted_by=user,
             notification_type="notification",
+        )
+
+
+# powiadomienia przed spotkaniem
+
+
+@task()
+def notify_meeting_reminder(meeting_id):
+    """
+    Wysyła powiadomienie 30 minut przed spotkaniem w aplikacji.
+    """
+    meeting = Meeting.objects.get(id=meeting_id)
+    if meeting.start_time > now():
+        Notification.objects.create(
+            user=meeting.submitted_by,
+            message=f"Przypomnienie: Spotkanie '{meeting.name_pl}' rozpoczyna się za 30 minut.",
+            notification_type="notification",
+            submitted_by=None,
+        )
+
+
+@task()
+def email_meeting_reminder(meeting_id, email_time=None):
+    """
+    Wysyła przypomnienie e-mail o spotkaniu.
+    """
+    meeting = Meeting.objects.get(id=meeting_id)
+    email_time = email_time or meeting.start_time
+    if email_time <= now():
+        send_mail(
+            subject=f"Przypomnienie o spotkaniu: {meeting.name_pl}",
+            message=f"Spotkanie '{meeting.name_pl}' rozpoczyna się {meeting.start_time}.",
+            from_email="powiadomienia@roomreserveuam.pl",
+            recipient_list=[meeting.submitted_by.email],
         )

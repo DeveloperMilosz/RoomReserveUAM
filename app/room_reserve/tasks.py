@@ -1,11 +1,11 @@
 from huey import crontab
-from huey.contrib.djhuey import periodic_task, task
+from huey.contrib.djhuey import periodic_task, task, crontab
 from room_reserve.models import Notification, User
 from room_reserve.handlers.UAMApiRoom import UAMApiHandler as RoomHandler
 from room_reserve.handlers.UAMApiMeeting import UAMApiHandler as MeetingHandler
 from room_reserve.handlers.UAMApiEquipment import UAMApiHandler as EquipmentHandler
 from room_reserve.notifications import notify_user
-from django.core.mail import send_mail
+from django.core.mail import send_mail, notify_meeting_reminder, email_meeting_reminder
 
 
 @task()
@@ -134,3 +134,19 @@ def update_equipment_data():
         ]
     )
     handler.main()  # Wywołaj metodę główną do pobrania i zapisania danych
+
+
+# email przed meetingiem
+
+
+@periodic_task(crontab(minute="*/10"))  # Co minutę sprawdzaj spotkania
+def schedule_meeting_notifications():
+    from room_reserve.models import Meeting
+
+    for meeting in Meeting.objects.filter(start_time__gt=now(), is_canceled=False):
+        # Zaplanuj powiadomienie 30 minut przed
+        if meeting.start_time - timedelta(minutes=30) > now():
+            notify_meeting_reminder.schedule((meeting.id,), eta=meeting.start_time - timedelta(minutes=30))
+
+        # Zaplanuj e-mail
+        email_meeting_reminder.schedule((meeting.id,), eta=meeting.start_time)
