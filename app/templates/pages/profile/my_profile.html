@@ -1,7 +1,24 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h1>Mój Profil</h1>
-<p>Witaj, {{ user.username }}!</p>
-<!-- Dodaj zawartość profilu użytkownika -->
+<div class="form-container">
+    <h1>Mój Profil</h1>
+    <form method="post">
+        {% csrf_token %}
+        <h2>Aktualizuj dane:</h2>
+        <div class="form-section">
+            {{ profile_form.as_p }}
+        </div>
+        <button type="submit" class="form-button">Zaktualizuj Profil</button>
+    </form>
+    <hr>
+    <form method="post">
+        {% csrf_token %}
+        <h2>Poproś o zmianę typu konta:</h2>
+        <div class="form-section">
+            {{ type_request_form.as_p }}
+        </div>
+        <button type="submit" class="form-button">Zgłoś prośbę</button>
+    </form>
+</div>
 {% endblock %}
