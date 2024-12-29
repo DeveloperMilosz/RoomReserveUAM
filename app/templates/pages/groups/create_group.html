@@ -1,14 +1,65 @@
 {% extends "base.html" %}
+{% load static %}
 {% block content %}
 
-<h1>Stwórz nową grupę</h1>
 
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit" class="btn btn-success">Utwórz grupę</button>
-</form>
 
-<a href="{% url 'my_groups' %}" class="btn btn-secondary">Wróć do listy grup</a>
+<div class="form-container">
+    <img src="{% static 'img/logo_pl.png' %}" id="logo" alt="logo UAM" aria-hidden="true">
+
+    <h1>Stwórz nową grupę</h1>
+    <p>Proszę wprowadzić szczegóły poniżej, aby stworzyć nową grupe.</p>
+    <div class="form-form">
+        <form method="post">
+            {% csrf_token %}
+
+            <!-- Pole "Nazwa" -->
+            <div class="input-box">
+                <label for="id_name">Nazwa</label>
+                <input
+                    type="text"
+                    name="name"
+                    maxlength="100"
+                    required
+                    id="id_name"
+                />
+            </div>
+
+            <!-- Pole "Description" -->
+            <div class="input-box">
+                <label for="id_description">Opis</label>
+                <textarea
+                    name="description"
+                    cols="40"
+                    rows="10"
+                    id="id_description"
+                ></textarea>
+            </div>
+
+            <!-- Pole "Group type" -->
+            <div class="input-box">
+                <label for="id_group_type">Typ grupy</label>
+                <select
+                    name="group_type"
+                    id="id_group_type"
+                >
+                    <option value="academic_year">Grupa rocznikowa</option>
+                    <option value="lecturer_group">Grupa wykładowcy</option>
+                    <option value="personal_group" selected>Grupa osobista</option>
+                </select>
+            </div>
+
+            <!-- Przycisk zatwierdzający -->
+            <button type="submit" class="form-button btn btn-success">
+                Utwórz grupę
+            </button>
+        </form>
+        <a href="{% url 'my_groups' %}" class="btn btn-secondary">
+            Wróć do listy grup
+        </a>
+    </div>
+</div>
+
+
 
 {% endblock %}
