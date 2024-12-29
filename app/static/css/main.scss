@@ -334,6 +334,14 @@ form > a {
   }
 }
 
+.form-container.about-page{
+  width: 64rem;
+
+  .form-form{
+    max-width: 60rem;
+  }
+}
+
 // Calendar styling
 .calendar-menu {
   display: flex;

@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+
+<div class="form-container about-page">
+  <!-- Logo -->
+  <img 
+    src="{% static 'img/logo_pl.png' %}" 
+    id="logo" 
+    alt="logo UAM" 
+    aria-hidden="true"
+  >
+
+  <!-- Główna treść podstrony -->
+  <div class="form-form">
+    <h2>O stronie</h2>
+    <p>
+      RoomReserveUAM to platforma stworzona po to, aby ułatwić studentom i pracownikom uczelni 
+      rezerwację sal. Jej głównym celem jest umożliwienie szybkiego i przejrzystego dostępu 
+      do informacji o dostępnych pomieszczeniach, terminach oraz rezerwacjach, tak aby każdy 
+      mógł bez problemu zorganizować spotkanie, wydarzenie czy zajęcia dodatkowe.
+    </p><br>
+
+    <h2>Po założeniu konta</h2>
+    <p>
+      Założenie konta daje Ci dostęp do spersonalizowanego kalendarza, w którym w jednym miejscu 
+      zobaczysz wszystkie swoje planowane wydarzenia i rezerwacje. Możesz też łatwo dodać nowe terminy 
+      lub modyfikować już istniejące — bez konieczności kontaktu z administratorem czy skomplikowanych procedur. 
+      Ponadto, system będzie Cię powiadamiać o wszelkich zmianach w grafiku, abyś zawsze był na bieżąco.
+    </p>
+    <p>
+      Dzięki indywidualnemu profilowi masz pełną kontrolę nad zarządzaniem własnymi rezerwacjami. 
+      Wszystkie informacje o salach, terminach i statusie Twoich zgłoszeń znajdują się w jednym miejscu, 
+      co oszczędza czas i minimalizuje ryzyko nieporozumień. Jeśli zależy Ci na wygodzie, automatycznych 
+      powiadomieniach i łatwym dostępie do terminów, załóż konto i korzystaj z wszystkich funkcjonalności 
+      RoomReserveUAM.
+    </p><br>
+
+    <a href="{% url 'account_login' %}" class="form-button">Przejdź do strony logowania</a>
+  </div>
+</div>
+
+{% endblock content %}

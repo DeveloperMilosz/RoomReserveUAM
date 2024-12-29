@@ -289,6 +289,13 @@ form > a {
   margin-right: 8px;
 }
 
+.form-container.about-page {
+  width: 64rem;
+}
+.form-container.about-page .form-form {
+  max-width: 60rem;
+}
+
 .calendar-menu {
   display: flex;
   justify-content: space-evenly;

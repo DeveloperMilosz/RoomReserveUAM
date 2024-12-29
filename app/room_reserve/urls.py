@@ -91,6 +91,7 @@ urlpatterns = [
     path("notifications/history/", history_views.notification_history, name="notification_history"),
     # test notifications
     path("test_notification/", test_views.test_notifications, name="test_notification"),
+    path("about/", calendar_views.about_view, name="about"),
     # notes
     path("notes/", notes_views.notes_list, name="notes_list"),
     path("notes/add/", notes_views.add_or_edit_note, name="add_note"),

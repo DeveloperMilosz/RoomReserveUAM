@@ -442,3 +442,7 @@ def restore_meeting(request, meeting_id):
 
     # Przekierowanie na stronę edycji spotkania
     return redirect("edit_meeting", meeting_id=meeting.id)
+
+
+def about_view(request):
+    return render(request, 'pages/about.html')

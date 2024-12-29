@@ -56,7 +56,13 @@
   {% else %}
   <div class="header-container">
     <div class="left">
-      <a href="{% url 'account_login' %}">System rezerwacji UAM</a>
+      <div class="header-container logged">
+        <nav>
+          <ul>
+            <li><a href="{% url 'home' %}">System rezerwacji UAM</a></li>
+            <li><a href="{% url 'about' %}">O stronie</a></li>
+        </nav>
+      </div>
     </div>
     <div class="right">&nbsp</div>
   </div>
