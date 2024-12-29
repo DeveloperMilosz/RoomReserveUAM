@@ -1,41 +1,120 @@
 {% extends "base.html" %}
-{% load static %}
 
 {% block content %}
-<h1>Historia Powiadomień</h1>
+<div class="notification-history-container">
+    <h1>Historia Powiadomień</h1>
 
-<!-- Formularz filtrowania -->
-<form method="get">
-    <label for="start_date">Data początkowa:</label>
-    <input type="date" id="start_date" name="start_date" value="{{ start_date }}">
+    <style>
+        .notification-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 16px;
+            text-align: left;
+        }
 
-    <label for="end_date">Data końcowa:</label>
-    <input type="date" id="end_date" name="end_date" value="{{ end_date }}">
+        .notification-table th, .notification-table td {
+            padding: 10px;
+            border: 1px solid #ddd;
+        }
 
-    <label for="search_name">Szukaj w nazwie:</label>
-    <input type="text" id="search_name" name="search_name" placeholder="Wpisz słowo kluczowe" value="{{ search_name }}">
+        .notification-table th {
+            background-color: rgba(15, 45, 102, 0.98);
+            color: white;
+            text-align: center;
+        }
 
-    <label for="group">Grupa:</label>
-    <select id="group" name="group">
-        <option value="">Wszystkie</option>
-        {% for group in groups %}
-            <option value="{{ group.id }}" {% if group.id|stringformat:"s" == selected_group %}selected{% endif %}>{{ group.name }}</option>
-        {% endfor %}
-    </select>
+        .notification-table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
 
-    <button type="submit">Filtruj</button>
-</form>
+        .notification-table tr:hover {
+            background-color: #f1f1f1;
+        }
 
-<!-- Lista powiadomień -->
-<ul>
-    {% for notification in notifications %}
-        <li>
-            <p><strong>{{ notification.message }}</strong></p>
-            <p><em>{{ notification.created_at }}</em></p>
-            <p>Status: {{ notification.is_read|yesno:"Przeczytane,Nieprzeczytane" }}</p>
-        </li>
-    {% empty %}
+        .form-button {
+            margin: 10px 0;
+            padding: 10px 20px;
+            color: white;
+            background-color: rgba(15, 45, 102, 0.98);
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .form-button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+
+    <div class="filters">
+        <form method="get">
+            <div>
+                <label for="start_date">Data początkowa:</label>
+                <input type="date" id="start_date" name="start_date" value="{{ start_date }}">
+            </div>
+            <div>
+                <label for="end_date">Data końcowa:</label>
+                <input type="date" id="end_date" name="end_date" value="{{ end_date }}">
+            </div>
+            <div>
+                <label for="search_name">Szukaj w treści:</label>
+                <input type="text" id="search_name" name="search_name" value="{{ search_name }}">
+            </div>
+            <div>
+                <label for="group">Grupa:</label>
+                <select id="group" name="group">
+                    <option value="">-- Wszystkie grupy --</option>
+                    {% for group in groups %}
+                    <option value="{{ group.id }}" {% if selected_group == group.id|stringformat:"s" %}selected{% endif %}>
+                        {{ group.name }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <button type="submit" class="form-button">Filtruj</button>
+        </form>
+    </div>
+
+    <hr>
+
+    <div class="notification-buttons">
+        <form method="get" action="">
+            <input type="hidden" name="type" value="message">
+            <button type="submit" class="form-button">Pokaż Wiadomości</button>
+        </form>
+        <form method="get" action="">
+            <input type="hidden" name="type" value="notification">
+            <button type="submit" class="form-button">Pokaż Powiadomienia</button>
+        </form>
+    </div>
+
+    <hr>
+
+    <div class="notification-list">
+        {% if notifications %}
+        <table class="notification-table">
+            <thead>
+                <tr>
+                    <th>Data</th>
+                    <th>Typ</th>
+                    <th>Treść</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for notification in notifications %}
+                <tr>
+                    <td>{{ notification.created_at|date:"Y-m-d H:i" }}</td>
+                    <td>{{ notification.get_notification_type_display }}</td>
+                    <td>{{ notification.message }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
         <p>Brak powiadomień do wyświetlenia.</p>
-    {% endfor %}
-</ul>
-{% endblock content %}
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
