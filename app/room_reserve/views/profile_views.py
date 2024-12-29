@@ -39,3 +39,10 @@ def my_reservations(request):
 @login_required
 def my_profile_view(request):
     return render(request, "pages/profile/my_profile.html")
+
+
+from django.shortcuts import render
+
+
+def terms_conditions_view(request):
+    return render(request, "pages/profile/regulamin.html")
