@@ -2,7 +2,10 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from room_reserve.models import Event, Meeting, Lecturers, Room, Group
 from django.utils.dateparse import parse_datetime
-from room_reserve.notifications import notify_event_submission_with_meetings
+from room_reserve.notifications import (
+    notify_event_with_meetings_submission,
+    notify_admin_event_with_meetings_submission,
+)
 
 
 def create_event_with_meetings(request):
@@ -69,26 +72,13 @@ def create_event_with_meetings(request):
             for group in selected_groups:
                 group.meetings.add(meeting)
 
-        # Notify administrators about the new event with meetings
-        notify_event_submission_with_meetings(event_name=event_name, user=request.user)
+        # Notify user and administrators about the new event with meetings
+        notify_event_with_meetings_submission(user=request.user, event_name=event_name, submitted_by=request.user)
+        notify_admin_event_with_meetings_submission(event_name=event_name, submitted_by=request.user)
 
         # Success message and redirect
         messages.success(request, "Event and its segments have been successfully created.")
         return redirect("home")
-
-    # Prepare data for the form
-    rooms = Room.objects.all()
-    lecturers = Lecturers.objects.all()
-    groups = Group.objects.all()  # Load all available groups
-    return render(
-        request,
-        "pages/calendar/create_event_with_meetings.html",
-        {
-            "rooms": rooms,
-            "lecturers": lecturers,
-            "groups": groups,
-        },
-    )
 
 
 def edit_event_with_meetings(request, event_id):

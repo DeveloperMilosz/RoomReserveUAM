@@ -23,7 +23,7 @@
                         <strong>Wydarzenie: <a href="{% url 'event_details' event.id %}">{{ event.name }}</a></strong><br>
                         Data rozpoczęcia: {{ event.start_date }}<br>
                         Data zakończenia: {{ event.end_date }}<br>
-                        <a href="{% url 'edit_event' event.id %}">Edytuj</a>
+                        <a href="{% url 'edit_event_with_meetings' event.id %}">Edytuj</a>
                     </li>
                 {% endfor %}
             </ul>
@@ -51,6 +51,7 @@
                         <strong>Wydarzenie: <a href="{% url 'event_details' event.id %}">{{ event.name }}</a></strong><br>
                         Data rozpoczęcia: {{ event.start_date }}<br>
                         Data zakończenia: {{ event.end_date }}<br>
+                        <a href="{% url 'edit_event_with_meetings' event.id %}">Edytuj</a>
                     </li>
                 {% endfor %}
             </ul>
@@ -78,7 +79,7 @@
                         <strong>Wydarzenie: <a href="{% url 'event_details' event.id %}">{{ event.name }}</a></strong><br>
                         Data rozpoczęcia: {{ event.start_date }}<br>
                         Data zakończenia: {{ event.end_date }}<br>
-                        <a href="{% url 'edit_event' event.id %}">Edytuj</a>
+                        <a href="{% url 'edit_event_with_meetings' event.id %}">Edytuj</a>
                     </li>
                 {% endfor %}
             </ul>

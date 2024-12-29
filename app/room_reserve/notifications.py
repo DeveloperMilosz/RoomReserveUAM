@@ -1,5 +1,6 @@
 from room_reserve.models import Notification, Group
 from django.contrib.auth import get_user_model
+from django.utils.timezone import now
 
 
 def notify_user(user=None, message="", submitted_by=None, is_admin_notification=False, user_type=None):
@@ -18,105 +19,65 @@ def notify_user(user=None, message="", submitted_by=None, is_admin_notification=
         Notification.objects.create(user=user, message=message, submitted_by=submitted_by)
 
 
-def notify_group(group, message, submitted_by=None):
-    """
-    Wysyła powiadomienia do wszystkich członków danej grupy.
-    """
-    for member in group.members.all():
-        Notification.objects.create(user=member, message=message, submitted_by=submitted_by)
-
-
-# Powiadomienia ogólne
-def notify_test(user, submitted_by=None):
-    """
-    Testowe powiadomienie.
-    """
-    message = "This is a test notification to check the notification system."
-    notify_user(user, message, submitted_by=submitted_by)
-
-
-# Powiadomienia związane z rezerwacją spotkań
+# do rezerwacji spotkania
 def notify_meeting_submission(user, meeting_name, submitted_by=None):
     """
-    Powiadomienie o złożeniu wniosku o spotkanie.
+    Powiadomienie o złożeniu wniosku o spotkanie dla użytkownika.
     """
-    message = f"Twój wniosek o spotkanie '{meeting_name}' został złożony i oczekuje na zatwierdzenie."
+    submission_date = now().strftime("%Y-%m-%d %H:%M:%S")
+    message = f"Złożyłeś wniosek o spotkanie o nazwie '{meeting_name}' w dniu {submission_date}."
     notify_user(user, message, submitted_by=submitted_by)
 
 
-def notify_meeting_approval(user, meeting_name, approved_by=None):
+def notify_admin_meeting_submission(meeting_name, submitted_by):
     """
-    Powiadomienie o zatwierdzeniu spotkania.
+    Powiadomienie do administratorów o nowym wniosku o spotkanie.
     """
-    message = f"Twoje spotkanie '{meeting_name}' zostało zatwierdzone przez administratora."
-    notify_user(user, message, submitted_by=approved_by)
-
-
-def notify_meeting_rejection(user, meeting_name, rejected_by=None):
-    """
-    Powiadomienie o odrzuceniu spotkania.
-    """
-    message = f"Twój wniosek o spotkanie '{meeting_name}' został odrzucony."
-    notify_user(user, message, submitted_by=rejected_by)
-
-
-# Powiadomienia dla administratorów
-def notify_admin_new_meeting(meeting_name, submitted_by):
-    """
-    Powiadomienie do administratora o nowym wniosku o spotkanie.
-    """
-    message = f"Nowy wniosek o spotkanie '{meeting_name}' został złożony przez {submitted_by.username}."
+    submission_date = now().strftime("%Y-%m-%d %H:%M:%S")
+    user_info = f"{submitted_by.first_name} {submitted_by.last_name} ({submitted_by.email})"
+    message = f"Użytkownik {user_info} złożył wniosek o spotkanie '{meeting_name}' w dniu {submission_date}."
     notify_user(None, message, submitted_by=submitted_by, is_admin_notification=True)
 
 
-# Powiadomienia związane z wydarzeniami
+# do rezerwacji wydarzeń
 def notify_event_submission(user, event_name, submitted_by=None):
     """
-    Powiadomienie o złożeniu wniosku o wydarzenie.
+    Powiadomienie o złożeniu wniosku o wydarzenie dla użytkownika.
     """
-    message = f"Twój wniosek o wydarzenie '{event_name}' został złożony i oczekuje na zatwierdzenie."
+    submission_date = now().strftime("%Y-%m-%d %H:%M:%S")
+    message = f"Złożyłeś wniosek o wydarzenie o nazwie '{event_name}' w dniu {submission_date}."
     notify_user(user, message, submitted_by=submitted_by)
 
 
-def notify_event_approval(user, event_name, approved_by=None):
+def notify_admin_event_submission(event_name, submitted_by):
     """
-    Powiadomienie o zatwierdzeniu wydarzenia.
+    Powiadomienie do administratorów o nowym wniosku o wydarzenie.
     """
-    message = f"Twoje wydarzenie '{event_name}' zostało zatwierdzone przez administratora."
-    notify_user(user, message, submitted_by=approved_by)
+    submission_date = now().strftime("%Y-%m-%d %H:%M:%S")
+    user_info = f"{submitted_by.first_name} {submitted_by.last_name} ({submitted_by.email})"
+    message = f"Użytkownik {user_info} złożył wniosek o wydarzenie '{event_name}' w dniu {submission_date}."
+    notify_user(None, message, submitted_by=submitted_by, is_admin_notification=True)
 
 
-def notify_event_rejection(user, event_name, rejected_by=None):
-    """
-    Powiadomienie o odrzuceniu wydarzenia.
-    """
-    message = f"Twój wniosek o wydarzenie '{event_name}' został odrzucony."
-    notify_user(user, message, submitted_by=rejected_by)
+# powiadomienie o nowym wydarzeniu ze spotkaniami
 
 
-# Powiadomienia systemowe
-def notify_custom_message(user, message, submitted_by=None):
+def notify_event_with_meetings_submission(user, event_name, submitted_by=None):
     """
-    Powiadomienie z własnym komunikatem.
+    Powiadomienie o złożeniu wniosku o wydarzenie ze spotkaniami dla użytkownika.
     """
+    submission_date = now().strftime("%Y-%m-%d %H:%M:%S")
+    message = f"Złożyłeś wniosek o wydarzenie ze spotkaniami o nazwie '{event_name}' w dniu {submission_date}."
     notify_user(user, message, submitted_by=submitted_by)
 
 
-def notify_event_submission_with_meetings(event_name, user):
+def notify_admin_event_with_meetings_submission(event_name, submitted_by):
     """
-    Tworzy powiadomienia dla każdego administratora o nowym wydarzeniu ze spotkaniami.
+    Powiadomienie do administratorów o nowym wniosku o wydarzenie ze spotkaniami.
     """
-    user_full_name = f"{user.first_name} {user.last_name}"
+    submission_date = now().strftime("%Y-%m-%d %H:%M:%S")
+    user_info = f"{submitted_by.first_name} {submitted_by.last_name} ({submitted_by.email})"
     message = (
-        f"Złożono wniosek o rezerwację wydarzenia '{event_name}' ze spotkaniami "
-        f'przez użytkownika "{user_full_name}".'
+        f"Użytkownik {user_info} złożył wniosek o wydarzenie ze spotkaniami '{event_name}' w dniu {submission_date}."
     )
-    User = get_user_model()
-    admins = User.objects.filter(is_staff=True, is_superuser=True)
-    for admin in admins:
-        Notification.objects.create(
-            user=admin,
-            message=message,
-            is_admin_notification=True,
-            submitted_by=user,
-        )
+    notify_user(None, message, submitted_by=submitted_by, is_admin_notification=True)
