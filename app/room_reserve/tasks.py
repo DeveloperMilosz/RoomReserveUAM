@@ -1,11 +1,11 @@
 from huey import crontab
-from huey.contrib.djhuey import periodic_task, task, crontab
+from huey.contrib.djhuey import periodic_task, task
 from room_reserve.models import Notification, User
 from room_reserve.handlers.UAMApiRoom import UAMApiHandler as RoomHandler
 from room_reserve.handlers.UAMApiMeeting import UAMApiHandler as MeetingHandler
 from room_reserve.handlers.UAMApiEquipment import UAMApiHandler as EquipmentHandler
-from room_reserve.notifications import notify_user
-from django.core.mail import send_mail, notify_meeting_reminder, email_meeting_reminder
+from room_reserve.notifications import notify_user, notify_meeting_reminder, email_meeting_reminder
+from django.core.mail import send_mail
 
 
 @task()
