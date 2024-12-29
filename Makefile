@@ -47,8 +47,13 @@ dropdatabase:
 	docker exec -it db psql -U postgres -c "DROP DATABASE mydatabase;"
 	docker exec -it db psql -U postgres -c "CREATE DATABASE mydatabase;"
 
-showtable:
+makequery:
 	docker exec -it db psql -U postgres -c "SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = 'mydatabase' AND pid <> pg_backend_pid();"
 	docker exec -it db \
 	psql -U postgres -d mydatabase \
 	-c "SELECT * FROM \"room_reserve_user\";"
+
+	# -c "SELECT * FROM \"room_reserve_user\";"
+	# -c "TRUNCATE TABLE \"room_reserve_user\";"  usuwanie zawartosci tabeli
+	# -c "DROP TABLE IF EXISTS \"room_reserve_user\";" usuwanie calej tabeli
+	# -c "SELECT table_schema, table_name FROM information_schema.tables WHERE table_type='BASE TABLE' AND table_schema='public' ORDER BY table_schema, table_name;" wyswietla wszystkie table w bazie danych
