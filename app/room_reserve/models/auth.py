@@ -10,6 +10,7 @@ class User(AbstractUser):
     ADMIN = "Admin"
     LECTURER = "Lecturer"
     GUEST = "Guest"
+    ORGANIZER = "Organizer"
 
     date_joined = None
     username = models.CharField(null=True, blank=True, max_length=255)
@@ -29,6 +30,7 @@ class User(AbstractUser):
         (ADMIN, _("Admin")),
         (LECTURER, _("Lecturer")),
         (GUEST, _("Guest")),
+        (ORGANIZER, _("Organizer")),
     ]
 
-    user_type = models.CharField(_("User Type"), max_length=50, choices=USER_TYPE_CHOICES, default=STUDENT)
+    user_type = models.CharField(_("User Type"), max_length=50, choices=USER_TYPE_CHOICES, default=GUEST)
