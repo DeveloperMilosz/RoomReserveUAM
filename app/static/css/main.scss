@@ -436,15 +436,6 @@ form > a {
     &:hover > .events {
       z-index: 99;
     }
-
-    .events{
-      a:last-child {
-        border-radius: 0px 0px 8px 8px;
-      }
-      a:first-child {
-        border-radius: 8px 8px 0px 0px;
-      }
-    }
   }
 
   &.weekly > strong {
@@ -582,7 +573,6 @@ form > a {
 .meeting-detail {
   width: 40rem;
   max-width: 100%;
-  border-radius: 8px;
   margin: 2rem auto;
   box-shadow: 0px 0px 16px -5px rgba(66, 68, 90, 1);
   border-radius: 24px;
@@ -811,7 +801,6 @@ table {
   transform: translate(-50%, -50%);
   background: white;
   padding: 20px;
-  border-radius: 10px;
   z-index: 1000;
   box-shadow: 0px 0px 16px -5px rgba(66, 68, 90, 1);
   border-radius: 24px;
