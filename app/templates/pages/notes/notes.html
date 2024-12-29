@@ -1,40 +1,20 @@
-<!-- templates/pages/notes/notes.html -->
-
 {% extends "base.html" %}
 {% load static %}
 {% block content %}
 
-{% comment %} <div class="group-selection">
-    <h2>Wybierz Grupę:</h2>
-    <div class="group-buttons">
-        {% for group in groups %}
-            <a href="{% url 'notes_list' %}?group_id={{ group.id }}" class="form-button {% if group == current_group %}active{% endif %}">
-                {{ group.name }}
-            </a>
-        {% endfor %}
-    </div>
-</div>
+
 
 <div class="notes-top">
-    <div class="navbar-title">
-        <h1>To-Do - {{ current_group.name }}</h1>
-    </div>
-    <div class="navbar-buttons">
-        <a href="{% url 'add_note' %}?group_id={{ current_group.id }}" class="form-button">Dodaj nową notatkę</a>
-        <button id="manage-statuses-btn" class="form-button">Zarządzaj statusami</button>
-    </div>
-</div> {% endcomment %}
-
-<div class="notes-top">
-    <div class="notes-top-left">
+    <div class="notes-top-left form-form">
         <form method="GET" action="{% url 'notes_list' %}">
             <div class="input-box">
                 <input type="hidden" name="group_id" value="{{ current_group.id }}">
-                <select name="group_id" onchange="this.form.submit()" class="form-select">
+                <select name="group_id" onchange="this.form.submit()">
                     {% for group in groups %}
-                        <option value="{{ group.id }}" {% if group == current_group %}selected{% endif %}>
-                            {{ group.name }}
-                        </option>
+                        
+                    <option value="{{ group.id }}" {% if group == current_group %}selected{% endif %}>
+                        {{ group.name }}
+                    </option>
                     {% endfor %}
                 </select>
             </div>

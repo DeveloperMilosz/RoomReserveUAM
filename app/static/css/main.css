@@ -610,11 +610,18 @@ table a:hover {
 
 .notes-top {
   display: flex;
-  width: 1800px;
+  max-width: 1800px;
+  width: 100%;
   margin: 0 auto;
   justify-content: space-between;
   align-items: center;
   margin-top: 32px;
+}
+.notes-top select {
+  padding: 8px 8px 8px 16px;
+  -webkit-appearance: auto;
+     -moz-appearance: auto;
+          appearance: auto;
 }
 .notes-top .navbar-buttons {
   display: flex;
@@ -631,7 +638,8 @@ table a:hover {
 
 .kanban-board {
   display: flex;
-  width: 1800px;
+  max-width: 1800px;
+  width: 100%;
   margin: 20px auto;
 }
 .kanban-board .status-column {

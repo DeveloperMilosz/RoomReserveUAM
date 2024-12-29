@@ -702,11 +702,17 @@ table {
 // board 
 .notes-top {
   display: flex;
-  width: 1800px;
+  max-width: 1800px;
+  width: 100%;
   margin: 0 auto;
   justify-content: space-between;
   align-items: center;
   margin-top: 32px;
+
+  select{
+    padding: 8px 8px 8px 16px;
+    appearance: auto;
+  }
 
   .navbar-buttons {
     display: flex;
@@ -726,7 +732,8 @@ table {
 
 .kanban-board {
   display: flex;
-  width: 1800px;
+  max-width: 1800px;
+  width: 100%;
   margin: 20px auto;
 
   .status-column {
