@@ -7,6 +7,12 @@ from django.db.models import Q
 from room_reserve.models import Meeting, Event, Room, Lecturers, RoomAttribute, Group
 from room_reserve.forms.calendar import MeetingForm, EventForm, EditMeetingForm
 from datetime import datetime, timedelta
+from room_reserve.notifications import (
+    notify_meeting_submission,
+    notify_admin_meeting_submission,
+    notify_event_submission,
+    notify_admin_event_submission,
+)
 from django.contrib import messages
 import json
 
@@ -217,6 +223,10 @@ def new_meeting(request):
                     for group in selected_groups:
                         group.meetings.add(meeting)
 
+            # Notify user and admins
+            notify_meeting_submission(request.user, meeting_data["name_pl"], submitted_by=request.user)
+            notify_admin_meeting_submission(meeting_data["name_pl"], submitted_by=request.user)
+
             return redirect("home")
     else:
         form = MeetingForm()
@@ -287,6 +297,10 @@ def new_event(request):
                 group = Group.objects.filter(id=group_id).first()
                 if group:
                     group.events.add(event)
+
+            # Notify user and admins
+            notify_event_submission(request.user, event.name, submitted_by=request.user)
+            notify_admin_event_submission(event.name, submitted_by=request.user)
 
             return redirect("home")
     else:

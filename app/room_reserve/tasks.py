@@ -5,6 +5,7 @@ from room_reserve.handlers.UAMApiRoom import UAMApiHandler as RoomHandler
 from room_reserve.handlers.UAMApiMeeting import UAMApiHandler as MeetingHandler
 from room_reserve.handlers.UAMApiEquipment import UAMApiHandler as EquipmentHandler
 from room_reserve.notifications import notify_user
+from django.core.mail import send_mail
 
 
 @task()
@@ -17,6 +18,20 @@ def send_notification_task(user_id=None, message="", submitted_by=None, user_typ
         notify_user(user=user, message=message, submitted_by=submitted_by)
     elif user_type:
         notify_user(message=message, submitted_by=submitted_by, user_type=user_type)
+
+
+@periodic_task(crontab(hour="0", minute="0"))  # Uruchamiane codziennie o północy
+def send_daily_notification_email():
+    users_with_notifications = User.objects.filter(notifications__is_read=False).distinct()
+
+    for user in users_with_notifications:
+        unread_count = user.notifications.filter(is_read=False).count()
+        send_mail(
+            subject="Masz nowe powiadomienia w aplikacji Room Reserve",
+            message=f"Masz {unread_count} nowych powiadomień. Zaloguj się do aplikacji, aby je zobaczyć.",
+            from_email="powiadomienia@roomreserveuam.pl",
+            recipient_list=[user.email],
+        )
 
 
 # Zadanie do pobierania danych o pokojach co 10 minut

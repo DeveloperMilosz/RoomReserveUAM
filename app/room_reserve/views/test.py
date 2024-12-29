@@ -1,41 +1,41 @@
 from django.shortcuts import render, redirect
-from room_reserve.models import Group, User
-from room_reserve.notifications import notify_user, notify_group
+from django.core.mail import send_mail
+from room_reserve.models import User
+from room_reserve.notifications import notify_user
 
 
 def test_notifications(request):
     if request.method == "POST":
-        user_id = request.POST.get("user")
-        group_id = request.POST.get("group")
+        user_id = request.POST.get("user")  # Pobieramy ID wybranego użytkownika
         message = request.POST.get("message")
+        email_subject = request.POST.get("email_subject")
+        email_content = request.POST.get("email_content")
+        send_email = "send_email" in request.POST  # Czy zaznaczono wysyłanie e-maila
 
-        # Walidacja: tylko użytkownik LUB grupa mogą być wybrane
-        if user_id and group_id:
+        # Sprawdzenie, czy wybrano użytkownika
+        if not user_id:
             return render(
                 request,
                 "test_notification.html",
                 {
-                    "error": "Możesz wybrać tylko użytkownika ALBO grupę.",
+                    "error": "Musisz wybrać użytkownika.",
                     "users": User.objects.all(),
-                    "groups": Group.objects.all(),
                 },
             )
 
-        if user_id:
-            user = User.objects.get(id=user_id)
-            notify_user(user=user, message=message, submitted_by=request.user)
-        elif group_id:
-            group = Group.objects.get(id=group_id)
-            notify_group(group=group, message=message, submitted_by=request.user)
-        else:
-            return render(
-                request,
-                "test_notification.html",
-                {
-                    "error": "Musisz wybrać użytkownika lub grupę.",
-                    "users": User.objects.all(),
-                    "groups": Group.objects.all(),
-                },
+        # Znalezienie użytkownika
+        user = User.objects.get(id=user_id)
+
+        # Tworzenie powiadomienia
+        notify_user(user=user, message=message, submitted_by=request.user)
+
+        # Wysyłanie e-maila, jeśli zaznaczono opcję
+        if send_email:
+            send_mail(
+                subject=email_subject or "Powiadomienie od Room Reserve",
+                message=email_content or message,
+                from_email="powiadomienia@roomreserveuam.pl",
+                recipient_list=[user.email],
             )
 
         return redirect("test_notification")  # Po wysłaniu przekierowanie na tę samą stronę
@@ -45,6 +45,5 @@ def test_notifications(request):
         "test_notification.html",
         {
             "users": User.objects.all(),
-            "groups": Group.objects.all(),
         },
     )
