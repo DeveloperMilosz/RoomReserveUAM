@@ -23,6 +23,8 @@ django-filter==24.3
 
 redis
 
+django-jazzmin
+
 sentry-sdk[django]
 
 djangorestframework
