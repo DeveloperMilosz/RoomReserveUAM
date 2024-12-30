@@ -746,4 +746,18 @@ table a:hover {
 .popup .form-button.btn-delete-status {
   background-color: red;
   border: 0;
+}
+
+.form-form.set-notification-form .meeting-detail-row {
+  margin-block-start: 0px;
+}
+.form-form.set-notification-form .meeting-detail-row .input-box {
+  width: 73%;
+}
+.form-form.set-notification-form .meeting-detail-row .input-box input {
+  padding: 0.5rem 1rem;
+  margin-right: 6px;
+}
+.form-form.set-notification-form .meeting-detail-row .form-button {
+  min-height: 32px;
 }/*# sourceMappingURL=main.css.map */

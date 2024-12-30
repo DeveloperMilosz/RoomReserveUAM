@@ -184,6 +184,7 @@ nav ul li:hover .submenu {
     display: block;
     border-width: 0;
     box-sizing: border-box;
+
   }
   
   &.form-segments{
@@ -858,6 +859,26 @@ table {
     &.btn-delete-status {
       background-color: red;
       border: 0;
+    }
+  }
+}
+
+.form-form.set-notification-form{
+      
+  .meeting-detail-row{
+    margin-block-start: 0px;
+
+    .input-box {
+      width: 73%;
+      
+      input{
+        padding: 0.5rem 1rem;
+        margin-right: 6px;
+        
+      }
+    }
+    .form-button{
+      min-height: 32px;
     }
   }
 }

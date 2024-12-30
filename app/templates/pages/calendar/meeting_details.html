@@ -82,9 +82,15 @@
 
 <form method="POST">
     {% csrf_token %}
-    <label for="email_time"><strong>Wyślij przypomnienie e-mail o określonej godzinie:</strong></label>
-    <input type="datetime-local" id="email_time" name="email_time" required>
-    <button type="submit" class="btn btn-primary">Zaplanuj e-mail</button>
+    <div class="form-form set-notification-form">
+        <label for="email_time"><strong>Wyślij przypomnienie e-mail o określonej godzinie:</strong></label>
+        <div class="meeting-detail-row">
+            <div class="input-box">
+                <input type="datetime-local" id="email_time" name="email_time" required>
+            </div>
+                <button type="submit" class="form-button">Zaplanuj e-mail</button>
+        </div>
+    </div>
 </form>
 
     {% if meeting.is_canceled %}
