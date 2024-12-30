@@ -74,24 +74,6 @@
     {% else %}
         <p><em>To spotkanie nie jest przypisane do żadnego wydarzenia.</em></p>
     {% endif %}
-
-    <!-- Formularz przypisywania grup -->
-    {% comment %} <form method="POST">
-        {% csrf_token %}
-        <label for="groups"><strong>Przypisz grupy:</strong></label>
-        <select name="groups" id="groups" multiple>
-            {% for group in all_groups %}
-                <option value="{{ group.id }}" {% if group in meeting.assigned_groups.all %}selected{% endif %}>
-                    {{ group.name }}
-                </option>
-            {% endfor %}
-        </select>
-        <button type="submit" class="btn btn-primary">Zapisz grupy</button>
-<<<<<<< HEAD
-    </form> {% endcomment %}
-=======
-    </form>
-
     {% if email_scheduled_message %}
     <div class="alert alert-success">
         {{ email_scheduled_message }}
@@ -104,10 +86,6 @@
     <input type="datetime-local" id="email_time" name="email_time" required>
     <button type="submit" class="btn btn-primary">Zaplanuj e-mail</button>
 </form>
-
-
-    <p>Szczegóły Spotkania</p>
->>>>>>> 3c694287fbb0d1e3fa4bbd628423b1a02ac42e1f
 
     {% if meeting.is_canceled %}
         <p style="color: red; font-weight: bold;">To spotkanie zostało odwołane.</p>
