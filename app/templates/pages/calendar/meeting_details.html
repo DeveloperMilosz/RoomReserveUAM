@@ -87,7 +87,27 @@
             {% endfor %}
         </select>
         <button type="submit" class="btn btn-primary">Zapisz grupy</button>
+<<<<<<< HEAD
     </form> {% endcomment %}
+=======
+    </form>
+
+    {% if email_scheduled_message %}
+    <div class="alert alert-success">
+        {{ email_scheduled_message }}
+    </div>
+{% endif %}
+
+<form method="POST">
+    {% csrf_token %}
+    <label for="email_time"><strong>Wyślij przypomnienie e-mail o określonej godzinie:</strong></label>
+    <input type="datetime-local" id="email_time" name="email_time" required>
+    <button type="submit" class="btn btn-primary">Zaplanuj e-mail</button>
+</form>
+
+
+    <p>Szczegóły Spotkania</p>
+>>>>>>> 3c694287fbb0d1e3fa4bbd628423b1a02ac42e1f
 
     {% if meeting.is_canceled %}
         <p style="color: red; font-weight: bold;">To spotkanie zostało odwołane.</p>

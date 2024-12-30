@@ -15,6 +15,7 @@ from room_reserve.notifications import (
 )
 from django.contrib import messages
 import json
+from room_reserve.notifications import email_meeting_reminder
 
 
 # @login_required
@@ -99,14 +100,26 @@ def room_schedule(request, room_id):
 def meeting_details(request, meeting_id):
     meeting = get_object_or_404(Meeting, pk=meeting_id)
     event = meeting.event
-    all_groups = Group.objects.all()  # Pobierz wszystkie grupy
+    all_groups = Group.objects.all()
+    email_scheduled_message = None  # Informacja o zaplanowanym e-mailu
 
     if request.method == "POST":
-        selected_group_ids = request.POST.getlist("groups")  # Pobierz wybrane grupy z formularza
-        selected_groups = Group.objects.filter(id__in=selected_group_ids)
-        meeting.assigned_groups.set(selected_groups)  # Przypisz grupy do spotkania
-        meeting.save()
-        return redirect("meeting_details", meeting_id=meeting.id)
+        email_time = request.POST.get("email_time")
+        if email_time:
+            email_time = datetime.fromisoformat(email_time)
+            email_meeting_reminder(meeting_id, email_time)  # Zaplanuj zadanie e-mailowe
+            email_scheduled_message = f"E-mail zostanie wysłany {email_time}."
+        messages.success(request, "Przypomnienie e-mail zostało zaplanowane.")
+        return render(
+            request,
+            "pages/calendar/meeting_details.html",
+            {
+                "meeting": meeting,
+                "event": event,
+                "all_groups": all_groups,
+                "email_scheduled_message": email_scheduled_message,
+            },
+        )
 
     return render(
         request,
@@ -461,4 +474,4 @@ def restore_meeting(request, meeting_id):
 
 
 def about_view(request):
-    return render(request, 'pages/about.html')
+    return render(request, "pages/about.html")
