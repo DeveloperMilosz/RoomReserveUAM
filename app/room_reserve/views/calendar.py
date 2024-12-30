@@ -254,16 +254,18 @@ def edit_meeting(request, meeting_id):
 
     if request.method == "POST":
         form = EditMeetingForm(request.POST, instance=meeting)
+        selected_group_ids = request.POST.getlist("groups")  # Pobierz wybrane grupy
+        selected_groups = Group.objects.filter(id__in=selected_group_ids)
+
         if form.is_valid():
             meeting = form.save(commit=False)
-            selected_groups = form.cleaned_data.get("groups")
-            meeting.groups.set(selected_groups)  # Updates Many-to-Many relationship for groups
+            meeting.assigned_groups.set(selected_groups)  # Przypisz grupy do spotkania
             meeting.save()
-            form.save_m2m()  # Save many-to-many fields
-            messages.success(request, "Meeting updated successfully.")
+            form.save_m2m()
+            messages.success(request, "Spotkanie zostało pomyślnie zaktualizowane.")
             return redirect("meeting_details", meeting_id=meeting.id)
         else:
-            messages.error(request, "There was an error updating the meeting.")
+            messages.error(request, "Wystąpił błąd podczas aktualizacji spotkania.")
     else:
         form = EditMeetingForm(instance=meeting)
 

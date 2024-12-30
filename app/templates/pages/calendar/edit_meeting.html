@@ -68,6 +68,17 @@
                 </select>
             </div>
 
+            <!-- Formularz przypisywania grup -->
+            <div class="input-box">
+                <select name="groups" id="groups" multiple>
+                    {% for group in groups %}
+                        <option value="{{ group.id }}" {% if group in meeting.assigned_groups.all %}selected{% endif %}>
+                            {{ group.name }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
             <div class="input-box">
                 <label for="id_color">Wybierz kolor:</label>
                 <input type="color" name="color" value="{{ meeting.color }}" id="id_color">
@@ -76,8 +87,6 @@
             <div class="input-box">
                 <input type="text" name="capacity" value="{{ meeting.capacity }}" maxlength="4" required id="capacity" placeholder="Liczba miejsc">
             </div>
-
-
 
             <button type="submit" class="form-button">Edytuj spotkanie</button>
         </form>
