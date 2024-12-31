@@ -15,27 +15,19 @@ import logging
 
 
 logger = logging.getLogger(__name__)
-# @periodic_task(crontab(minute="*/5"))  # Uruchamiane co 10 minut
-# def test_send_email():
-#     try:
-#         send_mail(
-#             subject="Testowy e-mail",
-#             message="To jest testowa wiadomość wysłana lokalnie.",
-#             from_email="powiadomienia@roomreserveuam.pl",
-#             recipient_list=["oskar.ciesak3@gmail.com"],
-#             fail_silently=False,
-#         )
-#         print("E-mail został wysłany pomyślnie.")
-#     except Exception as e:
-#         print(f"Błąd podczas wysyłania e-maila: {e}")
 
 
 @task()
-def send_scheduled_email(user_email):
+def send_scheduled_email(user_email, meeting_name, start_time, end_time):
     try:
+        subject = f"Room Reserve - Przypomnienie o spotkaniu"
+        message = (
+            f'Przypomnienie o spotkaniu "{meeting_name}", które odbędzie się '
+            f"od {start_time.strftime('%Y-%m-%d %H:%M')} do {end_time.strftime('%Y-%m-%d %H:%M')}."
+        )
         send_mail(
-            subject="Testowy e-mail",
-            message="To jest testowa wiadomość wysłana o wybranej dacie na e-mail użytkownika.",
+            subject=subject,
+            message=message,
             from_email="powiadomienia@roomreserveuam.pl",
             recipient_list=[user_email],
             fail_silently=False,
@@ -43,11 +35,6 @@ def send_scheduled_email(user_email):
         logger.info(f"E-mail został wysłany pomyślnie do {user_email}.")
     except Exception as e:
         logger.error(f"Błąd podczas wysyłania e-maila do {user_email}: {e}")
-
-
-# @periodic_task(crontab(minute="*/1"))
-# def test_task():
-#     print("Testowe zadanie Huey działa!")
 
 
 @task()
