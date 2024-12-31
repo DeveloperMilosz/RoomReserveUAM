@@ -129,13 +129,14 @@ def meeting_details(request, meeting_id):
 
             # Porównaj z timezone.now()
             if schedule_date > now():
-                # Zaplanuj zadanie w Huey
-                send_scheduled_email.schedule(args=[user_email], eta=schedule_date)
+                # Zaplanuj zadanie w Huey, przekazując szczegóły spotkania
+                send_scheduled_email.schedule(
+                    args=[user_email, meeting.name_pl, meeting.start_time, meeting.end_time], eta=schedule_date
+                )
                 email_scheduled_message = f"E-mail zostanie wysłany {schedule_date}."
                 messages.success(request, "E-mail został zaplanowany!")
             else:
                 form.add_error("schedule_date", "Data i godzina muszą być w przyszłości.")
-
     else:
         form = ScheduleEmailForm()
 
