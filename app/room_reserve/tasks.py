@@ -1,5 +1,5 @@
 from huey import crontab
-from huey.contrib.djhuey import periodic_task, task
+from huey.contrib.djhuey import periodic_task, task, db_task
 from room_reserve.models import Notification, User, Meeting
 from room_reserve.handlers.UAMApiRoom import UAMApiHandler as RoomHandler
 from room_reserve.handlers.UAMApiMeeting import UAMApiHandler as MeetingHandler
@@ -8,6 +8,46 @@ from room_reserve.notifications import notify_user, notify_meeting_reminder, ema
 from django.core.mail import send_mail
 from django.utils.timezone import now
 from datetime import timedelta
+from django.conf import settings
+from django.utils.timezone import make_aware
+from datetime import datetime
+import logging
+
+
+logger = logging.getLogger(__name__)
+# @periodic_task(crontab(minute="*/5"))  # Uruchamiane co 10 minut
+# def test_send_email():
+#     try:
+#         send_mail(
+#             subject="Testowy e-mail",
+#             message="To jest testowa wiadomość wysłana lokalnie.",
+#             from_email="powiadomienia@roomreserveuam.pl",
+#             recipient_list=["oskar.ciesak3@gmail.com"],
+#             fail_silently=False,
+#         )
+#         print("E-mail został wysłany pomyślnie.")
+#     except Exception as e:
+#         print(f"Błąd podczas wysyłania e-maila: {e}")
+
+
+@task()
+def send_scheduled_email(user_email):
+    try:
+        send_mail(
+            subject="Testowy e-mail",
+            message="To jest testowa wiadomość wysłana o wybranej dacie na e-mail użytkownika.",
+            from_email="powiadomienia@roomreserveuam.pl",
+            recipient_list=[user_email],
+            fail_silently=False,
+        )
+        logger.info(f"E-mail został wysłany pomyślnie do {user_email}.")
+    except Exception as e:
+        logger.error(f"Błąd podczas wysyłania e-maila do {user_email}: {e}")
+
+
+# @periodic_task(crontab(minute="*/1"))
+# def test_task():
+#     print("Testowe zadanie Huey działa!")
 
 
 @task()

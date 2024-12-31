@@ -15,8 +15,9 @@ from room_reserve.notifications import (
 )
 from django.contrib import messages
 import json
-from room_reserve.notifications import email_meeting_reminder
-
+from room_reserve.tasks import send_scheduled_email
+from django import forms
+from django.utils.timezone import now, make_aware
 
 # @login_required
 # def new_meeting(request):
@@ -96,35 +97,58 @@ def room_schedule(request, room_id):
     )
 
 
+class ScheduleEmailForm(forms.Form):
+    schedule_date = forms.DateTimeField(
+        label="Wybierz datę i godzinę wysyłki",
+        widget=forms.DateTimeInput(attrs={"type": "datetime-local", "class": "form-control"}),
+    )
+
+
 @login_required
 def meeting_details(request, meeting_id):
     meeting = get_object_or_404(Meeting, pk=meeting_id)
     event = meeting.event
     all_groups = Group.objects.all()
-    email_scheduled_message = None  # Informacja o zaplanowanym e-mailu
+    email_scheduled_message = None
 
     if request.method == "POST":
-        email_time = request.POST.get("email_time")
-        if email_time:
-            email_time = datetime.fromisoformat(email_time)
-            email_meeting_reminder(meeting_id, email_time)  # Zaplanuj zadanie e-mailowe
-            email_scheduled_message = f"E-mail zostanie wysłany {email_time}."
-        messages.success(request, "Przypomnienie e-mail zostało zaplanowane.")
-        return render(
-            request,
-            "pages/calendar/meeting_details.html",
-            {
-                "meeting": meeting,
-                "event": event,
-                "all_groups": all_groups,
-                "email_scheduled_message": email_scheduled_message,
-            },
-        )
+        form = ScheduleEmailForm(request.POST)
+        if form.is_valid():
+            schedule_date = form.cleaned_data["schedule_date"]
+
+            # Pobierz e-mail użytkownika
+            user_email = request.user.email
+
+            if not user_email:
+                messages.error(request, "Twój adres e-mail nie jest ustawiony.")
+                return redirect("meeting_details", meeting_id=meeting_id)
+
+            # Upewnij się, że schedule_date jest offset-aware
+            if schedule_date.tzinfo is None or schedule_date.tzinfo.utcoffset(schedule_date) is None:
+                schedule_date = make_aware(schedule_date)
+
+            # Porównaj z timezone.now()
+            if schedule_date > now():
+                # Zaplanuj zadanie w Huey
+                send_scheduled_email.schedule(args=[user_email], eta=schedule_date)
+                email_scheduled_message = f"E-mail zostanie wysłany {schedule_date}."
+                messages.success(request, "E-mail został zaplanowany!")
+            else:
+                form.add_error("schedule_date", "Data i godzina muszą być w przyszłości.")
+
+    else:
+        form = ScheduleEmailForm()
 
     return render(
         request,
         "pages/calendar/meeting_details.html",
-        {"meeting": meeting, "event": event, "all_groups": all_groups},
+        {
+            "meeting": meeting,
+            "event": event,
+            "all_groups": all_groups,
+            "email_scheduled_message": email_scheduled_message,
+            "form": form,
+        },
     )
 
 
