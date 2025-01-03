@@ -13,7 +13,7 @@ from room_reserve.views import search as search_views
 from room_reserve.views import admin_panel as admin_views
 from room_reserve.views import test as test_views
 from room_reserve.views import mark_notifications as mark_views
-from room_reserve.views import notifications_history as history_views
+from room_reserve.views import notifications_history
 from room_reserve.views import notes as notes_views
 from room_reserve.views import group_views
 
@@ -88,7 +88,10 @@ urlpatterns = [
     path("meeting/<int:meeting_id>/edit/", calendar_views.edit_meeting, name="edit_meeting"),
     # notifications
     path("notifications/mark-read/", mark_views.mark_notifications_as_read, name="mark_notifications_as_read"),
-    path("notifications/history/", history_views.notification_history, name="notification_history"),
+    path("notifications/messages/", notifications_history.message_history, name="message_history"),
+    path("notifications/alerts/", notifications_history.alert_history, name="alert_history"),
+    path("notifications/send/", notifications_history.send_notification, name="send_notification"),
+    path("notifications/history/", notifications_history.alert_history, name="notification_history"),  # Dodano tutaj
     # test notifications
     path("test_notification/", test_views.test_notifications, name="test_notification"),
     path("about/", calendar_views.about_view, name="about"),

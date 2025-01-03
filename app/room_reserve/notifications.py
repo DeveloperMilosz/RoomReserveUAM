@@ -1,4 +1,4 @@
-from room_reserve.models import Notification, Group, Meeting
+from room_reserve.models import Notification, Group, Meeting, User
 from django.contrib.auth import get_user_model
 from django.utils.timezone import now
 from datetime import timedelta
@@ -7,6 +7,21 @@ from huey.contrib.djhuey import task
 from django.core.mail import send_mail
 
 User = get_user_model()
+
+
+def create_notification(user=None, groups=None, message="", notification_type="message"):
+    """
+    Tworzy powiadomienie dla wybranego użytkownika lub wielu grup.
+    """
+    if user:
+        # Tworzenie powiadomienia dla jednego użytkownika
+        Notification.objects.create(user=user, message=message, notification_type=notification_type)
+
+    if groups:
+        # Tworzenie powiadomień dla członków wielu grup
+        for group in groups:
+            for member in group.members.all():
+                Notification.objects.create(user=member, message=message, notification_type=notification_type)
 
 
 def notify_user(user=None, message="", submitted_by=None, is_admin_notification=False, user_type=None):
