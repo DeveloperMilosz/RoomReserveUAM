@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="form-container form-segments">
+    <h1>Przetwórz pliki Excel</h1>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="form-form">
+            <h2>Wgraj plik Excel</h2>
+            <div class="input-box">
+                <label for="excel-file">Plik Excel:</label>
+                <input type="file" id="excel-file" name="excelfile" accept=".xlsx" required>
+            </div>
+        </div>
+        <button type="submit" class="form-button">Przetwórz plik</button>
+    </form>
+</div>
+
+{% if data %}
+<div class="form-container">
+    <h2>Edytowalne Dane</h2>
+    <form method="post">
+        {% csrf_token %}
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>Nazwa</th>
+                    <th>Nazwa (ang)</th>
+                    <th>Data</th>
+                    <th>Godzina Rozpoczęcia</th>
+                    <th>Godzina Zakończenia</th>
+                    <th>Nazwa Wydarzenia</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in data %}
+                <tr>
+                    <td><input type="text" name="nazwa" value="{{ row.nazwa }}"></td>
+                    <td><input type="text" name="nazwa_ang" value="{{ row.nazwa_ang }}"></td>
+                    <td><input type="date" name="data" value="{{ row.data }}"></td>
+                    <td><input type="time" name="godzina_rozpoczecia" value="{{ row.godzina_rozpoczecia }}"></td>
+                    <td><input type="time" name="godzina_zakonczenia" value="{{ row.godzina_zakonczenia }}"></td>
+                    <td><input type="text" name="nazwa_wydarzenia" value="{{ row.nazwa_wydarzenia }}"></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <button type="submit" name="save_data">Zapisz do Bazy</button>
+    </form>
+</div>
+{% endif %}
+{% endblock %}
