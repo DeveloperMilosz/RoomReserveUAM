@@ -29,6 +29,10 @@
                     <th>Godzina Rozpoczęcia</th>
                     <th>Godzina Zakończenia</th>
                     <th>Nazwa Wydarzenia</th>
+                    <th>Typ Spotkania</th>
+                    <th>Pokój</th>
+                    <th>Wykładowcy</th>
+                    <th>Kolor</th>
                 </tr>
             </thead>
             <tbody>
@@ -39,7 +43,34 @@
                     <td><input type="date" name="data" value="{{ row.data }}"></td>
                     <td><input type="time" name="godzina_rozpoczecia" value="{{ row.godzina_rozpoczecia }}"></td>
                     <td><input type="time" name="godzina_zakonczenia" value="{{ row.godzina_zakonczenia }}"></td>
-                    <td><input type="text" name="nazwa_wydarzenia" value="{{ row.nazwa_wydarzenia }}"></td>
+                    <td>
+                        <select name="nazwa_wydarzenia">
+                            {% for event in events %}
+                            <option value="{{ event.name }}" {% if row.nazwa_wydarzenia == event.name %}selected{% endif %}>{{ event.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </td>
+                    <td><input type="text" name="meeting_type" value="{{ row.meeting_type }}"></td>
+                    <td>
+                        <div style="padding-left: 20px;"> <!-- Wcięcie dla pokoju -->
+                            <select name="room">
+                                {% for room in rooms %}
+                                <option value="{{ room.room_number }}" {% if row.room == room.room_number %}selected{% endif %}>{{ room.room_number }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </td>
+                    <td>
+                        <select name="lecturers">
+                            {% for lecturer in lecturers %}
+                            <option value="{{ lecturer.full_name }}" 
+                                {% if row.lecturers == lecturer.full_name %}selected{% endif %}>
+                                {{ lecturer.full_name }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </td>
+                    <td><input type="text" name="color" value="{{ row.color }}"></td>
                 </tr>
                 {% endfor %}
             </tbody>
