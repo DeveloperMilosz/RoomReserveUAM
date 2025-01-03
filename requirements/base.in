@@ -28,3 +28,7 @@ django-jazzmin
 sentry-sdk[django]
 
 djangorestframework
+
+pandas
+
+openpyxl

@@ -16,7 +16,7 @@ from room_reserve.views import mark_notifications as mark_views
 from room_reserve.views import notifications_history
 from room_reserve.views import notes as notes_views
 from room_reserve.views import group_views
-
+from room_reserve.views import my_excel as excel_views
 
 urlpatterns = [
     # Home
@@ -123,4 +123,5 @@ urlpatterns = [
     path("admin-panel/", admin_views.admin_panel, name="admin_panel"),
     # regulamin
     path("regulamin/", profile_views.terms_conditions_view, name="terms_conditions"),
+    path("import_excel/", excel_views.my_excel_import, name="my_excel_import"),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
