@@ -101,6 +101,8 @@ class Meeting(models.Model):
     is_canceled = models.BooleanField(_("Is Canceled"), default=False)
     is_approved = models.BooleanField(_("is approved"), default=False)
     is_rejected = models.BooleanField(_("is rejected"), default=False)
+    is_excel = models.BooleanField(_("is excel"), default=False)
+    is_api = models.BooleanField(_("is api"), default=False)
     created_at = models.DateTimeField(_("created at"), auto_now_add=True, null=True, blank=True)
     modified_at = models.DateTimeField(_("modified at"), auto_now=True)
     is_updated = models.BooleanField(_("is updated"), default=True)
