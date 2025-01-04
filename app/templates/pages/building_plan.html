@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block content %}
+<style>
+  .room-marker {
+      position: absolute;
+      color: white;
+      padding: 5px;
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 12px;
+      text-align: center;
+  }
+  .room-marker.busy {
+      background-color: red;
+  }
+  .room-marker.free {
+      background-color: green;
+  }
+  .plan-container {
+      position: relative;
+      width: 800px;
+      margin: auto;
+  }
+  .plan-image img {
+      width: 100%;
+  }
+</style>
+
+<div class="plan-container">
+    {% if plan_image %}
+    <div class="plan-image">
+        <img src="{{ plan_image }}" alt="Plan piętra">
+        {% for plan in plans %}
+        <div class="room-marker {% if plan.is_busy %}busy{% else %}free{% endif %}"
+             style="top: {{ plan.y_position }}px; left: {{ plan.x_position }}px;">
+            <span>{{ plan.room.room_number }}</span>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p>Brak planu dla tego piętra.</p>
+    {% endif %}
+</div>
+{% endblock %}

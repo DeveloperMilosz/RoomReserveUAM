@@ -1,6 +1,19 @@
 from django.contrib import admin
-from room_reserve.models import Room, Lecturers, Meeting, RoomAttribute, Event, User, Notification, Status, Note, Group
+from room_reserve.models import (
+    Room,
+    Lecturers,
+    Meeting,
+    RoomAttribute,
+    Event,
+    User,
+    Notification,
+    Status,
+    Note,
+    Group,
+    RoomPlan,
+)
 from django.contrib.auth.admin import UserAdmin
+from django.utils.html import format_html
 from django.utils.translation import gettext_lazy as _
 
 
@@ -275,3 +288,28 @@ class GroupAdmin(admin.ModelAdmin):
         return ", ".join([meeting.name_pl for meeting in obj.meetings.all()])
 
     get_meetings.short_description = "Spotkania"
+
+
+@admin.register(RoomPlan)
+class RoomPlanAdmin(admin.ModelAdmin):
+    list_display = ("room", "building_name", "floor", "x_position", "y_position", "display_image")
+    list_filter = ("building_name", "floor")
+    search_fields = ("room__room_number", "building_name")
+    readonly_fields = ("display_image",)  # Podgląd obrazu tylko do odczytu
+
+    fieldsets = (
+        (
+            None,
+            {
+                "fields": ("room", "building_name", "floor", "x_position", "y_position", "plan_image", "display_image"),
+            },
+        ),
+    )
+
+    # Funkcja do wyświetlania podglądu obrazu w panelu admina
+    def display_image(self, obj):
+        if obj.plan_image:
+            return format_html('<img src="{}" style="max-height: 100px; max-width: 100px;" />', obj.plan_image.url)
+        return "Brak obrazu"
+
+    display_image.short_description = "Podgląd obrazu"
