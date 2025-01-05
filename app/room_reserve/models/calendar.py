@@ -3,6 +3,8 @@ from django.utils.translation import gettext_lazy as _
 from colorfield.fields import ColorField
 from django.contrib.auth import get_user_model
 import uuid
+from statistics import mean
+
 
 User = get_user_model()
 
@@ -106,6 +108,8 @@ class Meeting(models.Model):
     is_canceled = models.BooleanField(_("Is Canceled"), default=False)
     is_approved = models.BooleanField(_("is approved"), default=False)
     is_rejected = models.BooleanField(_("is rejected"), default=False)
+    is_excel = models.BooleanField(_("is excel"), default=False)
+    is_api = models.BooleanField(_("is api"), default=False)
     created_at = models.DateTimeField(_("created at"), auto_now_add=True, null=True, blank=True)
     modified_at = models.DateTimeField(_("modified at"), auto_now=True)
     is_updated = models.BooleanField(_("is updated"), default=True)
@@ -272,3 +276,31 @@ class Note(models.Model):
 
     def __str__(self):
         return self.title or f"Note {self.id}"
+
+
+class RoomPlan(models.Model):
+    room = models.OneToOneField(Room, on_delete=models.CASCADE, related_name="plan")
+    building_name = models.CharField(max_length=100)
+    floor = models.IntegerField()
+    svg_points = models.JSONField(default=list)  # Pole JSON dla punktów SVG
+    plan_image = models.ImageField(upload_to="building_plans/", null=True, blank=True)
+
+    def calculate_label_position(self):
+        """Oblicza środek figury na podstawie svg_points."""
+        label_positions = []
+        for shape in self.svg_points:
+            if shape["type"] == "polygon":
+                # Rozdziel punkty wielokąta
+                points = [list(map(float, point.split(","))) for point in shape["points"].split()]
+                x_coords = [p[0] for p in points]
+                y_coords = [p[1] for p in points]
+                label_positions.append({"label_x": mean(x_coords), "label_y": mean(y_coords)})
+            elif shape["type"] == "rect":
+                # Prostokąt - oblicz środek na podstawie x, y, width, height
+                label_x = shape["x"] + (shape["width"] / 2)
+                label_y = shape["y"] + (shape["height"] / 2)
+                label_positions.append({"label_x": label_x, "label_y": label_y})
+        return label_positions
+
+    def __str__(self):
+        return f"Plan for {self.room.room_number}"

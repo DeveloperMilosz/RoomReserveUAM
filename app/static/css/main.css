@@ -31,7 +31,7 @@ a.event:hover {
 
 #logo {
   display: block;
-  margin: 50px auto 30px;
+  margin: 30px auto 50px;
   max-width: min(90%, 400px);
   max-height: 150px;
 }
@@ -414,7 +414,7 @@ form > a {
   padding: 5px;
   font-size: 12px;
   box-sizing: border-box;
-  border-radius: 10px;
+  border-radius: 6px;
   border: 1px solid white;
   display: flex;
   justify-content: center;
@@ -591,7 +591,7 @@ table a:hover {
   z-index: 99;
   width: 130px;
   height: 130px;
-  border-radius: 12px;
+  border-radius: 65px;
 }
 .tiles_container a .event-name {
   position: absolute;
@@ -746,4 +746,18 @@ table a:hover {
 .popup .form-button.btn-delete-status {
   background-color: red;
   border: 0;
+}
+
+.form-form.set-notification-form .meeting-detail-row {
+  margin-block-start: 0px;
+}
+.form-form.set-notification-form .meeting-detail-row .input-box {
+  width: 73%;
+}
+.form-form.set-notification-form .meeting-detail-row .input-box input {
+  padding: 0.5rem 1rem;
+  margin-right: 6px;
+}
+.form-form.set-notification-form .meeting-detail-row .form-button {
+  min-height: 32px;
 }/*# sourceMappingURL=main.css.map */

@@ -35,7 +35,7 @@ a {
 
 #logo {
   display: block;
-  margin: 50px auto 30px;
+  margin: 30px auto 50px;
   max-width: min(90%, 400px);
   max-height: 150px;
 }
@@ -184,6 +184,7 @@ nav ul li:hover .submenu {
     display: block;
     border-width: 0;
     box-sizing: border-box;
+
   }
   
   &.form-segments{
@@ -474,7 +475,7 @@ form > a {
   padding: 5px;
   font-size: 12px;
   box-sizing: border-box;
-  border-radius: 10px;
+  border-radius: 6px;
   border: 1px solid white;
   display: flex;
   justify-content: center;
@@ -674,7 +675,7 @@ table {
       z-index: 99;
       width: 130px;
       height: 130px;
-      border-radius: 12px;
+      border-radius: 65px;
     }
 
     .event-name{
@@ -858,6 +859,26 @@ table {
     &.btn-delete-status {
       background-color: red;
       border: 0;
+    }
+  }
+}
+
+.form-form.set-notification-form{
+      
+  .meeting-detail-row{
+    margin-block-start: 0px;
+
+    .input-box {
+      width: 73%;
+      
+      input{
+        padding: 0.5rem 1rem;
+        margin-right: 6px;
+        
+      }
+    }
+    .form-button{
+      min-height: 32px;
     }
   }
 }

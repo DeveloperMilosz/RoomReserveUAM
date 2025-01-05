@@ -15,7 +15,9 @@ from room_reserve.notifications import (
 )
 from django.contrib import messages
 import json
-
+from room_reserve.tasks import send_scheduled_email
+from django import forms
+from django.utils.timezone import now, make_aware
 
 # @login_required
 # def new_meeting(request):
@@ -95,19 +97,44 @@ def room_schedule(request, room_id):
     )
 
 
+class ScheduleEmailForm(forms.Form):
+    schedule_date = forms.DateTimeField(
+        label="Wybierz datę i godzinę wysyłki",
+        widget=forms.DateTimeInput(attrs={"type": "datetime-local", "class": "form-control"}),
+    )
+
+
 @login_required
 def meeting_details(request, meeting_id):
     meeting = get_object_or_404(Meeting, pk=meeting_id)
     event = meeting.event
     all_groups = Group.objects.all()
     lecturers = meeting.lecturers.all()  # Fetch associated lecturers
+    email_scheduled_message = None
 
     if request.method == "POST":
-        selected_group_ids = request.POST.getlist("groups")
-        selected_groups = Group.objects.filter(id__in=selected_group_ids)
-        meeting.assigned_groups.set(selected_groups)
-        meeting.save()
-        return redirect("meeting_details", meeting_id=meeting.id)
+        form = ScheduleEmailForm(request.POST)
+        if form.is_valid():
+            schedule_date = form.cleaned_data["schedule_date"]
+            user_email = request.user.email
+
+            if not user_email:
+                messages.error(request, "Twój adres e-mail nie jest ustawiony.")
+                return redirect("meeting_details", meeting_id=meeting_id)
+
+            if schedule_date.tzinfo is None or schedule_date.tzinfo.utcoffset(schedule_date) is None:
+                schedule_date = make_aware(schedule_date)
+
+            if schedule_date > now():
+                send_scheduled_email.schedule(
+                    args=[user_email, meeting.name_pl, meeting.start_time, meeting.end_time], eta=schedule_date
+                )
+                email_scheduled_message = f"E-mail zostanie wysłany {schedule_date}."
+                messages.success(request, "E-mail został zaplanowany!")
+            else:
+                form.add_error("schedule_date", "Data i godzina muszą być w przyszłości.")
+    else:
+        form = ScheduleEmailForm()
 
     return render(
         request,
@@ -116,7 +143,9 @@ def meeting_details(request, meeting_id):
             "meeting": meeting,
             "event": event,
             "all_groups": all_groups,
-            "lecturers": lecturers,  # Pass lecturers to the template
+            "lecturers": lecturers,
+            "email_scheduled_message": email_scheduled_message,
+            "form": form,
         },
     )
 
@@ -260,14 +289,16 @@ def edit_meeting(request, meeting_id):
     rooms = Room.objects.all()
     events = Event.objects.all()
     users = User.objects.filter(user_type__in=["Lecturer", "Organizer"])
-    groups = Group.objects.all()  # Fetch all groups
+    groups = Group.objects.all()
 
     if request.method == "POST":
         form = EditMeetingForm(request.POST, instance=meeting)
+        selected_group_ids = request.POST.getlist("groups")
+        selected_groups = Group.objects.filter(id__in=selected_group_ids)
+
         if form.is_valid():
             meeting = form.save(commit=False)
-            selected_groups = form.cleaned_data.get("groups")  # Ensure this matches your form fields
-            meeting.assigned_groups.set(selected_groups)  # Use 'assigned_groups' here
+            meeting.assigned_groups.set(selected_groups)
             meeting.save()
             form.save_m2m()
             messages.success(request, "Meeting updated successfully.")
@@ -471,4 +502,4 @@ def restore_meeting(request, meeting_id):
 
 
 def about_view(request):
-    return render(request, 'pages/about.html')
+    return render(request, "pages/about.html")

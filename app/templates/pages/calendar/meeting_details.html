@@ -42,7 +42,20 @@
         <span style="display: inline-block; width: 20px; height: 20px; background-color: {{ meeting.color }}; border-radius: 50%;"></span>
     </p>
 
-    <p><strong>Zaktualizowane:</strong> <br>{{ meeting.is_updated|yesno:"Tak,Nie" }}</p>
+    <!-- Grupy przypisane do spotkania -->
+    <div><strong>Przypisane grupy:</strong>
+    {% if meeting.assigned_groups.exists %}
+        <ul style="margin-top:6px">
+            {% for group in meeting.assigned_groups.all %}
+                <li><a href="{% url 'group_detail' group.id %}">{{ group.name }}</a></li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <br>To spotkanie nie jest przypisane do żadnej grupy.
+    {% endif %}
+    </div>
+
+    <p><strong>Wypełnione wszystkie szczegóły:</strong> <br>{{ meeting.is_updated|yesno:"Tak,Nie" }}</p>
 
     {% if event %}
         <hr>
@@ -64,33 +77,24 @@
         <p><em>To spotkanie nie jest przypisane do żadnego wydarzenia.</em></p>
     {% endif %}
 
-    <!-- Grupy przypisane do spotkania -->
-    <p><strong>Grupy:</strong></p>
-    {% if meeting.assigned_groups.exists %}
-        <ul>
-            {% for group in meeting.assigned_groups.all %}
-                <li><a href="{% url 'group_detail' group.id %}">{{ group.name }}</a></li>
-            {% endfor %}
-        </ul>
-    {% else %}
-        <p>To spotkanie nie jest przypisane do żadnej grupy.</p>
+    <!-- Wyświetlenie komunikatu o zaplanowanym e-mailu -->
+    {% if email_scheduled_message %}
+    <div class="alert alert-success">
+        {{ email_scheduled_message }}
+    </div>
     {% endif %}
 
-    <!-- Formularz przypisywania grup -->
+    <!-- Formularz do planowania e-maila -->
     <form method="POST">
         {% csrf_token %}
-        <label for="groups"><strong>Przypisz grupy:</strong></label>
-        <select name="groups" id="groups" multiple>
-            {% for group in all_groups %}
-                <option value="{{ group.id }}" {% if group in meeting.assigned_groups.all %}selected{% endif %}>
-                    {{ group.name }}
-                </option>
-            {% endfor %}
-        </select>
-        <button type="submit" class="btn btn-primary">Zapisz grupy</button>
+        {{ form.non_field_errors }}
+        <div class="form-form set-notification-form">
+            {{ form.schedule_date.errors }}
+            <label for="schedule_date"><strong>Wyślij przypomnienie e-mail o określonej godzinie:</strong></label>
+            {{ form.schedule_date }}
+            <button type="submit" class="form-button">Zaplanuj e-mail</button>
+        </div>
     </form>
-
-    <p>Szczegóły Spotkania</p>
 
     {% if meeting.is_canceled %}
         <p style="color: red; font-weight: bold;">To spotkanie zostało odwołane.</p>

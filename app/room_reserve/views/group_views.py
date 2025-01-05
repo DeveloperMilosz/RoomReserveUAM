@@ -53,9 +53,6 @@ def group_detail_view(request, group_id):
 
 @login_required
 def edit_group_view(request, group_id):
-    """
-    Widok edycji grupy z przypisywaniem spotkań i wydarzeń.
-    """
     group = get_object_or_404(Group, id=group_id)
     invite_link = None  # Domyślny link, jeśli nie zostanie wygenerowany
     available_meetings = Meeting.objects.exclude(assigned_groups=group)  # Spotkania nieprzypisane do grupy

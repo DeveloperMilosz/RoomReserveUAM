@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Wyślij Powiadomienie</h1>
+<form method="post">
+    {% csrf_token %}
+    <label for="group">Grupa:</label>
+    <select name="group" id="group">
+        <option value="">-- Wybierz grupę --</option>
+        {% for group in groups %}
+        <option value="{{ group.id }}">{{ group.name }}</option>
+        {% endfor %}
+    </select>
+
+    <label for="email">E-mail:</label>
+    <input type="email" name="email" id="email">
+
+    <label for="content">Treść:</label>
+    <textarea name="content" id="content" rows="5"></textarea>
+
+    <button type="submit">Wyślij</button>
+</form>
+{% endblock %}

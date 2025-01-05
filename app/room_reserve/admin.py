@@ -1,6 +1,19 @@
 from django.contrib import admin
-from room_reserve.models import Room, Lecturers, Meeting, RoomAttribute, Event, User, Notification, Status, Note, Group
+from room_reserve.models import (
+    Room,
+    Lecturers,
+    Meeting,
+    RoomAttribute,
+    Event,
+    User,
+    Notification,
+    Status,
+    Note,
+    Group,
+    RoomPlan,
+)
 from django.contrib.auth.admin import UserAdmin
+from django.utils.html import format_html
 from django.utils.translation import gettext_lazy as _
 
 
@@ -300,3 +313,43 @@ class GroupAdmin(admin.ModelAdmin):
         return ", ".join([meeting.name_pl for meeting in obj.meetings.all()])
 
     get_meetings.short_description = "Spotkania"
+
+
+@admin.register(RoomPlan)
+class RoomPlanAdmin(admin.ModelAdmin):
+    list_display = ("room", "building_name", "floor", "display_svg_points", "display_label_positions", "display_image")
+    list_filter = ("building_name", "floor")
+    search_fields = ("room__room_number", "building_name")
+    readonly_fields = ("display_image", "display_label_positions")
+
+    # Wyświetlenie punktów SVG w adminie w czytelnej formie
+    def display_svg_points(self, obj):
+        try:
+            points = obj.svg_points
+            return format_html("<pre>{}</pre>", points)
+        except Exception:
+            return "Brak punktów SVG"
+
+    display_svg_points.short_description = "Punkty SVG"
+
+    # Wyświetlenie obrazu w panelu admina
+    def display_image(self, obj):
+        if obj.plan_image:
+            return format_html('<img src="{}" style="max-height: 100px; max-width: 100px;" />', obj.plan_image.url)
+        return "Brak obrazu"
+
+    display_image.short_description = "Podgląd obrazu"
+
+    # Wyświetlenie obliczonych pozycji etykiet na podstawie svg_points
+    def display_label_positions(self, obj):
+        try:
+            label_positions = obj.calculate_label_position()
+            preview_html = "<ul>"
+            for idx, position in enumerate(label_positions):
+                preview_html += f'<li>Figura {idx + 1}: x={position["label_x"]:.2f}, y={position["label_y"]:.2f}</li>'
+            preview_html += "</ul>"
+            return format_html(preview_html)
+        except Exception:
+            return "Brak danych do obliczeń"
+
+    display_label_positions.short_description = "Pozycje etykiet"
