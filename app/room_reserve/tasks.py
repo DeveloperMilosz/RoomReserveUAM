@@ -97,39 +97,69 @@ def update_room_data():
     handler.main()  # Wywołaj metodę główną do pobrania i zapisania danych
 
 
-# Zadanie do pobierania danych o spotkaniach co 10 minut
-@periodic_task(crontab(minute="*/10"))  # Uruchamiane co 10 minut
-def update_meeting_data():
-    handler = MeetingHandler(
-        meeting_ids=[
-            2488,
-            2489,
-            2490,
-            2684,
-            2685,
-            2686,
-            2687,
-            2688,
-            2689,
-            2690,
-            2691,
-            2692,
-            2693,
-            2694,
-            2695,
-            2696,
-            2697,
-            2698,
-            2699,
-            2700,
-            2701,
-            2702,
-            2703,
-            2704,
-            2777,
-        ]
-    )
-    handler.main()  # Wywołaj metodę główną do pobrania i zapisania danych
+@periodic_task(crontab(minute="*/10"))  # This runs every 10 minutes
+def update_meeting_and_room_data():
+    meeting_ids = [
+        2488,
+        2489,
+        2490,
+        2684,
+        2685,
+        2686,
+        2687,
+        2688,
+        2689,
+        2690,
+        2691,
+        2692,
+        2693,
+        2694,
+        2695,
+        2696,
+        2697,
+        2698,
+        2699,
+        2700,
+        2701,
+        2702,
+        2703,
+        2704,
+        2777,
+    ]
+
+    room_ids = [
+        2488,
+        2489,
+        2490,
+        2684,
+        2685,
+        2686,
+        2687,
+        2688,
+        2689,
+        2690,
+        2691,
+        2692,
+        2693,
+        2694,
+        2695,
+        2696,
+        2697,
+        2698,
+        2699,
+        2700,
+        2701,
+        2702,
+        2703,
+        2777,
+    ]
+
+    try:
+        # Initialize the handler and execute the main process
+        handler = MeetingHandler(meeting_ids=meeting_ids, room_ids=room_ids)
+        handler.main()  # Run the main handler
+    except Exception as e:
+        logger.error(f"An error occurred while updating meeting and room data: {e}")
 
 
 @periodic_task(crontab(minute="*/10"))  # Uruchamiane co 10 minut

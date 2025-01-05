@@ -17,6 +17,7 @@ from room_reserve.views import notifications_history
 from room_reserve.views import notes as notes_views
 from room_reserve.views import group_views
 from room_reserve.views import my_excel as excel_views
+from room_reserve.views import mapa as mapa_views
 
 urlpatterns = [
     # Home
@@ -124,4 +125,5 @@ urlpatterns = [
     # regulamin
     path("regulamin/", profile_views.terms_conditions_view, name="terms_conditions"),
     path("import_excel/", excel_views.my_excel_import, name="my_excel_import"),
+    path("building/<str:building_name>/<int:floor>/", mapa_views.building_plan_view, name="building_plan_view"),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
