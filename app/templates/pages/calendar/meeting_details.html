@@ -10,13 +10,14 @@
         <p><strong>Meeting name:</strong> <br>{{ meeting.name_en }}</p>
     </div>
 
-    <p><strong>Prowadzący:</strong>
-        <br>
-        {% for lecturer in meeting.lecturers.all %}
-            {{ lecturer.first_name }} {{ lecturer.last_name }}{% if not forloop.last %}, {% endif %}
-        {% empty %}
+    <p><strong>Prowadzący:</strong><br>
+        {% if lecturers %}
+            {% for lecturer in lecturers %}
+                {{ lecturer.first_name }} {{ lecturer.last_name }}{% if not forloop.last %}, {% endif %}
+            {% endfor %}
+        {% else %}
             Brak prowadzących
-        {% endfor %}
+        {% endif %}
     </p>
 
     <div class="meeting-detail-row">

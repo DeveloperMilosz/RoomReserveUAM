@@ -45,8 +45,10 @@ class Event(models.Model):
 
     name = models.CharField(_("Event Name"), max_length=50, null=True, blank=True)
     description = models.TextField(_("Description"), null=True, blank=True)
-    organizer = models.ForeignKey(
-        "Lecturers", on_delete=models.SET_NULL, verbose_name=_("Organizer"), null=True, blank=True
+    organizer = models.ManyToManyField(
+        User, verbose_name=_("Organizers/Lecturers"), blank=True, 
+        limit_choices_to={'user_type__in': ['Lecturer', 'Organizer']}, 
+        related_name="lecturer_event"
     )
     event_type = models.CharField(_("Event Type"), max_length=50, choices=EVENT_TYPE_CHOICES)
     start_date = models.DateTimeField(_("Start Date"))
@@ -91,10 +93,13 @@ class Meeting(models.Model):
     name_en = models.CharField(_("name en"), max_length=255, null=True, blank=True)
     room = models.ForeignKey(Room, on_delete=models.CASCADE, verbose_name=_("room number"), blank=True, null=True)
     description = models.CharField(max_length=255, null=True, blank=True)
-    lecturers = models.ManyToManyField(Lecturers, verbose_name=_("Lecturers"), blank=True)
+    lecturers = models.ManyToManyField(
+        User, verbose_name=_("Organizers/Lecturers"), blank=True, 
+        limit_choices_to={'user_type__in': ['Lecturer', 'Organizer']}, 
+        related_name="lecturer_meetings"
+    )
     capacity = models.IntegerField(_("meeting capacity"), null=True, blank=True)
     color = ColorField(default="#2873FF")
-    # event = models.ForeignKey(Event, on_delete=models.CASCADE, verbose_name=_("id"), blank=True, null=True)
     event = models.ForeignKey(
         Event, on_delete=models.CASCADE, verbose_name=_("Event"), related_name="meetings", null=True, blank=True
     )
@@ -105,11 +110,13 @@ class Meeting(models.Model):
     modified_at = models.DateTimeField(_("modified at"), auto_now=True)
     is_updated = models.BooleanField(_("is updated"), default=True)
     submitted_by = models.ForeignKey(
-        User, on_delete=models.SET_NULL, null=True, blank=True, verbose_name=_("Submitted By")
+        User, on_delete=models.SET_NULL, null=True, blank=True, verbose_name=_("Submitted By"), 
+        related_name="submitted_meetings"
     )
 
     def __str__(self):
         return f"{self.name_pl} ({self.start_time} - {self.end_time})"
+
 
 
 class Notification(models.Model):

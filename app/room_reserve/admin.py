@@ -171,28 +171,53 @@ class GroupInline1(admin.TabularInline):
 
 @admin.register(Event)
 class EventAdmin(admin.ModelAdmin):
-    list_display = ("name", "event_type", "organizer", "start_date", "end_date", "is_approved", "list_groups")
-    search_fields = ("name", "description")
-    list_filter = ("event_type", "organizer", "is_approved")
-    inlines = [GroupInline1]  # Inline dla zarządzania grupami
-    actions = ["approve_events", "reject_events"]
+    list_display = (
+        "name",
+        "event_type",
+        "display_organizers",  # Updated field for ManyToManyField
+        "start_date",
+        "end_date",
+        "is_approved",
+        "list_groups",  # Original functionality retained
+    )
+    search_fields = ("name", "description")  # Original search fields
+    list_filter = ("event_type", "is_approved")  # Original filters
+    actions = ["approve_events", "reject_events"]  # Original actions
 
+    # Custom method to display organizers
+    def display_organizers(self, obj):
+        """
+        Return a comma-separated list of organizers' names.
+        """
+        return ", ".join([user.get_full_name() for user in obj.organizer.all()])
+
+    display_organizers.short_description = _("Organizers")  # Customize admin column header
+
+    # Custom method to display related groups
     def list_groups(self, obj):
-        """Wyświetla przypisane grupy jako lista nazw."""
-        return ", ".join([group.name for group in obj.assigned_groups.all()])
+        """
+        Display assigned groups as a list of names.
+        """
+        if obj.assigned_groups.exists():
+            return ", ".join([group.name for group in obj.assigned_groups.all()])
+        return _("No groups assigned")
 
-    list_groups.short_description = _("Groups")
+    list_groups.short_description = _("Groups")  # Customize admin column header
 
+    # Action to approve selected events
     def approve_events(self, request, queryset):
         count = queryset.update(is_approved=True)
-        self.message_user(request, _(f"Zatwierdzono {count} wybrane wydarzenia."))
+        self.message_user(request, _(f"Approved {count} selected events."))
 
+    approve_events.short_description = _("Approve selected events")
+
+    # Action to reject selected events
     def reject_events(self, request, queryset):
         count = queryset.update(is_approved=False)
-        self.message_user(request, _(f"Odrzucono {count} wybrane wydarzenia."))
+        self.message_user(request, _(f"Rejected {count} selected events."))
 
-    approve_events.short_description = _("Zatwierdź wybrane wydarzenia")
-    reject_events.short_description = _("Odrzuć wybrane wydarzenia")
+    reject_events.short_description = _("Reject selected events")
+
 
 
 @admin.register(Notification)
