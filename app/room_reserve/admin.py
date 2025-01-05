@@ -292,21 +292,22 @@ class GroupAdmin(admin.ModelAdmin):
 
 @admin.register(RoomPlan)
 class RoomPlanAdmin(admin.ModelAdmin):
-    list_display = ("room", "building_name", "floor", "x_position", "y_position", "display_image")
+    list_display = ("room", "building_name", "floor", "display_svg_points", "display_image")
     list_filter = ("building_name", "floor")
     search_fields = ("room__room_number", "building_name")
-    readonly_fields = ("display_image",)  # Podgląd obrazu tylko do odczytu
+    readonly_fields = ("display_image",)
 
-    fieldsets = (
-        (
-            None,
-            {
-                "fields": ("room", "building_name", "floor", "x_position", "y_position", "plan_image", "display_image"),
-            },
-        ),
-    )
+    # Wyświetlenie punktów SVG w adminie w czytelnej formie
+    def display_svg_points(self, obj):
+        try:
+            points = obj.svg_points
+            return format_html("<pre>{}</pre>", points)
+        except Exception:
+            return "Brak punktów SVG"
 
-    # Funkcja do wyświetlania podglądu obrazu w panelu admina
+    display_svg_points.short_description = "Punkty SVG"
+
+    # Wyświetlenie obrazu w panelu admina
     def display_image(self, obj):
         if obj.plan_image:
             return format_html('<img src="{}" style="max-height: 100px; max-width: 100px;" />', obj.plan_image.url)

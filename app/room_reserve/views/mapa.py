@@ -15,7 +15,7 @@ def building_plan_view(request, building_name, floor):
             )
         )
     )
-    plan_image = plans.first().plan_image.url if plans.exists() else None
+    plan_image = plans.first().plan_image.url if plans.exists() and plans.first().plan_image else None
 
     return render(
         request,

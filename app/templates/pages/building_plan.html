@@ -1,28 +1,38 @@
 {% extends "base.html" %}
 {% block content %}
 <style>
-  .room-marker {
-      position: absolute;
-      color: white;
-      padding: 5px;
-      border-radius: 50%;
-      transform: translate(-50%, -50%);
-      font-size: 12px;
-      text-align: center;
-  }
-  .room-marker.busy {
-      background-color: red;
-  }
-  .room-marker.free {
-      background-color: green;
-  }
   .plan-container {
       position: relative;
       width: 800px;
       margin: auto;
   }
+  .plan-image {
+      position: relative;
+  }
   .plan-image img {
       width: 100%;
+      display: block;
+  }
+  .plan-image svg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      pointer-events: none;
+  }
+  .room-shape {
+      fill: green; /* Domyślny kolor dla wolnych sal */
+      stroke: black;
+      stroke-width: 1;
+  }
+  .room-shape.busy {
+      fill: red; /* Kolor dla zajętych sal */
+  }
+  .room-label {
+      font-size: 12px;
+      fill: white;
+      text-anchor: middle;
+      dominant-baseline: middle;
+      pointer-events: none; /* Aby kliknięcia nie działały na tekst */
   }
 </style>
 
@@ -30,12 +40,35 @@
     {% if plan_image %}
     <div class="plan-image">
         <img src="{{ plan_image }}" alt="Plan piętra">
-        {% for plan in plans %}
-        <div class="room-marker {% if plan.is_busy %}busy{% else %}free{% endif %}"
-             style="top: {{ plan.y_position }}px; left: {{ plan.x_position }}px;">
-            <span>{{ plan.room.room_number }}</span>
-        </div>
-        {% endfor %}
+        <svg width="800" height="600">
+            {% for plan in plans %}
+            {% for shape in plan.svg_points %}
+            {% if shape.type == "polygon" %}
+            <!-- Kształt wielokąta -->
+            <polygon class="room-shape {% if plan.is_busy %}busy{% else %}free{% endif %}"
+                     points="{{ shape.points }}">
+                <title>{{ plan.room.room_number }}</title>
+            </polygon>
+            <!-- Nazwa sali -->
+            <text class="room-label" x="{{ shape.label_x }}" y="{{ shape.label_y }}">
+                {{ plan.room.room_number }}
+            </text>
+            {% elif shape.type == "rect" %}
+            <!-- Kształt prostokąta -->
+            <rect class="room-shape {% if plan.is_busy %}busy{% else %}free{% endif %}"
+                  x="{{ shape.x }}" y="{{ shape.y }}"
+                  width="{{ shape.width }}" height="{{ shape.height }}">
+                <title>{{ plan.room.room_number }}</title>
+            </rect>
+            <!-- Nazwa sali -->
+            <text class="room-label" x="{{ shape.x | add:shape.width|divisibleby:2 }}"
+                  y="{{ shape.y | add:shape.height|divisibleby:2 }}">
+                {{ plan.room.room_number }}
+            </text>
+            {% endif %}
+            {% endfor %}
+            {% endfor %}
+        </svg>
     </div>
     {% else %}
     <p>Brak planu dla tego piętra.</p>

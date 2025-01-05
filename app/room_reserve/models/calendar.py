@@ -273,9 +273,8 @@ class RoomPlan(models.Model):
     room = models.OneToOneField(Room, on_delete=models.CASCADE, related_name="plan")
     building_name = models.CharField(max_length=100)
     floor = models.IntegerField()
-    x_position = models.IntegerField()  # Współrzędne na obrazie
-    y_position = models.IntegerField()
-    plan_image = models.ImageField(upload_to="building_plans/")  # Opcjonalnie dla różnych obrazów planów
+    svg_points = models.JSONField(default=list)  # Pole JSON dla punktów SVG
+    plan_image = models.ImageField(upload_to="building_plans/", null=True, blank=True)
 
     def __str__(self):
         return f"Plan for {self.room.room_number}"
