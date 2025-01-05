@@ -1,5 +1,5 @@
 from django import forms
-from room_reserve.models import Meeting, Event, Room, Lecturers, Note, Group
+from room_reserve.models import Meeting, Event, Room, Lecturers, Note, Group, User
 
 class MeetingForm(forms.ModelForm):
     is_recurring = forms.BooleanField(required=False, initial=False)
@@ -58,7 +58,7 @@ class MeetingForm(forms.ModelForm):
         ]
         self.fields['event'].queryset = Event.objects.all()
         self.fields['room'].queryset = Room.objects.all()
-        self.fields['lecturers'].queryset = Lecturers.objects.all()
+        self.fields['lecturers'].queryset = User.objects.filter(user_type__in=["Lecturer", "Organizer"])
         self.fields['groups'].queryset = Group.objects.all()  # Populate available groups
 
 
@@ -89,7 +89,7 @@ class EditMeetingForm(forms.ModelForm):
                 'oninput': "this.style.height = '';this.style.height = this.scrollHeight + 'px'"
             }),
             'room': forms.Select(attrs={'id': 'id_room'}),
-            'lecturers': forms.SelectMultiple(attrs={'id': 'id_lecturers'}),
+            'lecturers': forms.SelectMultiple(attrs={'size': '5'}),
             'event': forms.Select(attrs={'id': 'id_event'}),
             'color': forms.TextInput(attrs={'type': 'color', 'id': 'id_color'}),
             'capacity': forms.NumberInput(attrs={'id': 'capacity', 'maxlength': 4}),
@@ -98,24 +98,44 @@ class EditMeetingForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['room'].queryset = Room.objects.all()
-        self.fields['lecturers'].queryset = Lecturers.objects.all()
+        self.fields['lecturers'].queryset = User.objects.filter(user_type__in=["Lecturer", "Organizer"])
         self.fields['event'].queryset = Event.objects.all()
         self.fields['groups'].queryset = Group.objects.all()
 
 class EventForm(forms.ModelForm):
+    organizers = forms.ModelMultipleChoiceField(
+        queryset=User.objects.filter(user_type__in=["Lecturer", "Organizer"]),
+        widget=forms.SelectMultiple(attrs={"class": "form-control"}),  # Multi-select dropdown
+        required=False,
+    )
+    group = forms.ModelChoiceField(
+        queryset=Group.objects.all(),
+        required=False,
+        widget=forms.Select(attrs={"class": "form-control"}),  # Dropdown for single group selection
+    )
+
     class Meta:
         model = Event
-        fields = ["name", "description", "event_type", "start_date", "end_date", "organizer", "color"]
+        fields = [
+            "name",
+            "event_type",
+            "start_date",
+            "end_date",
+            "description",
+            "organizers",  # Updated to use the new field
+            "group",
+            "color",
+            "logo",
+        ]
         widgets = {
-            "start_date": forms.DateTimeInput(attrs={"type": "datetime-local"}),
-            "end_date": forms.DateTimeInput(attrs={"type": "datetime-local"}),
-            "description": forms.Textarea(attrs={"placeholder": "Opis wydarzenia", "rows": 3}),
+            "name": forms.TextInput(attrs={"class": "form-control", "placeholder": "Event Name"}),
+            "description": forms.Textarea(attrs={"class": "form-control", "rows": 3, "placeholder": "Event Description"}),
+            "start_date": forms.DateTimeInput(attrs={"type": "datetime-local", "class": "form-control"}),
+            "end_date": forms.DateTimeInput(attrs={"type": "datetime-local", "class": "form-control"}),
+            "color": forms.TextInput(attrs={"type": "color", "class": "form-control"}),
+            "logo": forms.ClearableFileInput(attrs={"class": "form-control"}),
         }
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.fields["event_type"].choices = [("lesson_schedule", "Plan zajęć"), ("event", "Wydarzenie")]
-
+        
 class NoteForm(forms.ModelForm):
     class Meta:
         model = Note

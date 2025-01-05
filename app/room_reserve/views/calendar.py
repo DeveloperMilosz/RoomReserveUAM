@@ -4,7 +4,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.utils.dateparse import parse_date
 from django.db.models import Q
-from room_reserve.models import Meeting, Event, Room, Lecturers, RoomAttribute, Group
+from room_reserve.models import Meeting, Event, Room, Lecturers, RoomAttribute, Group, User
 from room_reserve.forms.calendar import MeetingForm, EventForm, EditMeetingForm
 from datetime import datetime, timedelta
 from room_reserve.notifications import (
@@ -109,27 +109,23 @@ def meeting_details(request, meeting_id):
     meeting = get_object_or_404(Meeting, pk=meeting_id)
     event = meeting.event
     all_groups = Group.objects.all()
+    lecturers = meeting.lecturers.all()  # Fetch associated lecturers
     email_scheduled_message = None
 
     if request.method == "POST":
         form = ScheduleEmailForm(request.POST)
         if form.is_valid():
             schedule_date = form.cleaned_data["schedule_date"]
-
-            # Pobierz e-mail użytkownika
             user_email = request.user.email
 
             if not user_email:
                 messages.error(request, "Twój adres e-mail nie jest ustawiony.")
                 return redirect("meeting_details", meeting_id=meeting_id)
 
-            # Upewnij się, że schedule_date jest offset-aware
             if schedule_date.tzinfo is None or schedule_date.tzinfo.utcoffset(schedule_date) is None:
                 schedule_date = make_aware(schedule_date)
 
-            # Porównaj z timezone.now()
             if schedule_date > now():
-                # Zaplanuj zadanie w Huey, przekazując szczegóły spotkania
                 send_scheduled_email.schedule(
                     args=[user_email, meeting.name_pl, meeting.start_time, meeting.end_time], eta=schedule_date
                 )
@@ -147,6 +143,7 @@ def meeting_details(request, meeting_id):
             "meeting": meeting,
             "event": event,
             "all_groups": all_groups,
+            "lecturers": lecturers,
             "email_scheduled_message": email_scheduled_message,
             "form": form,
         },
@@ -156,7 +153,12 @@ def meeting_details(request, meeting_id):
 def event_details(request, event_id):
     event = get_object_or_404(Event, pk=event_id)
     meetings = event.meetings.all()
-    return render(request, "pages/calendar/event_details.html", {"event": event, "meetings": meetings})
+    organizers = event.organizer.all()  # Assuming organizer is a ManyToManyField
+    return render(request, "pages/calendar/event_details.html", {
+        "event": event,
+        "meetings": meetings,
+        "organizers": organizers,
+    })
 
 
 def room_details(request, room_number):
@@ -178,10 +180,13 @@ def room_details(request, room_number):
 
 
 def new_meeting(request):
+    """
+    Create a new meeting with the option to select multiple users as organizers or lecturers.
+    """
     rooms = Room.objects.all()
     events = Event.objects.all()
     groups = Group.objects.all()
-    lecturers = Lecturers.objects.all()
+    users = User.objects.filter(user_type__in=["Lecturer", "Organizer"])  # Filter users by type
 
     if request.method == "POST":
         form = MeetingForm(request.POST)
@@ -221,7 +226,6 @@ def new_meeting(request):
                             name_en=meeting_data["name_en"],
                             start_time=datetime.combine(current_date, start_time.time()),
                             end_time=datetime.combine(current_date, end_time.time()),
-                            meeting_type=meeting_data["meeting_type"],
                             room=meeting_data["room"],
                             description=meeting_data["description"],
                             color=meeting_data["color"],
@@ -237,8 +241,7 @@ def new_meeting(request):
                             meeting.lecturers.set(selected_lecturers)
 
                         if selected_groups:
-                            for group in selected_groups:
-                                group.meetings.add(meeting)
+                            meeting.groups.set(selected_groups)
 
                     # Advance to the next date
                     if frequency_select in ["daily", "weekly", "biweekly", "custom_days"]:
@@ -251,21 +254,19 @@ def new_meeting(request):
             # Handle a single meeting
             else:
                 meeting = form.save(commit=False)
-                meeting.is_approved = False
                 meeting.submitted_by = request.user
+                meeting.is_approved = False
                 meeting.save()
-                form.save_m2m()
-
-                # Add selected groups
-                if selected_groups:
-                    for group in selected_groups:
-                        group.meetings.add(meeting)
+                form.save_m2m()  # Save the many-to-many relationships
 
             # Notify user and admins
             notify_meeting_submission(request.user, meeting_data["name_pl"], submitted_by=request.user)
             notify_admin_meeting_submission(meeting_data["name_pl"], submitted_by=request.user)
 
+            messages.success(request, "Meeting request submitted successfully.")
             return redirect("home")
+        else:
+            messages.error(request, "There was an error submitting the meeting request.")
     else:
         form = MeetingForm()
 
@@ -277,7 +278,7 @@ def new_meeting(request):
             "rooms": rooms,
             "events": events,
             "groups": groups,
-            "lecturers": lecturers,
+            "users": users,
         },
     )
 
@@ -287,23 +288,23 @@ def edit_meeting(request, meeting_id):
     meeting = get_object_or_404(Meeting, pk=meeting_id)
     rooms = Room.objects.all()
     events = Event.objects.all()
-    lecturers = Lecturers.objects.all()
+    users = User.objects.filter(user_type__in=["Lecturer", "Organizer"])
     groups = Group.objects.all()
 
     if request.method == "POST":
         form = EditMeetingForm(request.POST, instance=meeting)
-        selected_group_ids = request.POST.getlist("groups")  # Pobierz wybrane grupy
+        selected_group_ids = request.POST.getlist("groups")
         selected_groups = Group.objects.filter(id__in=selected_group_ids)
 
         if form.is_valid():
             meeting = form.save(commit=False)
-            meeting.assigned_groups.set(selected_groups)  # Przypisz grupy do spotkania
+            meeting.assigned_groups.set(selected_groups)
             meeting.save()
             form.save_m2m()
-            messages.success(request, "Spotkanie zostało pomyślnie zaktualizowane.")
+            messages.success(request, "Meeting updated successfully.")
             return redirect("meeting_details", meeting_id=meeting.id)
         else:
-            messages.error(request, "Wystąpił błąd podczas aktualizacji spotkania.")
+            messages.error(request, "There was an error updating the meeting.")
     else:
         form = EditMeetingForm(instance=meeting)
 
@@ -315,15 +316,14 @@ def edit_meeting(request, meeting_id):
             "meeting": meeting,
             "rooms": rooms,
             "events": events,
-            "lecturers": lecturers,
+            "lecturers": users,
             "groups": groups,
         },
     )
 
 
 def new_event(request):
-    lecturers = Lecturers.objects.all()
-    groups = Group.objects.all()  # Fetch all groups for the dropdown
+    users = User.objects.filter(user_type__in=["Lecturer", "Organizer"])  # Fetch appropriate users
 
     if request.method == "POST":
         form = EventForm(request.POST)
@@ -331,16 +331,9 @@ def new_event(request):
             event = form.save(commit=False)
             event.save()
 
-            # Associate the event with a group if selected
-            group_id = form.cleaned_data.get("group")
-            if group_id:
-                group = Group.objects.filter(id=group_id).first()
-                if group:
-                    group.events.add(event)
-
-            # Notify user and admins
-            notify_event_submission(request.user, event.name, submitted_by=request.user)
-            notify_admin_event_submission(event.name, submitted_by=request.user)
+            # Associate the event with selected organizers/lecturers
+            selected_users = request.POST.getlist("organizer")
+            event.organizer.set(User.objects.filter(id__in=selected_users))
 
             return redirect("home")
     else:
@@ -349,9 +342,19 @@ def new_event(request):
     return render(
         request,
         "pages/calendar/new_event.html",
-        {"form": form, "lecturers": lecturers, "groups": groups},
+        {"form": form, "users": users},
     )
 
+    return render(
+        request,
+        "pages/calendar/new_event.html",
+        {
+            "form": form,
+            "lecturers": lecturers,
+            "groups": groups,
+            "users": users,
+        },
+    )
 
 def delete_meeting(request, meeting_id):
     if request.method == "POST":

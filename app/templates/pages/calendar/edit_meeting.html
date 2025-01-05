@@ -46,12 +46,10 @@
             </div>
 
             <div class="input-box">
-                <select name="lecturers" id="id_lecturers" multiple>
-                    {% for lecturer in lecturers %}
-                        <option value="{{ lecturer.id }}"
-                            {% if lecturer.id|stringformat:"s" in form.data.lecturers or lecturer in meeting.lecturers.all %}selected{% endif %}>
-                            {{ lecturer.first_name }} {{ lecturer.last_name }}
-                        </option>
+                <label for="id_lecturers">Wybierz prowadzących (Organizatorów/Wykładowców):</label>
+                <select name="lecturers[]" id="id_lecturers" multiple>
+                    {% for user in form.fields.lecturers.queryset %}
+                    <option value="{{ user.id }}">{{ user.first_name }} {{ user.last_name }} ({{ user.user_type }})</option>
                     {% endfor %}
                 </select>
             </div>

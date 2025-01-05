@@ -16,16 +16,7 @@
             <div class="input-box">
                 <input type="text" name="name" placeholder="Nazwa wydarzenia" maxlength="50" required id="id_name">
             </div>
-            
-            <!-- Event Type -->
-            <div class="input-box">
-                <select name="event_type" required id="id_event_type">
-                    <option value="" disabled selected>Wybierz typ wydarzenia</option>
-                    <option value="lesson_schedule">Plan zajęć</option>
-                    <option value="event">Wydarzenie</option>
-                </select>
-            </div>
-
+         
             <!-- Start Date -->
             <div class="input-box">
                 <input type="datetime-local" name="start_date" placeholder="Data rozpoczęcia" required id="id_start_date">
@@ -42,23 +33,21 @@
                     oninput='this.style.height = "";this.style.height = this.scrollHeight + "px"'></textarea>
             </div>
 
-            <!-- Organizer -->
-            <div class="input-box">
-                <label for="id_organizer">Organizator:</label>
-                <select name="organizer" required id="id_organizer">
-                    <option value="" disabled selected>Wybierz organizatora</option>
-                    {% for lecturer in lecturers %}
-                        <option value="{{ lecturer.id }}">{{ lecturer.first_name }} {{ lecturer.last_name }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-
             <!-- Group Selection -->
             <div class="input-box">
                 <label for="id_group">Grupy:</label>
                 <select name="groups[]" id="id_group" multiple>
                     {% for group in groups %}
                     <option value="{{ group.id }}">{{ group.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="input-box">
+                <label for="id_organizer">Wybierz organizatorów (Organizatorów/Wykładowców):</label>
+                <select name="organizer" id="id_organizer" multiple>
+                    {% for user in users %}
+                    <option value="{{ user.id }}">{{ user.first_name }} {{ user.last_name }} ({{ user.user_type }})</option>
                     {% endfor %}
                 </select>
             </div>
