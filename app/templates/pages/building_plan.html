@@ -17,22 +17,26 @@
       position: absolute;
       top: 0;
       left: 0;
-      pointer-events: none;
   }
   .room-shape {
       fill: green; /* Domyślny kolor dla wolnych sal */
       stroke: black;
       stroke-width: 1;
+      cursor: pointer; /* Wskazuje, że figura jest klikalna */
   }
   .room-shape.busy {
       fill: red; /* Kolor dla zajętych sal */
   }
   .room-label {
-      font-size: 12px;
-      fill: white;
-      text-anchor: middle;
-      dominant-baseline: middle;
-      pointer-events: none; /* Aby kliknięcia nie działały na tekst */
+    font-size: 14px; /* Większy rozmiar tekstu */
+    fill: #000000; /* Czarny kolor dla lepszej widoczności */
+    text-anchor: middle;
+    dominant-baseline: central;
+    font-weight: bold;
+}
+
+  title {
+      fill: black; /* Kolor dla tytułu */
   }
 </style>
 
@@ -45,24 +49,29 @@
             {% for shape in plan.svg_points %}
             {% if shape.type == "polygon" %}
             <!-- Kształt wielokąta -->
-            <polygon class="room-shape {% if plan.is_busy %}busy{% else %}free{% endif %}"
-                     points="{{ shape.points }}">
-                <title>{{ plan.room.room_number }}</title>
-            </polygon>
+            <a href="{% if plan.current_meeting_id %}{% url 'meeting_details' meeting_id=plan.current_meeting_id %}{% else %}#{% endif %}">
+                <polygon class="room-shape {% if plan.is_busy %}busy{% else %}free{% endif %}"
+                         points="{{ shape.points }}">
+                </polygon>
+            </a>
             <!-- Nazwa sali -->
-            <text class="room-label" x="{{ shape.label_x }}" y="{{ shape.label_y }}">
+            <text class="room-label"
+                  x="{{ shape.label_x }}"
+                  y="{{ shape.label_y }}">
                 {{ plan.room.room_number }}
             </text>
             {% elif shape.type == "rect" %}
             <!-- Kształt prostokąta -->
-            <rect class="room-shape {% if plan.is_busy %}busy{% else %}free{% endif %}"
-                  x="{{ shape.x }}" y="{{ shape.y }}"
-                  width="{{ shape.width }}" height="{{ shape.height }}">
-                <title>{{ plan.room.room_number }}</title>
-            </rect>
+            <a href="{% if plan.current_meeting_id %}{% url 'meeting_details' meeting_id=plan.current_meeting_id %}{% else %}#{% endif %}">
+                <rect class="room-shape {% if plan.is_busy %}busy{% else %}free{% endif %}"
+                      x="{{ shape.x }}" y="{{ shape.y }}"
+                      width="{{ shape.width }}" height="{{ shape.height }}">
+                </rect>
+            </a>
             <!-- Nazwa sali -->
-            <text class="room-label" x="{{ shape.x | add:shape.width|divisibleby:2 }}"
-                  y="{{ shape.y | add:shape.height|divisibleby:2 }}">
+            <text class="room-label"
+                  x="{{ shape.label_x }}"
+                  y="{{ shape.label_y }}">
                 {{ plan.room.room_number }}
             </text>
             {% endif %}
