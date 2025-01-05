@@ -1,4 +1,3 @@
-{% extends "base.html" %}
 {% block content %}
 <style>
   .plan-container {
@@ -83,4 +82,10 @@
     <p>Brak planu dla tego piętra.</p>
     {% endif %}
 </div>
+<h3>Aktualne zajęcia:</h3>
+<ul>
+    {% for meeting in current_meetings %}
+        <li>Sala: {{ meeting.room.room_number }} - Spotkanie: {{ meeting.name_pl }}</li>
+    {% endfor %}
+</ul>
 {% endblock %}

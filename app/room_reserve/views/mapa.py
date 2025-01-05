@@ -18,6 +18,11 @@ def building_plan_view(request, building_name, floor):
         .annotate(is_busy=Exists(current_meeting_query), current_meeting_id=Subquery(current_meeting_query))
     )
 
+    # Pobranie aktualnych spotkań
+    current_meetings = Meeting.objects.filter(
+        start_time__lte=current_time, end_time__gte=current_time, room__in=[plan.room for plan in plans if plan.room]
+    ).select_related("room")
+
     # Oblicz współrzędne etykiet
     for plan in plans:
         label_positions = plan.calculate_label_position()
@@ -48,5 +53,6 @@ def building_plan_view(request, building_name, floor):
             "plan_image": plan_image,
             "building_name": building_name,
             "floor": floor,
+            "current_meetings": current_meetings,
         },
     )
