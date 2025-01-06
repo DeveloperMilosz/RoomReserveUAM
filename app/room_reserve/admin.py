@@ -16,16 +16,21 @@ from django.contrib.auth.admin import UserAdmin
 from django.utils.html import format_html
 from django.utils.translation import gettext_lazy as _
 
+from django.contrib import admin
+from django.contrib.auth.admin import UserAdmin
+from django.utils.translation import gettext_lazy as _
+from room_reserve.models import User
+
 
 class CustomUserAdmin(UserAdmin):
     model = User
     list_display = ("email", "username", "first_name", "last_name", "user_type", "is_active")
-    list_filter = ("user_type", "is_active")  # Usunięto 'is_staff', bo to właściwość
+    list_filter = ("user_type", "is_active")  # Usunięto 'is_superuser', bo to właściwość
 
     fieldsets = (
         (None, {"fields": ("email", "password")}),
         (_("Personal info"), {"fields": ("first_name", "last_name", "department", "username")}),
-        (_("Permissions"), {"fields": ("is_active", "is_superuser", "groups", "user_permissions")}),
+        (_("Permissions"), {"fields": ("is_active", "groups", "user_permissions")}),
         (_("Important dates"), {"fields": ("last_login",)}),
         (_("User Type"), {"fields": ("user_type",)}),
     )

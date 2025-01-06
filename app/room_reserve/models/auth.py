@@ -35,12 +35,15 @@ class User(AbstractUser):
 
     user_type = models.CharField(_("User Type"), max_length=50, choices=USER_TYPE_CHOICES, default=GUEST)
 
-    @property
     def is_staff(self):
-        # ADMIN ma uprawnienia staff
-        return self.user_type == self.ADMIN
+        # Użytkownik ma status staff, jeśli jest ADMIN lub superuser
+        return self.user_type == self.ADMIN or self.is_superuser
 
-    @property
     def is_superuser(self):
-        # ADMIN ma pełne uprawnienia superusera
-        return self.user_type == self.ADMIN
+        # Django superuser ma zawsze pełne uprawnienia
+        return self.is_superuser
+
+    class Meta:
+        permissions = [
+            ("can_view_dashboard", "Can view dashboard"),
+        ]
