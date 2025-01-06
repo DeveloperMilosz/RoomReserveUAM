@@ -6,6 +6,7 @@ from django.contrib import messages
 from django import forms
 from django.contrib.auth import get_user_model
 from room_reserve.notifications import notify_account_type_request
+from django.db.models import Q
 
 
 @login_required
@@ -16,15 +17,36 @@ def my_reservations(request):
     if user.user_type not in ["Admin", "Lecturer", "Guest"]:
         return HttpResponseForbidden("Nie masz uprawnień do przeglądania tej strony.")
 
-    # Filtruj spotkania (Meeting) dla zalogowanego użytkownika
-    pending_meetings = Meeting.objects.filter(submitted_by=user, is_approved=False, is_rejected=False)
-    approved_meetings = Meeting.objects.filter(submitted_by=user, is_approved=True)
-    rejected_meetings = Meeting.objects.filter(submitted_by=user, is_rejected=True)
+    # Parametry filtrowania
+    name_query = request.GET.get("name", "").strip()
+    start_date = request.GET.get("start_date", "").strip()
+    end_date = request.GET.get("end_date", "").strip()
 
-    # Filtruj wydarzenia (Event) dla zalogowanego użytkownika
-    pending_events = Event.objects.filter(submitted_by=user, is_approved=False, is_rejected=False)
-    approved_events = Event.objects.filter(submitted_by=user, is_approved=True)
-    rejected_events = Event.objects.filter(submitted_by=user, is_rejected=True)
+    # Filtr dla spotkań (Meeting)
+    meeting_filters = Q(lecturers=user)
+    if name_query:
+        meeting_filters &= Q(name_pl__icontains=name_query) | Q(name_en__icontains=name_query)
+    if start_date:
+        meeting_filters &= Q(start_time__gte=start_date)
+    if end_date:
+        meeting_filters &= Q(end_time__lte=end_date)
+
+    pending_meetings = Meeting.objects.filter(meeting_filters, is_approved=False, is_rejected=False)
+    approved_meetings = Meeting.objects.filter(meeting_filters, is_approved=True)
+    rejected_meetings = Meeting.objects.filter(meeting_filters, is_rejected=True)
+
+    # Filtr dla wydarzeń (Event)
+    event_filters = Q(organizer=user)
+    if name_query:
+        event_filters &= Q(name__icontains=name_query)
+    if start_date:
+        event_filters &= Q(start_date__gte=start_date)
+    if end_date:
+        event_filters &= Q(end_date__lte=end_date)
+
+    pending_events = Event.objects.filter(event_filters, is_approved=False, is_rejected=False)
+    approved_events = Event.objects.filter(event_filters, is_approved=True)
+    rejected_events = Event.objects.filter(event_filters, is_rejected=True)
 
     return render(
         request,

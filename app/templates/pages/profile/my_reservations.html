@@ -1,94 +1,60 @@
 {% extends "base.html" %}
 
 {% block content %}
+<style>
+  .filter-form {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.filter-fields {
+    display: flex;
+    gap: 10px;
+}
+
+.filter-fields input {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+.form-button {
+    padding: 10px 20px;
+    border: none;
+    background-color: #0f2d66;
+    color: white;
+    font-size: 16px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.form-button:hover {
+    background-color: #018dc4;
+}
+
+.no-data {
+    text-align: center;
+    font-style: italic;
+    color: #888888;
+    margin-top: 20px;
+}
+</style>
+
 <div class="container">
     <h1>Moje Rezerwacje</h1>
 
-    <style>
-        .container {
-            width: 100%;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-            background-color: #f9f9f9;
-            border-radius: 8px;
-            box-shadow: 0px 0px 16px -5px rgb(66, 68, 90);
-        }
-
-        .container h1, .container h2 {
-            font-family: Lato, Roboto, sans-serif;
-            color: rgba(15, 45, 102, 0.98);
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        .container h1 {
-            font-size: 2rem;
-        }
-
-        .container h2 {
-            font-size: 1.5rem;
-        }
-
-        .container ul {
-            list-style: none;
-            padding: 0;
-        }
-
-        .container ul li {
-            padding: 10px;
-            margin: 5px 0;
-            background-color: white;
-            border-radius: 5px;
-            box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s;
-        }
-
-        .container ul li:hover {
-            transform: scale(1.02);
-        }
-
-        .container a {
-            color: #2873FF;
-            text-decoration: none;
-            font-weight: 500;
-            transition: color 0.3s;
-        }
-
-        .container a:hover {
-            color: #0056b3;
-        }
-
-        .container .form-button {
-            padding: 10px 20px;
-            color: white;
-            background-color: rgba(15, 45, 102, 0.98);
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 14px;
-            transition: background-color 0.3s;
-        }
-
-        .container .form-button:hover {
-            background-color: #0056b3;
-        }
-
-        .container section {
-            margin: 20px 0;
-            padding: 15px;
-            border-radius: 8px;
-            background-color: #ffffff;
-            box-shadow: 0px 0px 16px -5px rgb(66, 68, 90);
-        }
-
-        .container .no-data {
-            text-align: center;
-            font-style: italic;
-            color: #888888;
-            margin: 20px 0;
-        }
-    </style>
+    <!-- Formularz filtrowania -->
+    <form method="get" class="filter-form">
+        <div class="filter-fields">
+            <input type="text" name="name" placeholder="Nazwa" value="{{ request.GET.name }}">
+            <input type="date" name="start_date" placeholder="Od daty" value="{{ request.GET.start_date }}">
+            <input type="date" name="end_date" placeholder="Do daty" value="{{ request.GET.end_date }}">
+        </div>
+        <button type="submit" class="form-button">Filtruj</button>
+    </form>
 
     <!-- Oczekujące -->
     <section>
@@ -100,16 +66,14 @@
                         <strong>Spotkanie: <a href="{% url 'meeting_details' meeting.id %}">{{ meeting.name_pl }}</a></strong><br>
                         Data rozpoczęcia: {{ meeting.start_time }}<br>
                         Data zakończenia: {{ meeting.end_time }}<br>
-                        Sala: {{ meeting.room.room_number }}<br>
-                        <a href="{% url 'edit_meeting' meeting.id %}" class="form-button">Edytuj</a>
+                        Sala: {{ meeting.room.room_number }}
                     </li>
                 {% endfor %}
                 {% for event in pending_events %}
                     <li>
                         <strong>Wydarzenie: <a href="{% url 'event_details' event.id %}">{{ event.name }}</a></strong><br>
                         Data rozpoczęcia: {{ event.start_date }}<br>
-                        Data zakończenia: {{ event.end_date }}<br>
-                        <a href="{% url 'edit_event_with_meetings' event.id %}" class="form-button">Edytuj</a>
+                        Data zakończenia: {{ event.end_date }}
                     </li>
                 {% endfor %}
             </ul>
@@ -128,16 +92,14 @@
                         <strong>Spotkanie: <a href="{% url 'meeting_details' meeting.id %}">{{ meeting.name_pl }}</a></strong><br>
                         Data rozpoczęcia: {{ meeting.start_time }}<br>
                         Data zakończenia: {{ meeting.end_time }}<br>
-                        Sala: {{ meeting.room.room_number }}<br>
-                        <a href="{% url 'edit_meeting' meeting.id %}" class="form-button">Edytuj</a>
+                        Sala: {{ meeting.room.room_number }}
                     </li>
                 {% endfor %}
                 {% for event in approved_events %}
                     <li>
                         <strong>Wydarzenie: <a href="{% url 'event_details' event.id %}">{{ event.name }}</a></strong><br>
                         Data rozpoczęcia: {{ event.start_date }}<br>
-                        Data zakończenia: {{ event.end_date }}<br>
-                        <a href="{% url 'edit_event_with_meetings' event.id %}" class="form-button">Edytuj</a>
+                        Data zakończenia: {{ event.end_date }}
                     </li>
                 {% endfor %}
             </ul>
@@ -156,16 +118,14 @@
                         <strong>Spotkanie: <a href="{% url 'meeting_details' meeting.id %}">{{ meeting.name_pl }}</a></strong><br>
                         Data rozpoczęcia: {{ meeting.start_time }}<br>
                         Data zakończenia: {{ meeting.end_time }}<br>
-                        Sala: {{ meeting.room.room_number }}<br>
-                        <a href="{% url 'edit_meeting' meeting.id %}" class="form-button">Edytuj</a>
+                        Sala: {{ meeting.room.room_number }}
                     </li>
                 {% endfor %}
                 {% for event in rejected_events %}
                     <li>
                         <strong>Wydarzenie: <a href="{% url 'event_details' event.id %}">{{ event.name }}</a></strong><br>
                         Data rozpoczęcia: {{ event.start_date }}<br>
-                        Data zakończenia: {{ event.end_date }}<br>
-                        <a href="{% url 'edit_event_with_meetings' event.id %}" class="form-button">Edytuj</a>
+                        Data zakończenia: {{ event.end_date }}
                     </li>
                 {% endfor %}
             </ul>
