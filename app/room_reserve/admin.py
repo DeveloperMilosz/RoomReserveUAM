@@ -19,12 +19,13 @@ from django.utils.translation import gettext_lazy as _
 
 class CustomUserAdmin(UserAdmin):
     model = User
-    list_display = ("email", "username", "first_name", "last_name", "user_type", "is_active", "is_staff")
-    list_filter = ("user_type", "is_staff", "is_active")
+    list_display = ("email", "username", "first_name", "last_name", "user_type", "is_active")
+    list_filter = ("user_type", "is_active")  # Usunięto 'is_staff', bo to właściwość
+
     fieldsets = (
         (None, {"fields": ("email", "password")}),
         (_("Personal info"), {"fields": ("first_name", "last_name", "department", "username")}),
-        (_("Permissions"), {"fields": ("is_active", "is_staff", "is_superuser", "groups", "user_permissions")}),
+        (_("Permissions"), {"fields": ("is_active", "is_superuser", "groups", "user_permissions")}),
         (_("Important dates"), {"fields": ("last_login",)}),
         (_("User Type"), {"fields": ("user_type",)}),
     )
@@ -33,7 +34,7 @@ class CustomUserAdmin(UserAdmin):
             None,
             {
                 "classes": ("wide",),
-                "fields": ("email", "password1", "password2", "user_type", "is_active", "is_staff"),
+                "fields": ("email", "password1", "password2", "user_type", "is_active"),
             },
         ),
     )
@@ -230,7 +231,6 @@ class EventAdmin(admin.ModelAdmin):
         self.message_user(request, _(f"Rejected {count} selected events."))
 
     reject_events.short_description = _("Reject selected events")
-
 
 
 @admin.register(Notification)
