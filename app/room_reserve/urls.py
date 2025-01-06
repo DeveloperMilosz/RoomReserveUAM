@@ -126,4 +126,5 @@ urlpatterns = [
     path("regulamin/", profile_views.terms_conditions_view, name="terms_conditions"),
     path("import_excel/", excel_views.my_excel_import, name="my_excel_import"),
     path("building/<str:building_name>/<int:floor>/", mapa_views.building_plan_view, name="building_plan_view"),
+    path("api/room-status/<int:room_id>/", search_views.room_status, name="room_status"),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
