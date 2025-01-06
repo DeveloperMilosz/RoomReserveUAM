@@ -4,6 +4,7 @@ from django.contrib import messages
 from django.contrib.auth import get_user_model
 from room_reserve.models import Group, Meeting, Event
 from room_reserve.forms.groups import GroupForm
+from django.http import HttpResponseForbidden
 
 User = get_user_model()
 
@@ -19,18 +20,35 @@ def my_groups_view(request):
 
 @login_required
 def create_group_view(request):
-    """
-    Widok tworzenia nowej grupy.
-    """
+    if request.user.user_type == "Guest":
+        messages.error(request, "Nie masz uprawnień do tworzenia grup.")
+        return HttpResponseForbidden("Nie masz uprawnień do tej operacji.")
+
+    allowed_group_types = {
+        "Student": ["personal_group"],
+        "Admin": ["personal_group", "lecturer_group", "academic_year"],
+        "Lecturer": ["personal_group", "lecturer_group", "academic_year"],
+        "Organizer": ["personal_group", "lecturer_group"],
+    }
+
+    user_allowed_group_types = allowed_group_types.get(request.user.user_type, [])
+    localized_group_types = [
+        {"value": group_type[0], "label": group_type[1]}
+        for group_type in Group.GROUP_TYPE_CHOICES
+        if group_type[0] in user_allowed_group_types
+    ]
+
     if request.method == "POST":
         form = GroupForm(request.POST)
         if form.is_valid():
-            group = form.save(commit=False)  # Tworzymy obiekt, ale jeszcze go nie zapisujemy
-            group.save()  # Zapisujemy obiekt w bazie danych, aby uzyskał ID
+            group = form.save(commit=False)
+            if group.group_type not in user_allowed_group_types:
+                messages.error(request, f"Nie masz uprawnień do tworzenia grupy typu '{group.group_type}'.")
+                return redirect("create_group")
 
-            # Dodajemy relacje ManyToMany po zapisaniu obiektu
-            group.admins.add(request.user)  # Dodaj użytkownika jako administratora
-            group.members.add(request.user)  # Dodaj użytkownika jako członka
+            group.save()
+            group.admins.add(request.user)
+            group.members.add(request.user)
 
             messages.success(request, "Grupa została pomyślnie utworzona.")
             return redirect("my_groups")
@@ -39,7 +57,14 @@ def create_group_view(request):
     else:
         form = GroupForm()
 
-    return render(request, "pages/groups/create_group.html", {"form": form})
+    return render(
+        request,
+        "pages/groups/create_group.html",
+        {
+            "form": form,
+            "localized_group_types": localized_group_types,
+        },
+    )
 
 
 @login_required
