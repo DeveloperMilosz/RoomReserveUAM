@@ -34,3 +34,13 @@ class User(AbstractUser):
     ]
 
     user_type = models.CharField(_("User Type"), max_length=50, choices=USER_TYPE_CHOICES, default=GUEST)
+
+    @property
+    def is_staff(self):
+        # ADMIN ma uprawnienia staff
+        return self.user_type == self.ADMIN
+
+    @property
+    def is_superuser(self):
+        # ADMIN ma pełne uprawnienia superusera
+        return self.user_type == self.ADMIN
