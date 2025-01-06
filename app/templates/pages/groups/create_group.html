@@ -36,18 +36,21 @@
                 ></textarea>
             </div>
 
-            <!-- Pole "Group type" -->
+
+            <!-- Pole "Typ grupy" -->
             <div class="input-box">
-                <label for="id_group_type">Typ grupy</label>
-                <select
-                    name="group_type"
-                    id="id_group_type"
-                >
-                    <option value="academic_year">Grupa rocznikowa</option>
-                    <option value="lecturer_group">Grupa wykładowcy</option>
-                    <option value="personal_group" selected>Grupa osobista</option>
-                </select>
-            </div>
+              <label for="id_group_type">Typ grupy</label>
+              <select
+                  name="group_type"
+                  id="id_group_type"
+              >
+                  {% for group_type in localized_group_types %}
+                      <option value="{{ group_type.value }}">
+                          {{ group_type.label }}
+                      </option>
+                  {% endfor %}
+              </select>
+          </div>
 
             <!-- Przycisk zatwierdzający -->
             <button type="submit" class="form-button btn btn-success">
