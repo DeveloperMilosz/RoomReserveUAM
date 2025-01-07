@@ -53,7 +53,7 @@
                 <a href="{% url 'handle_join_request' group.id request_user.id 'reject' %}" style="background-color:red;" class="form-button">Odrzuć</a>
             </li>
             {% empty %}
-            <li>Brak próśb o dołączenie.</li>
+            <li>Brak prośb o dołączenie.</li>
             {% endfor %}
         </ul>
     </div>
@@ -72,8 +72,9 @@
                 </form>
                 {% endif %}
             </li>
-            <!-- Załadowanie pliku CSS dla formularzy -->
-            <link rel="stylesheet" type="text/css" href="{% static 'css/forms.css' %}">
+            {% empty %}
+            <li>Brak przypisanych spotkań.</li>
+            {% endfor %}
         </ul>
     </div>
 
