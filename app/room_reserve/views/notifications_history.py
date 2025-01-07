@@ -110,24 +110,56 @@ def alert_history(request):
 
 @login_required
 def send_notification(request):
+    """
+    Wysyła powiadomienia typu "message" do użytkowników lub grup.
+    """
     if request.method == "POST":
-        group_id = request.POST.get("group")
-        user_email = request.POST.get("email")
-        content = request.POST.get("content")
+        group_ids = request.POST.getlist("groups")  # Lista grup
+        emails = request.POST.get("emails")  # Lista e-maili jako string
+        content = request.POST.get("content")  # Treść wiadomości
 
-        if group_id:
-            group = Group.objects.get(id=group_id)
-            for user in group.members.all():
-                Notification.objects.create(user=user, message=content, notification_type="notification")
+        # Walidacja treści wiadomości
+        if not content.strip():
+            messages.error(request, "Treść wiadomości nie może być pusta.")
+            return redirect("send_notification")
 
-        if user_email:
-            user = User.objects.get(email=user_email)
-            Notification.objects.create(user=user, message=content, notification_type="notification")
+        # Wysyłanie do grup
+        if group_ids:
+            for group_id in group_ids:
+                try:
+                    group = Group.objects.get(id=group_id)
+                    for user in group.members.all():
+                        Notification.objects.create(
+                            user=user, message=content, notification_type="message", submitted_by=request.user
+                        )
+                except Group.DoesNotExist:
+                    messages.error(request, f"Grupa o ID {group_id} nie istnieje.")
+                    continue
 
+        # Wysyłanie do użytkowników przez e-mail
+        if emails:
+            email_list = [email.strip() for email in emails.split(",") if email.strip()]
+            for email in email_list:
+                try:
+                    user = User.objects.get(email=email)
+                    Notification.objects.create(
+                        user=user, message=content, notification_type="message", submitted_by=request.user
+                    )
+                except User.DoesNotExist:
+                    messages.error(request, f"Użytkownik o e-mailu {email} nie istnieje.")
+
+        # Potwierdzenie sukcesu
+        messages.success(request, "Powiadomienia zostały wysłane.")
         return redirect("alert_history")
 
     groups = Group.objects.all()
-    return render(request, "notifications/send_notification.html", {"groups": groups})
+    return render(
+        request,
+        "notifications/send_notification.html",
+        {
+            "groups": groups,
+        },
+    )
 
 
 # from django.shortcuts import render
