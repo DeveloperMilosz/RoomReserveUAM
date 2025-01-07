@@ -610,11 +610,17 @@ table a:hover {
   align-items: center;
   margin-top: 32px;
 }
+.notes-top > * {
+  width: 33%;
+  text-align: center;
+}
 .notes-top select {
   padding: 8px 8px 8px 16px;
   -webkit-appearance: auto;
      -moz-appearance: auto;
           appearance: auto;
+  min-width: 200px;
+  width: unset;
 }
 .notes-top .navbar-buttons {
   display: flex;

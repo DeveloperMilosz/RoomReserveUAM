@@ -700,9 +700,16 @@ table {
   align-items: center;
   margin-top: 32px;
 
+  &>*{
+    width: 33%;
+    text-align: center;
+  }
+
   select{
     padding: 8px 8px 8px 16px;
     appearance: auto;
+    min-width: 200px;
+    width: unset;
   }
 
   .navbar-buttons {
