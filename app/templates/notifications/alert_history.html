@@ -1,31 +1,51 @@
 {% extends "base.html" %}
-
+{% load static %}
 {% block content %}
-<h1>Historia Powiadomień</h1>
 
-<!-- Guzik do przejścia na historię wiadomości -->
-<a href="{% url 'message_history' %}" class="form-button">Zobacz historię wiadomości</a>
+<div class="form-container">
+    <img src="{% static 'img/logo_pl.png' %}" id="logo" alt="logo UAM" aria-hidden="true">
 
-<form method="get">
-    <label for="search_content">Treść:</label>
-    <input type="text" name="search_content" id="search_content">
+    <h1>Filtruj powiadomienia</h1>
+    <p>Wprowadź kryteria poniżej, aby przefiltrować wyniki.</p>
+    <div class="form-form">
+        <form method="get">
 
-    <label for="group">Grupa:</label>
-    <select name="group" id="group">
-        <option value="">-- Wszystkie grupy --</option>
-        {% for group in groups %}
-        <option value="{{ group.id }}">{{ group.name }}</option>
-        {% endfor %}
-    </select>
+            <!-- Pole "Treść" -->
+            <div class="input-box">
+                <label for="search_content">Treść:</label>
+                <input type="text" name="search_content" id="search_content">
+            </div>
 
-    <label for="start_date">Data początkowa:</label>
-    <input type="date" name="start_date" id="start_date">
+            <!-- Pole "Grupa" -->
+            <div class="input-box">
+                <label for="group">Grupa:</label>
+                <select name="group" id="group">
+                    <option value="">-- Wszystkie grupy --</option>
+                    {% for group in groups %}
+                    <option value="{{ group.id }}">{{ group.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
 
-    <label for="end_date">Data końcowa:</label>
-    <input type="date" name="end_date" id="end_date">
+            <!-- Pole "Data początkowa" -->
+            <div class="input-box">
+                <label for="start_date">Data początkowa:</label>
+                <input type="date" name="start_date" id="start_date">
+            </div>
 
-    <button type="submit">Filtruj</button>
-</form>
+            <!-- Pole "Data końcowa" -->
+            <div class="input-box">
+                <label for="end_date">Data końcowa:</label>
+                <input type="date" name="end_date" id="end_date">
+            </div>
+
+            <!-- Przycisk zatwierdzający -->
+            <button type="submit" class="form-button">
+                Filtruj
+            </button>
+        </form>
+    </div>
+</div>
 
 <table>
     <thead>
@@ -37,7 +57,7 @@
     <tbody>
         {% for alert in alerts %}
         <tr>
-            <td>{{ alert.message }}</td>
+            <td style="text-align:left;">{{ alert.message }}</td>
             <td>{{ alert.created_at|date:"Y-m-d H:i" }}</td>
         </tr>
         {% endfor %}

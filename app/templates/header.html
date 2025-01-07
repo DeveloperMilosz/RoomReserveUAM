@@ -47,13 +47,12 @@
 
           <!-- Powiadomienia -->
           <li class="notification-dropdown">
-            <a href="{% url 'notification_history' %}">
-                {% if header_notifications|length > 0 %}
-                    Powiadomienia ({{ header_notifications|length }})
-                {% else %}
-                    Powiadomienia
-                {% endif %}
-            </a>
+            <a href="{% url 'notification_history' %}">Powiadomienia</a>
+            <ul class="submenu">
+              <li><a href="{% url 'notification_history' %}">Historia powiadomień</a></li>
+              <li><a href="{% url 'message_history' %}">Historia wiadomości</a></li>
+              <li><a href="{% url 'send_notification' %}">Wyślij wiadomość</a></li>
+            </ul>
         </li>
     </nav>
   </div>

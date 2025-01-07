@@ -1,34 +1,57 @@
 {% extends "base.html" %}
-
+{% load static %}
 {% block content %}
-<h1>Historia Wiadomości</h1>
 
-<!-- Formularz filtrowania -->
-<form method="get">
-    <label for="search_email">E-mail:</label>
-    <input type="text" name="search_email" id="search_email" value="{{ request.GET.search_email }}">
+<div class="form-container">
+    <img src="{% static 'img/logo_pl.png' %}" id="logo" alt="logo UAM" aria-hidden="true">
 
-    <label for="search_content">Treść:</label>
-    <input type="text" name="search_content" id="search_content" value="{{ request.GET.search_content }}">
+    <h1>Historia Wiadomości</h1>
+    <p>Wprowadź kryteria poniżej, aby przefiltrować wyniki.</p>
+    <div class="form-form">
+        <form method="get">
 
-    <label for="group">Grupa:</label>
-    <select name="group" id="group">
-        <option value="">-- Wszystkie grupy --</option>
-        {% for group in groups %}
-        <option value="{{ group.id }}" {% if group.id|stringformat:"s" == request.GET.group %}selected{% endif %}>
-            {{ group.name }}
-        </option>
-        {% endfor %}
-    </select>
+            <!-- Pole "E-mail" -->
+            <div class="input-box">
+                <label for="search_email">E-mail:</label>
+                <input type="text" name="search_email" id="search_email" value="{{ request.GET.search_email }}">
+            </div>
 
-    <label for="start_date">Data początkowa:</label>
-    <input type="date" name="start_date" id="start_date" value="{{ request.GET.start_date }}">
+            <!-- Pole "Treść" -->
+            <div class="input-box">
+                <label for="search_content">Treść:</label>
+                <input type="text" name="search_content" id="search_content" value="{{ request.GET.search_content }}">
+            </div>
 
-    <label for="end_date">Data końcowa:</label>
-    <input type="date" name="end_date" id="end_date" value="{{ request.GET.end_date }}">
+            <!-- Pole "Grupa" -->
+            <div class="input-box">
+                <label for="group">Grupa:</label>
+                <select name="group" id="group">
+                    <option value="">-- Wszystkie grupy --</option>
+                    {% for group in groups %}
+                    <option value="{{ group.id }}" {% if group.id|stringformat:"s" == request.GET.group %}selected{% endif %}>
+                        {{ group.name }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
 
-    <button type="submit">Filtruj</button>
-</form>
+            <!-- Pole "Data początkowa" -->
+            <div class="input-box">
+                <label for="start_date">Data początkowa:</label>
+                <input type="date" name="start_date" id="start_date" value="{{ request.GET.start_date }}">
+            </div>
+
+            <!-- Pole "Data końcowa" -->
+            <div class="input-box">
+                <label for="end_date">Data końcowa:</label>
+                <input type="date" name="end_date" id="end_date" value="{{ request.GET.end_date }}">
+            </div>
+
+            <!-- Przycisk zatwierdzający -->
+            <button type="submit" class="form-button">Filtruj</button>
+        </form>
+    </div>
+</div>
 
 <!-- Tabela wiadomości -->
 <table>
@@ -56,23 +79,30 @@
     </tbody>
 </table>
 
-<!-- Formularz wysyłania wiadomości -->
+{% comment %} <!-- Formularz wysyłania wiadomości -->
 <h2>Wyślij Wiadomość</h2>
 <form method="post">
     {% csrf_token %}
-    <label for="groups">Grupy:</label>
-    <select name="groups" id="groups" multiple>
-        {% for group in groups %}
-        <option value="{{ group.id }}">{{ group.name }}</option>
-        {% endfor %}
-    </select>
+    <div class="input-box">
+        <label for="groups">Grupy:</label>
+        <select name="groups" id="groups" multiple>
+            {% for group in groups %}
+            <option value="{{ group.id }}">{{ group.name }}</option>
+            {% endfor %}
+        </select>
+    </div>
 
-    <label for="emails">E-maile (oddziel przecinkami):</label>
-    <input type="text" name="emails" id="emails">
+    <div class="input-box">
+        <label for="emails">E-maile (oddziel przecinkami):</label>
+        <input type="text" name="emails" id="emails">
+    </div>
 
-    <label for="content">Treść:</label>
-    <textarea name="content" id="content" rows="5"></textarea>
+    <div class="input-box">
+        <label for="content">Treść:</label>
+        <textarea name="content" id="content" rows="5"></textarea>
+    </div>
 
-    <button type="submit">Wyślij</button>
-</form>
+    <button type="submit" class="form-button">Wyślij</button>
+</form> {% endcomment %}
+
 {% endblock %}

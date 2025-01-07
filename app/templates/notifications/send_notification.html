@@ -1,23 +1,43 @@
 {% extends "base.html" %}
-
+{% load static %}
 {% block content %}
-<h1>Wyślij Powiadomienie</h1>
-<form method="post">
-    {% csrf_token %}
-    <label for="group">Grupa:</label>
-    <select name="group" id="group">
-        <option value="">-- Wybierz grupę --</option>
-        {% for group in groups %}
-        <option value="{{ group.id }}">{{ group.name }}</option>
-        {% endfor %}
-    </select>
 
-    <label for="email">E-mail:</label>
-    <input type="email" name="email" id="email">
+<div class="form-container">
+    <img src="{% static 'img/logo_pl.png' %}" id="logo" alt="logo UAM" aria-hidden="true">
 
-    <label for="content">Treść:</label>
-    <textarea name="content" id="content" rows="5"></textarea>
+    <h1>Wyślij Wiadomość</h1>
+    <p>Wypełnij formularz poniżej, aby wysłać wiadomość do wybranych grup.</p>
 
-    <button type="submit">Wyślij</button>
-</form>
+    <div class="form-form">
+        <form method="post">
+            {% csrf_token %}
+
+            <!-- Pole "Grupy" -->
+            <div class="input-box">
+                <label for="groups">Grupy:</label>
+                <select name="groups" id="groups" multiple>
+                    {% for group in groups %}
+                    <option value="{{ group.id }}">{{ group.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Pole "E-maile" -->
+            <div class="input-box">
+                <label for="emails">E-maile (oddziel przecinkami):</label>
+                <input type="text" name="emails" id="emails">
+            </div>
+
+            <!-- Pole "Treść" -->
+            <div class="input-box">
+                <label for="content">Treść:</label>
+                <textarea name="content" id="content" rows="5"></textarea>
+            </div>
+
+            <!-- Przycisk wysyłania -->
+            <button type="submit" class="form-button">Wyślij</button>
+        </form>
+    </div>
+</div>
+
 {% endblock %}
