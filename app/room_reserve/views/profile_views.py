@@ -14,7 +14,7 @@ def my_reservations(request):
     user = request.user
 
     # Ograniczenie widoku do ADMIN, LECTURER i GUEST
-    if user.user_type not in ["Admin", "Lecturer", "Guest"]:
+    if user.user_type not in ["Admin", "Lecturer", "Organizer"]:
         return HttpResponseForbidden("Nie masz uprawnień do przeglądania tej strony.")
 
     # Parametry filtrowania
