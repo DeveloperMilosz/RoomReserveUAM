@@ -1,84 +1,120 @@
 {% extends "base.html" %}
 {% block content %}
 
-<h1>Edytuj grupę: {{ group.name }}</h1>
+<div class="form-container group-edit">
+    <h1>Edytuj grupę: {{ group.name }}</h1>
 
-<!-- Formularz edycji grupy -->
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit" class="btn btn-success">Zapisz zmiany</button>
-</form>
+    <!-- Formularz edycji grupy -->
+    <div class="form-form">
+        <form method="post">
+            <input type="hidden" name="csrfmiddlewaretoken" value="s2ajXSSfJ3S4f4IuJ2XAJAamp9ZVEFjn6m201gAnNDXr5PUpS211mwv90ShJ5odQ">
+            <div class="input-box">
+                <label for="id_name">Nazwa:</label>
+                <input type="text" name="name" maxlength="100" required id="id_name" value="{{ group.name }}">
+            </div>
+            <div class="input-box">
+                <label for="id_description">Description:</label>
+                <textarea name="description" cols="40" rows="10" id="id_description">{{ group.description }}</textarea>
+            </div>
+            <div class="input-box">
+                <label for="id_group_type">Group type:</label>
+                <select name="group_type" id="id_group_type">
+                    <option value="academic_year" {% if group.group_type == "academic_year" %}selected{% endif %}>Grupa rocznikowa</option>
+                    <option value="lecturer_group" {% if group.group_type == "lecturer_group" %}selected{% endif %}>Grupa wykładowcy</option>
+                    <option value="personal_group" {% if group.group_type == "personal_group" %}selected{% endif %}>Grupa osobista</option>
+                </select>
+            </div>
+            <button type="submit" class="form-button" style="background-color: green;">Zapisz zmiany</button>
+        </form>
+    </div>
 
-<!-- Formularz dodawania administratora -->
-<h2>Dodaj administratora</h2>
-<form method="post">
-    {% csrf_token %}
-    <input type="hidden" name="add_admin" value="1">
-    <label for="new_admin_email">Email nowego administratora:</label>
-    <input type="email" id="new_admin_email" name="new_admin_email" required>
-    <button type="submit" class="btn btn-primary">Dodaj administratora</button>
-</form>
+    <!-- Formularz dodawania administratora -->
+    <h2>Dodaj administratora</h2>
+    <div class="form-form">
+        <form method="post">
+            {% csrf_token %}
+            <input type="hidden" name="add_admin" value="1">
+            <div class="input-box">
+                <label for="new_admin_email">Email nowego administratora:</label>
+                <input type="email" id="new_admin_email" name="new_admin_email" required>
+            </div>
+            <button type="submit" class="form-button">Dodaj administratora</button>
+        </form>
+    </div>
 
-<!-- Formularz dodawania członka -->
-<h2>Dodaj członka</h2>
-<form method="post">
-    {% csrf_token %}
-    <input type="hidden" name="add_member" value="1">
-    <label for="new_member_email">Email nowego członka:</label>
-    <input type="email" id="new_member_email" name="new_member_email" required>
-    <button type="submit" class="btn btn-primary">Dodaj członka</button>
-</form>
+    <!-- Formularz dodawania członka -->
+    <h2>Dodaj członka</h2>
+    <div class="form-form">
+        <form method="post">
+            {% csrf_token %}
+            <input type="hidden" name="add_member" value="1">
+            <div class="input-box">
+                <label for="new_member_email">Email nowego członka:</label>
+                <input type="email" id="new_member_email" name="new_member_email" required>
+            </div>
+            <button type="submit" class="form-button">Dodaj członka</button>
+        </form>
+    </div>
 
-<!-- Generowanie i wyświetlanie linku zaproszenia -->
-<h2>Link zaproszenia</h2>
-{% if invite_link %}
-<p>
-    <strong>Aktualny link zaproszenia:</strong>
-    <a href="{{ invite_link }}" target="_blank">{{ invite_link }}</a>
-</p>
-{% endif %}
-<form method="post">
-    {% csrf_token %}
-    <input type="hidden" name="generate_invite_link" value="1">
-    <button type="submit" class="btn btn-warning">Generuj nowy link</button>
-</form>
+    <!-- Generowanie i wyświetlanie linku zaproszenia -->
+    <h2>Link zaproszenia</h2>
+    {% if invite_link %}
+    <p>
+        <strong>Aktualny link zaproszenia:</strong>
+        <a href="{{ invite_link }}" target="_blank">{{ invite_link }}</a>
+    </p>
+    {% endif %}
+    <div class="form-form">
+        <form method="post">
+            {% csrf_token %}
+            <input type="hidden" name="generate_invite_link" value="1">
+            <button type="submit" class="form-button" style="background-color: orange;">Generuj nowy link</button>
+        </form>
+    </div>
 
-<!-- Formularz przypisywania spotkań -->
-<h2>Przypisz spotkania</h2>
-<form method="post">
-    {% csrf_token %}
-    <input type="hidden" name="assign_meeting" value="1">
-    <label for="meeting_id">Wybierz spotkanie:</label>
-    <select id="meeting_id" name="meeting_id" required>
-        <option value="" disabled selected>Wybierz spotkanie</option>
-        {% for meeting in available_meetings %}
-        <option value="{{ meeting.id }}">{{ meeting.name_pl }} ({{ meeting.start_time }} - {{ meeting.end_time }})</option>
-        {% empty %}
-        <option value="" disabled>Brak dostępnych spotkań</option>
-        {% endfor %}
-    </select>
-    <button type="submit" class="btn btn-primary">Przypisz spotkanie</button>
-</form>
+    <!-- Formularz przypisywania spotkań -->
+    <h2>Przypisz spotkania</h2>
+    <div class="form-form">
+        <form method="post">
+            {% csrf_token %}
+            <input type="hidden" name="assign_meeting" value="1">
+            <div class="input-box">
+                <label for="meeting_id">Wybierz spotkanie:</label>
+                <select id="meeting_id" name="meeting_id" required>
+                    <option value="" disabled selected>Wybierz spotkanie</option>
+                    {% for meeting in available_meetings %}
+                    <option value="{{ meeting.id }}" {% if meeting.id == group.meeting_id %}selected{% endif %}>{{ meeting.name_pl }} ({{ meeting.start_time }} - {{ meeting.end_time }})</option>
+                    {% empty %}
+                    <option value="" disabled>Brak dostępnych spotkań</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <button type="submit" class="form-button">Przypisz spotkanie</button>
+        </form>
+    </div>
 
+    <!-- Formularz przypisywania wydarzeń -->
+    <h2>Przypisz wydarzenie</h2>
+    <div class="form-form">
+        <form method="post">
+            {% csrf_token %}
+            <input type="hidden" name="assign_event" value="1">
+            <div class="input-box">
+                <label for="event_id">Wybierz wydarzenie:</label>
+                <select id="event_id" name="event_id" required>
+                    <option value="" disabled selected>Wybierz wydarzenie</option>
+                    {% for event in available_events %}
+                    <option value="{{ event.id }}" {% if event.id == group.event_id %}selected{% endif %}>{{ event.name }} ({{ event.start_date }} - {{ event.end_date }})</option>
+                    {% empty %}
+                    <option value="" disabled>Brak dostępnych wydarzeń</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <button type="submit" class="form-button">Przypisz wydarzenie</button>
+        </form>
+    </div>
 
-<!-- Formularz przypisywania wydarzeń -->
-<h2>Przypisz wydarzenie</h2>
-<form method="post">
-    {% csrf_token %}
-    <input type="hidden" name="assign_event" value="1">
-    <label for="event_id">Wybierz wydarzenie:</label>
-    <select id="event_id" name="event_id" required>
-        <option value="" disabled selected>Wybierz wydarzenie</option>
-        {% for event in available_events %}
-        <option value="{{ event.id }}">{{ event.name }} ({{ event.start_date }} - {{ event.end_date }})</option>
-        {% empty %}
-        <option value="" disabled>Brak dostępnych wydarzeń</option>
-        {% endfor %}
-    </select>
-    <button type="submit" class="btn btn-primary">Przypisz wydarzenie</button>
-</form>
-
-<a href="{% url 'group_detail' group.id %}" class="btn btn-secondary">Wróć do szczegółów grupy</a>
+    <a href="{% url 'group_detail' group.id %}">Wróć do szczegółów grupy</a>
+</div>
 
 {% endblock %}

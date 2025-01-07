@@ -2,12 +2,10 @@
 {% block content %}
 {% load static %}
 
-<!-- Załadowanie pliku CSS dla formularzy -->
-<link rel="stylesheet" type="text/css" href="{% static 'css/forms.css' %}">
+<div class="meeting-detail">
+<h1 style="text-align:center;">Moje grupy</h1>
 
-<h1>Moje grupy</h1>
-
-<h2>Grupy, do których należysz:</h2>
+<h2 >Grupy, do których należysz:</h2>
 <ul>
     {% for group in my_groups %}
     <li>
@@ -28,7 +26,5 @@
     <li>Nie administrujesz żadną grupą.</li>
     {% endfor %}
 </ul>
-
-<a href="{% url 'create_group' %}">Stwórz nową grupę</a>
-
+</div>
 {% endblock %}

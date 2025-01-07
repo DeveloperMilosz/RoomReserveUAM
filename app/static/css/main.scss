@@ -889,3 +889,22 @@ table {
     }
   }
 }
+
+// Groups
+.group-details{
+  .form-button {
+    padding: 5px 10px;
+    min-height: unset;
+    margin:1px 5px 0px;
+  }
+}
+
+.group-edit{
+  .form-button {
+    margin: 0px auto 12px;
+  }
+
+  h2{
+    margin-bottom: 4px;
+  }
+}

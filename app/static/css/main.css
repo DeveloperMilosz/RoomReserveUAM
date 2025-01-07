@@ -766,4 +766,17 @@ table a:hover {
 }
 .form-form.set-notification-form .meeting-detail-row .form-button {
   min-height: 32px;
+}
+
+.group-details .form-button {
+  padding: 5px 10px;
+  min-height: unset;
+  margin: 1px 5px 0px;
+}
+
+.group-edit .form-button {
+  margin: 0px auto 12px;
+}
+.group-edit h2 {
+  margin-bottom: 4px;
 }/*# sourceMappingURL=main.css.map */

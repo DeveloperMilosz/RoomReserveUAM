@@ -1,106 +1,109 @@
 {% extends "base.html" %}
 {% block content %}
+{% load static %}
 
-<h1>Szczegóły grupy: {{ group.name }}</h1>
+<div class="meeting-detail group-details">
+    <h1 style="text-align:center;">Grupa: {{ group.name }}</h1>
+    <div><h2>Opis:</h2>{{ group.description }}</div>
+    <div><h2>Typ grupy:</h2>{{ group.get_group_type_display }}</div>
 
-<p><strong>Opis:</strong> {{ group.description }}</p>
-<p><strong>Typ grupy:</strong> {{ group.get_group_type_display }}</p>
-<p><strong>Data utworzenia:</strong> {{ group.created_at }}</p>
+    <p><h2>Data utworzenia:</h2>{{ group.created_at }}</p>
 
-<h2>Administratorzy:</h2>
-<ul>
-    {% for admin in group.admins.all %}
-    <li>{{ admin.get_full_name }} ({{ admin.email }})</li>
-    {% endfor %}
-</ul>
-
-<h2>Członkowie:</h2>
-<ul>
-    {% for member in group.members.all %}
-    <li>
-        {{ member.get_full_name }} ({{ member.email }})
-        {% if user in group.admins.all or user.user_type == 'Admin' %}
-        <form method="post" action="{% url 'remove_member' group.id member.id %}" style="display: inline;">
-            {% csrf_token %}
-            <button type="submit" class="btn btn-danger btn-sm">Usuń</button>
-        </form>
-        {% endif %}
-    </li>
-    {% empty %}
-    <li>Brak członków w tej grupie.</li>
-    {% endfor %}
-</ul>
-
-<!-- Przyciski składania prośby o dołączenie -->
-{% if user not in group.members.all %}
-    <form method="post" action="{% url 'request_join_group' group.id %}">
-        {% csrf_token %}
-        <button type="submit" class="btn btn-primary">Poproś o dołączenie</button>
-    </form>
-{% endif %}
-
-<!-- Wyświetlanie próśb o dołączenie dla administratorów -->
-{% if user in group.admins.all or user.user_type == 'Admin' %}
-    <h2>Prośby o dołączenie</h2>
-    <ul>
-        {% for request_user in group.join_requests.all %}
-        <li>
-            {{ request_user.get_full_name }} ({{ request_user.email }})
-            <a href="{% url 'handle_join_request' group.id request_user.id 'accept' %}" class="btn btn-success">Akceptuj</a>
-            <a href="{% url 'handle_join_request' group.id request_user.id 'reject' %}" class="btn btn-danger">Odrzuć</a>
-        </li>
-        {% empty %}
-        <li>Brak próśb o dołączenie.</li>
-        {% endfor %}
-    </ul>
-{% endif %}
-
-<h2>Przypisane spotkania</h2>
-<ul>
-    {% for meeting in group.meetings.all %}
-    <li>
-        {{ meeting.name_pl }} ({{ meeting.start_time }} - {{ meeting.end_time }})
-        {% if user in group.admins.all or user.user_type == 'Admin' %}
-        <form method="post" action="{% url 'remove_meeting' group.id meeting.id %}" style="display: inline;">
-            {% csrf_token %}
-            <button type="submit" class="btn btn-danger btn-sm">Usuń</button>
-        </form>
-        {% endif %}
-    </li>
-    {% empty %}
-    <li>Brak przypisanych spotkań.</li>
-    {% endfor %}
-</ul>
-
-<h2>Przypisane wydarzenia</h2>
-<ul>
-    {% for event in group.events.all %}
-    <li>
-        <strong>{{ event.name }}</strong> ({{ event.start_date }} - {{ event.end_date }})
-        {% if user in group.admins.all or user.user_type == 'Admin' %}
-        <form method="post" action="{% url 'remove_event' group.id event.id %}" style="display: inline;">
-            {% csrf_token %}
-            <button type="submit" class="btn btn-danger btn-sm">Usuń</button>
-        </form>
-        {% endif %}
+    <div><h2>Administratorzy:</h2>
         <ul>
-            {% for meeting in event.meetings.all %}
-            <li>{{ meeting.name_pl }} ({{ meeting.start_time }} - {{ meeting.end_time }})</li>
+            {% for admin in group.admins.all %}
+            <li>{{ admin.get_full_name }} ({{ admin.email }})</li>
             {% endfor %}
         </ul>
-    </li>
-    {% empty %}
-    <li>Brak przypisanych wydarzeń.</li>
-    {% endfor %}
-</ul>
+    </div>
 
+    <div><h2>Członkowie:</h2>
+        <ul>
+            {% for member in group.members.all %}
+            <li>
+                {{ member.get_full_name }} ({{ member.email }})
+                {% if user in group.admins.all or user.user_type == 'Admin' %}
+                <form method="post" action="{% url 'remove_member' group.id member.id %}" style="display: inline;">
+                    {% csrf_token %}
+                    <button type="submit" style="background-color:red;" class="form-button">Usuń</button>
+                </form>
+                {% endif %}
+            </li>
+            {% empty %}
+            <li>Brak członków w tej grupie.</li>
+            {% endfor %}
+        </ul>
+    </div>
 
+    {% if user not in group.members.all %}
+    <form method="post" action="{% url 'request_join_group' group.id %}">
+        {% csrf_token %}
+        <button type="submit" class="form-button">Poproś o dołączenie</button>
+    </form>
+    {% endif %}
 
-<!-- Przycisk edycji grupy dla administratorów grupy lub użytkowników z typem konta Admin -->
-{% if user in group.admins.all or user.user_type == 'Admin' %}
+    {% if user in group.admins.all or user.user_type == 'Admin' %}
+    <div>
+        <h2>Prośby o dołączenie</h2>
+        <ul>
+            {% for request_user in group.join_requests.all %}
+            <li>
+                {{ request_user.get_full_name }} ({{ request_user.email }})
+                <a href="{% url 'handle_join_request' group.id request_user.id 'accept' %}" class="form-button">Akceptuj</a>
+                <a href="{% url 'handle_join_request' group.id request_user.id 'reject' %}" style="background-color:red;" class="form-button">Odrzuć</a>
+            </li>
+            {% empty %}
+            <li>Brak próśb o dołączenie.</li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+
+    <div>
+        <h2>Przypisane spotkania</h2>
+        <ul>
+            {% for meeting in group.meetings.all %}
+            <li>
+                {{ meeting.name_pl }} ({{ meeting.start_time }} - {{ meeting.end_time }})
+                {% if user in group.admins.all or user.user_type == 'Admin' %}
+                <form method="post" action="{% url 'remove_meeting' group.id meeting.id %}" style="display: inline;">
+                    {% csrf_token %}
+                    <button type="submit" style="background-color:red;" class="form-button">Usuń</button>
+                </form>
+                {% endif %}
+            </li>
+            <!-- Załadowanie pliku CSS dla formularzy -->
+            <link rel="stylesheet" type="text/css" href="{% static 'css/forms.css' %}">
+        </ul>
+    </div>
+
+    <div>
+        <h2>Przypisane wydarzenia</h2>
+        <ul>
+            {% for event in group.events.all %}
+            <li>
+                <strong>{{ event.name }}</strong> ({{ event.start_date }} - {{ event.end_date }})
+                {% if user in group.admins.all or user.user_type == 'Admin' %}
+                <form method="post" action="{% url 'remove_event' group.id event.id %}" style="display: inline;">
+                    {% csrf_token %}
+                    <button type="submit" style="background-color:red;" class="form-button">Usuń</button>
+                </form>
+                {% endif %}
+                <ul>
+                    {% for meeting in event.meetings.all %}
+                    <li>{{ meeting.name_pl }} ({{ meeting.start_time }} - {{ meeting.end_time }})</li>
+                    {% endfor %}
+                </ul>
+            </li>
+            {% empty %}
+            <li>Brak przypisanych wydarzeń.</li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    {% if user in group.admins.all or user.user_type == 'Admin' %}
     <a href="{% url 'edit_group' group.id %}" class="btn btn-primary">Edytuj grupę</a>
-{% endif %}
-
-<a href="{% url 'my_groups' %}" class="btn btn-secondary">Wróć do listy grup</a>
+    {% endif %}
+</div>
 
 {% endblock %}
