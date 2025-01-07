@@ -263,7 +263,9 @@ Prowadzący: ${meeting.lecturer || 'Brak danych'}
 Godziny: ${meeting.start.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})} – ${meeting.end.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}`
                     eventEl.classList.add('event', 'weekly');
                     eventEl.textContent = meeting.title;
-
+                    if (meeting.is_canceled) {
+                        eventEl.style.textDecoration = 'line-through';
+                    }
                     const position = timeToPosition(meeting.start, meeting.end);
                     eventEl.style.position = 'absolute';
                     eventEl.style.top = position.top + 'px';
