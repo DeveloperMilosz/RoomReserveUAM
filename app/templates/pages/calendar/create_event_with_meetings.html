@@ -57,6 +57,7 @@
             <!-- Dynamic meeting segments will be appended here -->
         </div>
         <button type="button" id="add-segment-btn" class="form-button">Dodaj Spotkanie</button>
+        <button type="button" id="remove-segment-btn" class="form-button">Usuń Spotkanie</button>
         <button type="submit" class="form-button">Akceptuj</button>
     </form>
 </div>
@@ -70,7 +71,7 @@ document.getElementById('add-segment-btn').addEventListener('click', function ()
     newSegment.classList.add('form-form', 'segment');
 
     newSegment.innerHTML = `
-        <h3>Meeting ${segmentCount}</h3>
+        <h3>Spotkanie ${segmentCount}</h3>
         <div class="input-box">
             <label for="segment-name-${segmentCount}">Nazwa Spotkania:</label>
             <input type="text" id="segment-name-${segmentCount}" name="segmentname[]" required>
@@ -106,6 +107,13 @@ document.getElementById('add-segment-btn').addEventListener('click', function ()
     `;
 
     segmentsContainer.appendChild(newSegment);
+});
+
+document.getElementById('remove-segment-btn').addEventListener('click', function () {
+    const segmentsContainer = document.getElementById('segments-container');
+    if (segmentsContainer.children.length > 0) {
+        segmentsContainer.removeChild(segmentsContainer.lastElementChild);
+    }
 });
 </script>
 {% endblock content %}
