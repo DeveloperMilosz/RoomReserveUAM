@@ -21,7 +21,19 @@ function filterMeetingsByRoom(meetings) {
     return meetings.filter(meeting => meeting.room === roomNumber);
 }
 
+function filterMeetingsByEvent(meetings) {
+    const eventNameElement = document.querySelector('#filter_event');
+    if (!eventNameElement) {
+        return meetings;
+    }
+
+    const eventName = eventNameElement.innerHTML.trim();
+    return meetings.filter(meeting => meeting.event_name == eventName);
+}
+
 async function importMeetings() {
-    const meetings = await fetchMeetings();
-    return filterMeetingsByRoom(meetings);
+    let meetings = await fetchMeetings();
+    meetings = filterMeetingsByRoom(meetings);
+    meetings = filterMeetingsByEvent(meetings);
+    return meetings;
 }

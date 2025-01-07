@@ -50,7 +50,36 @@
           <a href="{% url 'edit_event_with_meetings' event_id=event.id %}" class="form-button">Edytuj Wydarzenie</a>
       </div>
   </div>
-
 </div>
+
+<div class="calendar-menu">
+    <div class="calendar-buttons">
+        <button id="toggleView" class="form-button">Zmień widok</button>
+        <button id="goToToday" class="form-button">Dzisiaj</button>
+    </div>
+    <span class="calendar-title">Kalendarz sali {{ room.room_number }}</span>
+    <div class="calendar-navigation">
+        <button id="arrow-left"></button>
+        <span id="dateRange"></span>
+        <button id="arrow-right"></button>
+    </div>
+</div>
+
+<div class="weekdays">
+    <div>Poniedziałek</div>
+    <div>Wtorek</div>
+    <div>Środa</div>
+    <div>Czwartek</div>
+    <div>Piątek</div>
+    <div>Sobota</div>
+    <div>Niedziela</div>
+</div>
+
+<div id="calendar" class="monthly"></div>
+
+<div id="filter_event" display="none">{{ event.name }}</div>
+
+<script src="{% static 'js/fetch_meetings_api.js' %}"></script>
+<script src="{% static 'js/homepage_calendar.js' %}"></script>
 
 {% endblock content %}

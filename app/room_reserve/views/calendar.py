@@ -60,6 +60,7 @@ def get_meetings(request):
             "room": meeting.room.room_number if meeting.room else None,
             "lecturer": [f"{lecturer.first_name} {lecturer.last_name}" for lecturer in meeting.lecturers.all()],
             "is_canceled": meeting.is_canceled,
+            "event_name": meeting.event.name if meeting.event else None,
         }
 
         print(meeting.is_canceled)
