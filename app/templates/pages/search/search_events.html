@@ -18,12 +18,16 @@
             <input type="time" name="start_time" id="start_time">
         </div>
         <div class="input-box">
-            <label for="end_time">Godzina zakończenia:</label>
-            <input type="time" name="end_time" id="end_time">
+            <label for="end_date">Data zakończenia:</label>
+            <input type="date" name="end_date" id="end_date">
         </div>
         <div class="input-box">
-            <label for="organizer">Organizator:</label>
-            <input type="text" name="organizer" id="organizer" placeholder="Wprowadź nazwę organizatora">
+            <label for="organizer">Organizatorzy:</label>
+            <select name="organizer" id="organizer" multiple>
+                {% for user in filter.form.fields.organizer.queryset %}
+                    <option value="{{ user.id }}">{{ user.first_name }} {{ user.last_name }}</option>
+                {% endfor %}
+            </select>
         </div>
         <button type="submit" class="form-button">Szukaj</button>
     </form>

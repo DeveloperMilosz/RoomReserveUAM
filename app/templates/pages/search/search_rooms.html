@@ -14,7 +14,11 @@ Szukaj Sal
         </div>
         <div class="input-box">
             <label for="attribute">Wyposażenie:</label>
-            <input type="text" name="attribute" id="attribute" placeholder="Wprowadź wyposażenie">
+            <select name="attribute" id="attribute" multiple>
+                {% for choice in filter.form.fields.attribute.choices %}
+                <option value="{{ choice.0 }}">{{ choice.1 }}</option>
+                {% endfor %}
+            </select>
         </div>
         <button type="submit" class="form-button">Szukaj</button>
     </form>

@@ -26,12 +26,21 @@
             <input type="time" name="end_time" id="end_time">
         </div>
         <div class="input-box">
-            <label for="lecturer">Prowadzący:</label>
-            <input type="text" name="lecturer" id="lecturer" placeholder="Wprowadź nazwisko prowadzącego">
+            <label for="lecturers">Prowadzący/Organizatorzy:</label>
+            <select name="lecturers" id="lecturers" multiple>
+                {% for user in filter.form.fields.lecturers.queryset %}
+                <option value="{{ user.id }}">{{ user.first_name }} {{ user.last_name }}</option>
+                {% endfor %}
+            </select>
         </div>
         <div class="input-box">
             <label for="room">Sala:</label>
-            <input type="text" name="room" id="room" placeholder="Wprowadź numer sali">
+            <select name="room" id="room">
+                <option value="">-- Wybierz salę --</option>
+                {% for room in filter.form.fields.room.queryset %}
+                <option value="{{ room.id }}">{{ room.room_number }}</option>
+                {% endfor %}
+            </select>
         </div>
         <div class="input-box">
             <label for="meeting_type">Typ spotkania:</label>

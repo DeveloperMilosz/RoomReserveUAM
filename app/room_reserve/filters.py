@@ -1,5 +1,7 @@
 from django_filters import rest_framework as filters
-from room_reserve.models import Meeting, Event, Room, Group
+from django_filters import ModelMultipleChoiceFilter
+from django_filters import ModelChoiceFilter
+from room_reserve.models import Meeting, Event, Room, Group, User
 from django.db.models import Q
 
 
@@ -7,8 +9,17 @@ class MeetingFilter(filters.FilterSet):
     start_date = filters.DateFilter(field_name="start_time", lookup_expr="date", label="Data spotkania")
     start_time = filters.TimeFilter(field_name="start_time", lookup_expr="time", label="Godzina rozpoczęcia")
     name = filters.CharFilter(field_name="name_pl", lookup_expr="icontains", label="Nazwa spotkania")
-    lecturer = filters.CharFilter(field_name="lecturers__first_name", lookup_expr="icontains", label="Prowadzący")
-    room = filters.CharFilter(field_name="room__room_number", lookup_expr="icontains", label="Sala")
+    lecturers = ModelMultipleChoiceFilter(
+        queryset=User.objects.filter(user_type__in=["Lecturer", "Organizer"]),
+        field_name="lecturers",
+        label="Prowadzący/Organizatorzy",
+    )
+    room = ModelChoiceFilter(
+        queryset=Room.objects.all(),
+        field_name="room",
+        label="Sala",
+        empty_label="-- Wybierz salę --"
+    )
     meeting_type = filters.ChoiceFilter(choices=Meeting.MEETING_TYPE_CHOICES, label="Typ spotkania")
     capacity = filters.NumberFilter(field_name="capacity", lookup_expr="gte", label="Minimalna liczba osób")
     event = filters.ModelChoiceFilter(
@@ -17,23 +28,32 @@ class MeetingFilter(filters.FilterSet):
 
     class Meta:
         model = Meeting
-        fields = ["start_date", "start_time", "name", "lecturer", "room", "meeting_type", "capacity", "event"]
+        fields = ["start_date", "start_time", "name", "lecturers", "room", "meeting_type", "capacity", "event"]
 
 
 class EventFilter(filters.FilterSet):
-    start_date = filters.DateFilter(field_name="start_date", lookup_expr="date", label="Data wydarzenia")
+    start_date = filters.DateFilter(field_name="start_date", lookup_expr="gte", label="Data rozpoczęcia")
+    end_date = filters.DateFilter(field_name="end_date", lookup_expr="lte", label="Data zakończenia")
     start_time = filters.TimeFilter(field_name="start_date", lookup_expr="time", label="Godzina rozpoczęcia")
     name = filters.CharFilter(field_name="name", lookup_expr="icontains", label="Nazwa wydarzenia")
-    organizer = filters.CharFilter(field_name="organizer__first_name", lookup_expr="icontains", label="Organizator")
+    organizer = filters.ModelMultipleChoiceFilter(
+        queryset=User.objects.filter(user_type__in=["Organizer", "Lecturer"]),
+        label="Organizator",
+    )
 
     class Meta:
         model = Event
-        fields = ["start_date", "start_time", "name", "organizer"]
+        fields = ["start_date", "end_date", "start_time", "name", "organizer"]
 
 
 class RoomFilter(filters.FilterSet):
     room_number = filters.CharFilter(field_name="room_number", lookup_expr="icontains", label="Nazwa sali")
-    attribute = filters.CharFilter(field_name="attributes__attribute_id", lookup_expr="icontains", label="Wyposażenie")
+    attribute = filters.MultipleChoiceFilter(
+        field_name="attributes__attribute_id",
+        lookup_expr="icontains",
+        label="Wyposażenie",
+        conjoined=False,  # Set to True if all selected attributes must match
+    )
 
     class Meta:
         model = Room

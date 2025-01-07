@@ -14,6 +14,7 @@ def search_meetings(request):
         meeting_filter = MeetingFilter(request.GET, queryset=Meeting.objects.all().order_by("start_time"))
     else:
         meeting_filter = MeetingFilter(queryset=Meeting.objects.none())
+
     return render(request, "pages/search/search_meetings.html", {"filter": meeting_filter})
 
 
