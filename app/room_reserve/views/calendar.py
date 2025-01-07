@@ -59,7 +59,10 @@ def get_meetings(request):
             "color": meeting.color,
             "room": meeting.room.room_number if meeting.room else None,
             "lecturer": [f"{lecturer.first_name} {lecturer.last_name}" for lecturer in meeting.lecturers.all()],
+            "is_canceled": meeting.is_canceled,
         }
+
+        print(meeting.is_canceled)
 
         if meeting.event and meeting.event.logo:
             event_data["logo"] = request.build_absolute_uri(meeting.event.logo.url)

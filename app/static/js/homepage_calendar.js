@@ -157,7 +157,9 @@ Prowadzący: ${meeting.lecturer || 'Brak danych'}`;
                     
                     eventEl.title = titleHolder;
                     eventEl.textContent = meeting.title;
-
+                    if (meeting.is_canceled) {
+                        eventEl.style.textDecoration = 'line-through';
+                    }
                     eventEl.style.boxShadow = `inset 0 0 0 2px ${meeting.color}`;
 
 
