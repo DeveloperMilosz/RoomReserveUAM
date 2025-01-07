@@ -6,8 +6,10 @@ from room_reserve.notifications import (
     notify_event_with_meetings_submission,
     notify_admin_event_with_meetings_submission,
 )
+from django.contrib.auth.decorators import login_required
 
 
+@login_required
 def create_event_with_meetings(request):
     if request.method == "POST":
         # Collect event data
@@ -29,7 +31,9 @@ def create_event_with_meetings(request):
         )
 
         # Add organizers to the event
-        selected_organizers = User.objects.filter(id__in=selected_organizers_ids, user_type__in=["Organizer", "Lecturer"])
+        selected_organizers = User.objects.filter(
+            id__in=selected_organizers_ids, user_type__in=["Organizer", "Lecturer"]
+        )
         event.organizer.set(selected_organizers)
 
         # Associate event with selected groups
@@ -91,6 +95,7 @@ def create_event_with_meetings(request):
         )
 
 
+@login_required
 def edit_event_with_meetings(request, event_id):
     event = get_object_or_404(Event, id=event_id)
     meetings = event.meetings.all()
@@ -101,59 +106,66 @@ def edit_event_with_meetings(request, event_id):
     users = User.objects.filter(user_type__in=["Organizer", "Lecturer"])
 
     if request.method == "POST":
-        # Update event details
-        event.name = request.POST.get("eventname")
-        event.description = request.POST.get("eventdescription")
-        event.start_date = request.POST.get("eventdatestart")
-        event.end_date = request.POST.get("eventdateend")
-        if request.FILES.get("eventlogo"):
-            event.logo = request.FILES.get("eventlogo")
+        try:
+            # Update event details
+            event.name = request.POST.get("eventname")
+            event.description = request.POST.get("eventdescription")
+            event.start_date = request.POST.get("eventdatestart")
+            event.end_date = request.POST.get("eventdateend")
+            if request.FILES.get("eventlogo"):
+                event.logo = request.FILES.get("eventlogo")
 
-        # Update groups associated with the event
-        selected_group_ids = request.POST.getlist("eventgroups[]")
-        event.groups.set(Group.objects.filter(id__in=selected_group_ids))
+            # Update groups associated with the event
+            selected_group_ids = request.POST.getlist("eventgroups[]")
+            selected_groups = Group.objects.filter(id__in=selected_group_ids)
 
-        # Update the event and save
-        event.save()
+            for group in groups:
+                if group in selected_groups:
+                    group.events.add(event)
+                else:
+                    group.events.remove(event)
 
-        # Update organizers/lecturers for the entire event
-        selected_lecturers_ids = request.POST.getlist("segmentlecturers[]")
-        selected_lecturers = User.objects.filter(
-            id__in=selected_lecturers_ids, user_type__in=["Organizer", "Lecturer"]
-        )
-        event.organizer.set(selected_lecturers)
+            # Save the updated event
+            event.save()
 
-        # Apply organizers to all meetings under the event
-        for meeting in event.meetings.all():
-            meeting.lecturers.set(selected_lecturers)
-            meeting.save()
+            # Update organizers/lecturers for the entire event
+            selected_lecturers_ids = request.POST.getlist("segmentlecturers[]")
+            selected_lecturers = User.objects.filter(
+                id__in=selected_lecturers_ids, user_type__in=["Organizer", "Lecturer"]
+            )
+            event.organizer.set(selected_lecturers)
 
-        # Update specific meeting details if provided in the POST
-        segment_ids = request.POST.getlist("segmentid[]")
-        segment_names = request.POST.getlist("segmentname[]")
-        segment_rooms = request.POST.getlist("segmentroom[]")
-        segment_descriptions = request.POST.getlist("segmentdescription[]")
-        segment_dates = request.POST.getlist("segmentdate[]")
-        segment_start_times = request.POST.getlist("segmenttimestart[]")
-        segment_end_times = request.POST.getlist("segmenttimeend[]")
-        segment_participants = request.POST.getlist("segmentparticipants[]")
+            # Apply organizers to all meetings under the event
+            for meeting in event.meetings.all():
+                meeting.lecturers.set(selected_lecturers)
+                meeting.save()
 
-        for i, segment_id in enumerate(segment_ids):
-            if segment_id:  # Existing meeting
-                meeting = get_object_or_404(Meeting, id=segment_id)
-            else:  # New meeting
-                meeting = Meeting(event=event)
+            # Update specific meeting details if provided in the POST
+            segment_ids = request.POST.getlist("segmentid[]")
+            segment_names = request.POST.getlist("segmentname[]")
+            segment_rooms = request.POST.getlist("segmentroom[]")
+            segment_descriptions = request.POST.getlist("segmentdescription[]")
+            segment_dates = request.POST.getlist("segmentdate[]")
+            segment_start_times = request.POST.getlist("segmenttimestart[]")
+            segment_end_times = request.POST.getlist("segmenttimeend[]")
+            segment_participants = request.POST.getlist("segmentparticipants[]")
 
-            meeting.name_pl = segment_names[i]
-            meeting.description = segment_descriptions[i]
-            meeting.start_time = parse_datetime(f"{segment_dates[i]}T{segment_start_times[i]}")
-            meeting.end_time = parse_datetime(f"{segment_dates[i]}T{segment_end_times[i]}")
-            meeting.capacity = segment_participants[i]
-            meeting.room = Room.objects.filter(id=segment_rooms[i]).first()
-            meeting.save()
+            for i, segment_id in enumerate(segment_ids):
+                meeting = Meeting.objects.filter(id=segment_id).first() if segment_id else Meeting(event=event)
 
-        messages.success(request, "Event and its meetings were successfully updated.")
-        return redirect("event_details", event_id=event.id)
+                meeting.name_pl = segment_names[i]
+                meeting.description = segment_descriptions[i]
+                meeting.start_time = parse_datetime(f"{segment_dates[i]}T{segment_start_times[i]}")
+                meeting.end_time = parse_datetime(f"{segment_dates[i]}T{segment_end_times[i]}")
+                meeting.capacity = segment_participants[i]
+                meeting.room = Room.objects.filter(id=segment_rooms[i]).first()
+                meeting.save()
+
+            messages.success(request, "Event and its meetings were successfully updated.")
+            return redirect("event_details", event_id=event.id)
+
+        except Exception as e:
+            messages.error(request, f"An error occurred while updating the event: {e}")
 
     return render(
         request,
@@ -162,8 +174,8 @@ def edit_event_with_meetings(request, event_id):
             "event": event,
             "meetings": meetings,
             "rooms": rooms,
-            "lecturers": users,  # Pass users to the template
+            "lecturers": users,
             "groups": groups,
-            "users": users,  # Also pass users explicitly if needed
+            "users": users,
         },
     )
