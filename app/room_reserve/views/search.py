@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from room_reserve.models import Meeting, Event, Room, Group
+from room_reserve.models import Meeting, Event, Room, Group, RoomAttribute
 from room_reserve.filters import MeetingFilter, EventFilter, RoomFilter, FreeRoomFilter, GroupFilter
 from django.http import JsonResponse
 from rest_framework.decorators import api_view
@@ -35,16 +35,17 @@ def search_events(request):
 def search_rooms(request):
     """Wyszukaj sale."""
     if request.GET:
-        room_filter = RoomFilter(request.GET, queryset=Room.objects.all())
+        room_filter = RoomFilter(request.GET, queryset=Room.objects.prefetch_related('attributes').distinct())
     else:
         room_filter = RoomFilter(queryset=Room.objects.none())
     return render(request, "pages/search/search_rooms.html", {"filter": room_filter})
 
 
+
 def search_free_rooms(request):
     """Wyszukaj wolne sale."""
     if request.GET:
-        room_filter = FreeRoomFilter(request.GET, queryset=Room.objects.all())
+        room_filter = FreeRoomFilter(request.GET, queryset=Room.objects.prefetch_related('attributes').distinct())
     else:
         room_filter = FreeRoomFilter(queryset=Room.objects.none())
     return render(request, "pages/search/search_free_rooms.html", {"filter": room_filter})

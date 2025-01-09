@@ -102,7 +102,9 @@
         <p style="color: green; font-weight: bold;">To spotkanie jest aktywne.</p>
     {% endif %}
 
+    {% if can_edit %}
     <a href="{% url 'edit_meeting' meeting_id=meeting.id %}" class="btn btn-primary">Edytuj</a>
+    {% endif %}
 </div>
 
 {% endblock content %}

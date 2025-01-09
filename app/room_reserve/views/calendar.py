@@ -116,6 +116,13 @@ def meeting_details(request, meeting_id):
     lecturers = meeting.lecturers.all()  # Fetch associated lecturers
     email_scheduled_message = None
 
+    # Check permissions
+    can_edit = (
+        request.user.user_type == "Admin" or
+        request.user in meeting.lecturers.all() or
+        (meeting.event and request.user in meeting.event.organizer.all())
+    )
+
     if request.method == "POST":
         form = ScheduleEmailForm(request.POST)
         if form.is_valid():
@@ -150,21 +157,27 @@ def meeting_details(request, meeting_id):
             "lecturers": lecturers,
             "email_scheduled_message": email_scheduled_message,
             "form": form,
+            "can_edit": can_edit,  # Pass permission to the template
         },
     )
 
-
+@login_required
 def event_details(request, event_id):
     event = get_object_or_404(Event, pk=event_id)
     meetings = event.meetings.all()
-    organizers = event.organizer.all()  # Assuming organizer is a ManyToManyField
+    organizers = event.organizer.all()
+
+    # Check if the user has permission to edit
+    can_edit = request.user.user_type == "Admin" or request.user in organizers
+
     return render(request, "pages/calendar/event_details.html", {
         "event": event,
         "meetings": meetings,
         "organizers": organizers,
+        "can_edit": can_edit,  # Pass the permission to the template
     })
 
-
+@login_required
 def room_details(request, room_number):
     room = get_object_or_404(Room, room_number=room_number)
     attributes = room.attributes.all()
@@ -182,7 +195,7 @@ def room_details(request, room_number):
         },
     )
 
-
+@login_required
 def new_meeting(request):
     """
     Create a new meeting with the option to select multiple users as organizers or lecturers.
@@ -290,6 +303,15 @@ def new_meeting(request):
 @login_required
 def edit_meeting(request, meeting_id):
     meeting = get_object_or_404(Meeting, pk=meeting_id)
+
+    # Permission check
+    if not (
+        request.user.user_type == "Admin" or
+        request.user in meeting.lecturers.all() or
+        (meeting.event and request.user in meeting.event.organizer.all())
+    ):
+        return HttpResponseForbidden("Nie masz uprawnień do edycji tego spotkania.")
+
     rooms = Room.objects.all()
     events = Event.objects.all()
     users = User.objects.filter(user_type__in=["Lecturer", "Organizer"])
@@ -325,7 +347,7 @@ def edit_meeting(request, meeting_id):
         },
     )
 
-
+@login_required
 def new_event(request):
     users = User.objects.filter(user_type__in=["Lecturer", "Organizer"])  # Fetch appropriate users
 
@@ -360,6 +382,7 @@ def new_event(request):
         },
     )
 
+@login_required
 def delete_meeting(request, meeting_id):
     if request.method == "POST":
         meeting = get_object_or_404(Meeting, id=meeting_id)
@@ -367,7 +390,7 @@ def delete_meeting(request, meeting_id):
         return JsonResponse({"message": "Meeting deleted successfully"}, status=200)
     return JsonResponse({"error": "Invalid request method"}, status=400)
 
-
+@login_required
 def search_view(request):
     search_type = request.GET.get("search_type", "")
     meetings, events, available_rooms = [], [], []

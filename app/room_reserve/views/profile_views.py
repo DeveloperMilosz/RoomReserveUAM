@@ -7,6 +7,7 @@ from django import forms
 from django.contrib.auth import get_user_model
 from room_reserve.notifications import notify_account_type_request
 from django.db.models import Q
+from PIL import Image
 
 
 @login_required
@@ -72,7 +73,19 @@ User = get_user_model()
 class UserProfileForm(forms.ModelForm):
     class Meta:
         model = User
-        fields = ["first_name", "last_name", "email", "department"]
+        fields = ["first_name", "last_name", "email", "profile_picture"]
+
+    def clean_profile_picture(self):
+        picture = self.cleaned_data.get("profile_picture")
+        if picture:
+            try:
+                # Open the image using Pillow
+                img = Image.open(picture)
+                if img.width != 492 or img.height != 633:
+                    raise forms.ValidationError("Profile picture must be 492x633 pixels.")
+            except IOError:
+                raise forms.ValidationError("Uploaded file is not a valid image.")
+        return picture
 
 
 class UserTypeRequestForm(forms.Form):
@@ -90,7 +103,7 @@ def my_profile_view(request):
     user = request.user
 
     if request.method == "POST":
-        profile_form = UserProfileForm(request.POST, instance=user)
+        profile_form = UserProfileForm(request.POST, request.FILES, instance=user)
         type_request_form = UserTypeRequestForm(request.POST)
 
         if profile_form.is_valid():

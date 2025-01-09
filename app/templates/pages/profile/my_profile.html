@@ -73,6 +73,12 @@
             cursor: pointer;
         }
 
+        .profile-picture img {
+            border-radius: 10px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
         .form-button:hover {
             background-color: #0056b3;
         }
@@ -83,7 +89,14 @@
             border-top: 1px solid #ddd;
         }
     </style>
-    <form method="post">
+    <div class="profile-picture">
+        {% if user.profile_picture %}
+            <img src="{{ user.profile_picture.url }}" alt="Profile Picture" style="width: 492px; height: 633px;">
+        {% else %}
+            <p><em>No profile picture uploaded.</em></p>
+        {% endif %}
+    </div>
+    <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
         <h2>Aktualizuj dane:</h2>
         <div class="form-section">

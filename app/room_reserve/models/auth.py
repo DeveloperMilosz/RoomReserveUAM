@@ -29,15 +29,22 @@ class User(AbstractUser):
 
     date_joined = None
     username = models.CharField(null=True, blank=True, max_length=255)
-    first_name = models.CharField(_("First Name"), max_length=50, null=True, blank=True)
-    last_name = models.CharField(_("Last Name"), max_length=50, null=True, blank=True)
-    department = models.CharField(_("Department"), max_length=100, null=True, blank=True)
+    first_name = models.CharField(_("Imie"), max_length=50, null=True, blank=True)
+    last_name = models.CharField(_("Nazwisko"), max_length=50, null=True, blank=True)
+    department = models.CharField(_("Wydział "), max_length=100, null=True, blank=True)
 
     email = models.EmailField(
-        verbose_name=_("email address"),
+        verbose_name=_("Adres Email"),
         unique=True,
         null=False,
         blank=False,
+    )
+
+    profile_picture = models.ImageField(
+        upload_to="profile_pictures/",
+        null=True,
+        blank=True,
+        verbose_name="Zdjęcie Profilowe"
     )
 
     USER_TYPE_CHOICES = [

@@ -25,16 +25,19 @@ Wyszukaj Wolne Sale
             <input type="time" name="end_time" id="end_time">
         </div>
         <div class="input-box">
-    <label for="attribute">Wyposażenie:</label>
-    <input type="text" name="attribute" id="attribute" placeholder="Wprowadź wyposażenie, oddzielając przecinkami">
-</div>
+            <label for="attribute">Wyposażenie:</label>
+            <select name="attribute" id="attribute" multiple>
+                {% for choice in filter.form.fields.attribute.choices %}
+                <option value="{{ choice.0 }}">{{ choice.1 }}</option>
+                {% endfor %}
+            </select>
+        </div>
         <button type="submit" class="form-button">Szukaj</button>
     </form>
 </div>
 {% if filter.qs %}
-
 <div class="tiles_container">
-{% for room in filter.qs %}
+    {% for room in filter.qs %}
     <a href="{% url 'room_details' room.room_number %}">
         {{ room.room_number }}
     </a>

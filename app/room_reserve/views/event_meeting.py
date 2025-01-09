@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.http import JsonResponse, HttpResponseForbidden
 from django.contrib import messages
 from room_reserve.models import Event, Meeting, Lecturers, Room, Group, User
 from django.utils.dateparse import parse_datetime
@@ -97,13 +98,18 @@ def create_event_with_meetings(request):
 
 @login_required
 def edit_event_with_meetings(request, event_id):
-    event = get_object_or_404(Event, id=event_id)
-    meetings = event.meetings.all()
-    rooms = Room.objects.all()
-    groups = Group.objects.all()
+    # Fetch the event and related details
+    event = get_object_or_404(Event, pk=event_id)
+    meetings = event.meetings.all()  # Meetings linked to this event
+    rooms = Room.objects.all()  # All available rooms
+    groups = Group.objects.all()  # All available groups
+    users = User.objects.filter(user_type__in=["Organizer", "Lecturer"])  # Users eligible as organizers
 
-    # Fetch users with the roles 'Organizer' and 'Lecturer'
-    users = User.objects.filter(user_type__in=["Organizer", "Lecturer"])
+    # Permission check: Only Admins and event organizers can edit
+    if not (request.user.user_type == "Admin" or request.user in event.organizer.all()):
+        print(f"User Type: {request.user.user_type}")
+        print(f"User: {request.user} not in Event Organizers: {event.organizer.all()}")
+        return JsonResponse({"error": "Permission denied", "reason": "User lacks Admin role or is not an Organizer."}, status=403)
 
     if request.method == "POST":
         try:
@@ -112,10 +118,18 @@ def edit_event_with_meetings(request, event_id):
             event.description = request.POST.get("eventdescription")
             event.start_date = request.POST.get("eventdatestart")
             event.end_date = request.POST.get("eventdateend")
+
             if request.FILES.get("eventlogo"):
                 event.logo = request.FILES.get("eventlogo")
 
-            # Update groups associated with the event
+            event.save()
+
+            # Update event organizers
+            selected_organizers_ids = request.POST.getlist("segmentuser[]")
+            selected_organizers = User.objects.filter(id__in=selected_organizers_ids, user_type__in=["Organizer", "Lecturer"])
+            event.organizer.set(selected_organizers)
+
+            # Update event groups
             selected_group_ids = request.POST.getlist("eventgroups[]")
             selected_groups = Group.objects.filter(id__in=selected_group_ids)
 
@@ -125,22 +139,7 @@ def edit_event_with_meetings(request, event_id):
                 else:
                     group.events.remove(event)
 
-            # Save the updated event
-            event.save()
-
-            # Update organizers/lecturers for the entire event
-            selected_lecturers_ids = request.POST.getlist("segmentlecturers[]")
-            selected_lecturers = User.objects.filter(
-                id__in=selected_lecturers_ids, user_type__in=["Organizer", "Lecturer"]
-            )
-            event.organizer.set(selected_lecturers)
-
-            # Apply organizers to all meetings under the event
-            for meeting in event.meetings.all():
-                meeting.lecturers.set(selected_lecturers)
-                meeting.save()
-
-            # Update specific meeting details if provided in the POST
+            # Update meetings
             segment_ids = request.POST.getlist("segmentid[]")
             segment_names = request.POST.getlist("segmentname[]")
             segment_rooms = request.POST.getlist("segmentroom[]")
@@ -165,8 +164,9 @@ def edit_event_with_meetings(request, event_id):
             return redirect("event_details", event_id=event.id)
 
         except Exception as e:
-            messages.error(request, f"An error occurred while updating the event: {e}")
+            messages.error(request, f"An error occurred: {e}")
 
+    # Render the edit page
     return render(
         request,
         "pages/calendar/edit_event_with_meetings.html",
@@ -174,7 +174,6 @@ def edit_event_with_meetings(request, event_id):
             "event": event,
             "meetings": meetings,
             "rooms": rooms,
-            "lecturers": users,
             "groups": groups,
             "users": users,
         },

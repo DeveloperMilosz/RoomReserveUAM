@@ -1,7 +1,7 @@
 from django_filters import rest_framework as filters
 from django_filters import ModelMultipleChoiceFilter
 from django_filters import ModelChoiceFilter
-from room_reserve.models import Meeting, Event, Room, Group, User
+from room_reserve.models import Meeting, Event, Room, Group, User, RoomAttribute
 from django.db.models import Q
 
 
@@ -48,16 +48,19 @@ class EventFilter(filters.FilterSet):
 
 class RoomFilter(filters.FilterSet):
     room_number = filters.CharFilter(field_name="room_number", lookup_expr="icontains", label="Nazwa sali")
-    attribute = filters.MultipleChoiceFilter(
-        field_name="attributes__attribute_id",
-        lookup_expr="icontains",
-        label="Wyposażenie",
-        conjoined=False,  # Set to True if all selected attributes must match
-    )
+    attribute = filters.ChoiceFilter(field_name="attributes__attribute_id", label="Wyposażenie", empty_label="-- Wybierz wyposażenie --")
 
     class Meta:
         model = Room
         fields = ["room_number", "attribute"]
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Dynamically set choices for the attribute field
+        self.filters['attribute'].extra['choices'] = [
+            (attr['attribute_id'], attr['description_pl'])
+            for attr in RoomAttribute.objects.values('attribute_id', 'description_pl').distinct()
+        ]
 
 
 class FreeRoomFilter(filters.FilterSet):
@@ -65,14 +68,20 @@ class FreeRoomFilter(filters.FilterSet):
     end_date = filters.DateFilter(method="filter_by_time", label="Data końcowa")
     start_time = filters.TimeFilter(method="filter_by_time", label="Godzina początkowa")
     end_time = filters.TimeFilter(method="filter_by_time", label="Godzina końcowa")
-    attribute = filters.CharFilter(
-        field_name="attributes__description_pl", lookup_expr="icontains", label="Wyposażenie"
-    )
+    attribute = filters.ChoiceFilter(field_name="attributes__attribute_id", label="Wyposażenie", empty_label="-- Wybierz wyposażenie --")
     room_number = filters.CharFilter(field_name="room_number", lookup_expr="icontains", label="Nazwa sali")
 
     class Meta:
         model = Room
         fields = ["start_date", "end_date", "start_time", "end_time", "attribute", "room_number"]
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Dynamically populate unique attributes for the dropdown
+        self.filters['attribute'].extra['choices'] = [
+            (attr['attribute_id'], attr['description_pl'])
+            for attr in RoomAttribute.objects.values('attribute_id', 'description_pl').distinct()
+        ]
 
     def filter_by_time(self, queryset, name, value):
         start_date = self.data.get("start_date")
