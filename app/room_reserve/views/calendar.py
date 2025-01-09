@@ -104,7 +104,13 @@ def room_schedule(request, room_id):
 class ScheduleEmailForm(forms.Form):
     schedule_date = forms.DateTimeField(
         label="Wybierz datę i godzinę wysyłki",
-        widget=forms.DateTimeInput(attrs={"type": "datetime-local", "class": "form-control"}),
+        widget=forms.DateTimeInput(
+            attrs={
+                "type": "datetime-local",
+                "class": "form-control",
+                "step": "300"  # 300 seconds = 5 minutes
+            }
+        ),
     )
 
 
