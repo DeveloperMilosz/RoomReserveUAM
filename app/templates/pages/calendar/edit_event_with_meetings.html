@@ -62,59 +62,65 @@
                 <button type="submit" class="form-button">Zapisz zmiany</button>
             </div>
 
-            {% for meeting in meetings %}
-            <div class="form-form segment">
-                <input type="hidden" name="segmentid[]" value="{{ meeting.id }}">
+{% for meeting in meetings %}
+<div class="form-form segment">
+    <input type="hidden" name="segmentid[]" value="{{ meeting.id }}">
 
-                <h2>Spotkanie {{ forloop.counter }}</h2>
-                <div class="input-box">
-                    <label for="segment-name-{{ forloop.counter }}">Nazwa Spotkania:</label>
-                    <input type="text" id="segment-name-{{ forloop.counter }}"
-                           name="segmentname[]" value="{{ meeting.name_pl }}" required>
-                </div>
-                <div class="input-box">
-                    <label for="segment-room-{{ forloop.counter }}">Sala:</label>
-                    <select id="segment-room-{{ forloop.counter }}" name="segmentroom[]" required>
-                        <option value="" disabled>Wybierz salę</option>
-                        {% for room in rooms %}
-                        <option value="{{ room.id }}"
-                                {% if meeting.room == room %}selected{% endif %}>
-                            Sala {{ room.room_number }} ({{ room.building_name_pl }})
-                        </option>
-                        {% endfor %}
-                    </select>
-                </div>
-                <div class="input-box">
-                    <label for="segment-description-{{ forloop.counter }}">Opis:</label>
-                    <textarea id="segment-description-{{ forloop.counter }}"
-                              name="segmentdescription[]" required>{{ meeting.description }}</textarea>
-                </div>
-                <div class="input-box">
-                    <label for="segment-date-{{ forloop.counter }}">Data:</label>
-                    <input type="date" id="segment-date-{{ forloop.counter }}"
-                           name="segmentdate[]"
-                           value="{{ meeting.start_time|date:'Y-m-d' }}" required>
-                </div>
-                <div class="input-box">
-                    <label for="segment-time-start-{{ forloop.counter }}">Czas rozpoczęcia:</label>
-                    <input type="time" id="segment-time-start-{{ forloop.counter }}"
-                           name="segmenttimestart[]"
-                           value="{{ meeting.start_time|time:'H:i' }}" required>
-                </div>
-                <div class="input-box">
-                    <label for="segment-time-end-{{ forloop.counter }}">Czas zakończenia:</label>
-                    <input type="time" id="segment-time-end-{{ forloop.counter }}"
-                           name="segmenttimeend[]"
-                           value="{{ meeting.end_time|time:'H:i' }}" required>
-                </div>
-                <div class="input-box">
-                    <label for="segment-participants-{{ forloop.counter }}">Liczba uczestników:</label>
-                    <input type="number" id="segment-participants-{{ forloop.counter }}"
-                           name="segmentparticipants[]"
-                           value="{{ meeting.capacity }}" min="1" required>
-                </div>
-            </div>
+    <h2>Spotkanie {{ forloop.counter }}</h2>
+    <div class="input-box">
+        <label for="segment-name-{{ forloop.counter }}">Nazwa Spotkania:</label>
+        <input type="text" id="segment-name-{{ forloop.counter }}"
+               name="segmentname[]" value="{{ meeting.name_pl }}" required>
+    </div>
+    <div class="input-box">
+        <label for="segment-room-{{ forloop.counter }}">Sala:</label>
+        <select id="segment-room-{{ forloop.counter }}" name="segmentroom[]" required>
+            <option value="" disabled>Wybierz salę</option>
+            {% for room in rooms %}
+            <option value="{{ room.id }}"
+                    {% if meeting.room == room %}selected{% endif %}>
+                Sala {{ room.room_number }} ({{ room.building_name_pl }})
+            </option>
             {% endfor %}
+        </select>
+    </div>
+    <div class="input-box">
+        <label for="segment-description-{{ forloop.counter }}">Opis:</label>
+        <textarea id="segment-description-{{ forloop.counter }}"
+                  name="segmentdescription[]" required>{{ meeting.description }}</textarea>
+    </div>
+    <div class="input-box">
+        <label for="segment-date-{{ forloop.counter }}">Data:</label>
+        <input type="date" id="segment-date-{{ forloop.counter }}"
+               name="segmentdate[]"
+               value="{{ meeting.start_time|date:'Y-m-d' }}" required>
+    </div>
+    <div class="input-box">
+        <label for="segment-time-start-{{ forloop.counter }}">Czas rozpoczęcia:</label>
+        <input type="time" id="segment-time-start-{{ forloop.counter }}"
+               name="segmenttimestart[]"
+               value="{{ meeting.start_time|time:'H:i' }}" required>
+    </div>
+    <div class="input-box">
+        <label for="segment-time-end-{{ forloop.counter }}">Czas zakończenia:</label>
+        <input type="time" id="segment-time-end-{{ forloop.counter }}"
+               name="segmenttimeend[]"
+               value="{{ meeting.end_time|time:'H:i' }}" required>
+    </div>
+    <div class="input-box">
+        <label for="segment-participants-{{ forloop.counter }}">Liczba uczestników:</label>
+        <input type="number" id="segment-participants-{{ forloop.counter }}"
+               name="segmentparticipants[]"
+               value="{{ meeting.capacity }}" min="1" required>
+    </div>
+    
+    <!-- NOWY PRZYCISK USUWANIA SPOTKANIA -->
+    <button type="button" class="remove-segment-btn"
+            onclick="removeSegment(this)">
+        Cofnij dodanie tego spotkania
+    </button>
+</div>
+{% endfor %}
         </div>
     </form>
 </div>

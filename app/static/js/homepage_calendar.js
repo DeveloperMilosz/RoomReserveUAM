@@ -145,11 +145,11 @@ const displayMeetings = meetings => {
                         ? endDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
                         : '---';
                     
-                    const titleHolder = `
-                      Tytuł: ${meeting.title}
+                    const titleHolder = 
+`${meeting.title}
 Godziny: ${startTimeString} – ${endTimeString}
 Sala: ${meeting.room || 'Nieznana'}
-Prowadzący: ${meeting.lecturer || 'Brak danych'}`;
+Prowadzący: ${meeting.lecturer || 'Brak prowadzacego'}`;
 
                     const eventEl = document.createElement('a');
                     eventEl.href = `/meeting/${meeting.id}`;

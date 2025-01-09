@@ -91,8 +91,10 @@
         <div class="form-form set-notification-form">
             {{ form.schedule_date.errors }}
             <label for="schedule_date"><strong>Wyślij przypomnienie e-mail o określonej godzinie:</strong></label>
-            {{ form.schedule_date }}
+            <div class="input-box">
+                {{ form.schedule_date }}
             <button type="submit" class="form-button">Zaplanuj e-mail</button>
+            </div>
         </div>
     </form>
 
