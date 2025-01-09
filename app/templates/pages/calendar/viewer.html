@@ -17,7 +17,8 @@
         <div class="weather"></div>
                 <!-- Current Meeting -->
                 {% if current_meeting %}
-                    <div class="meeting current" style="background:linear-gradient(0deg, {{ current_meeting.color }} 0%, #fff 40%);">
+                {% comment %} <div class="meeting current" style="background:linear-gradient(0deg, {{ current_meeting.color }} 0%, #fff 100%);"> {% endcomment %}
+                    <div class="meeting current" style="background:{{ current_meeting.color }};">
                         <div class="meeting-header">Obecne Spotkanie</div>
                         <div class="meeting-content">
                             <h2>{{ current_meeting.name_pl|default:"Brak tytułu" }}</h2>
@@ -45,7 +46,8 @@
 
                 <!-- Next Meeting -->
                 {% if next_meeting %}
-                    <div class="meeting next" style="background:linear-gradient(0deg, {{ next_meeting.color }} 0%, #fff 40%);">
+                {% comment %} <div class="meeting next" style="background:linear-gradient(0deg, {{ next_meeting.color }} 0%, #fff 100%);"> {% endcomment %}
+                    <div class="meeting next" style="background:{{ next_meeting.color }}">
                         <div class="meeting-header">Następne Spotkanie</div>
                         <div class="meeting-content">
                             <h2>{{ next_meeting.name_pl|default:"Brak tytułu" }}</h2>
