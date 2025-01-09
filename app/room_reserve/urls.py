@@ -129,4 +129,5 @@ urlpatterns = [
     path("building/<str:building_name>/<int:floor>/", mapa_views.building_plan_view, name="building_plan_view"),
     path("api/room-status/<int:room_id>/", search_views.room_status, name="room_status"),
     path("mapa/1pietro/", mappa_views.mapa_pietro1, name="mapa_pietro1"),
+    path("manual/", home_views.manual_view, name="manual"),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
