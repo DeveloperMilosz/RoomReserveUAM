@@ -1,0 +1,148 @@
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 20px;
+  background-color: #f4f4f4;
+  color: #333;
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.container {
+  width: 1240px;
+  display: flex;
+  margin: 0 auto;
+}
+
+.clock {
+  font-size: 48px;
+  font-weight: bold;
+  padding: 10px;
+  border-radius: 5px;
+  margin-bottom: 32px;
+}
+
+.meeting {
+  flex: 1;
+  border: 2px solid #ccc;
+  border-radius: 0 50px 50px 0;
+  padding: 20px;
+  background-color: #eafaf1;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  padding-left: 70px;
+  position: relative;
+}
+.meeting.current {
+  z-index: 2;
+  left: -50px;
+}
+.meeting.next {
+  z-index: 1;
+  left: -100px;
+}
+.meeting .meeting-event {
+  text-align: center;
+}
+
+.meeting-header {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 10px;
+  text-align: center;
+  padding: 10px;
+  border-radius: 5px;
+}
+
+.meeting-content {
+  font-size: 18px;
+  margin: 10px 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  text-align: center;
+}
+.meeting-content h2 {
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.meeting-content p {
+  height: 30px;
+}
+.meeting-content > div {
+  font-weight: 700;
+  height: 50px;
+}
+
+.meeting-time {
+  font-weight: bold;
+  color: #555;
+}
+
+.no-meeting {
+  color: #888;
+  text-align: center;
+}
+
+.weather {
+  width: 420px;
+  height: 480px;
+  display: block;
+  margin: auto;
+  text-align: center;
+  padding: 40px 0;
+  overflow: hidden;
+  border-radius: 50px;
+  background-image: linear-gradient(#30A2C5, #00242F);
+  z-index: 3;
+}
+.weather .titlebar {
+  line-height: 0.5rem;
+  color: #fff;
+}
+.weather .titlebar h4 {
+  font-size: 40px;
+  font-weight: bold;
+  text-transform: uppercase;
+  margin: 2rem;
+}
+.weather .titlebar .description {
+  text-transform: uppercase;
+}
+.weather .temperature {
+  background: rgb(206, 206, 206);
+  border-radius: 500px;
+  width: 200px;
+  height: 200px;
+  text-align: center;
+  display: block;
+  margin: auto;
+  box-shadow: 0 30px 20px rgba(29, 29, 29, 0.2117647059);
+  margin: auto;
+  margin-top: 30px;
+  margin-bottom: 30px;
+}
+.weather .temperature img {
+  margin-bottom: -20px;
+}
+.weather .temperature p {
+  font-size: 14px;
+}
+.weather .temperature h2 {
+  margin: 0;
+  font-size: 60px;
+  font-weight: 300;
+}
+.weather .extra {
+  display: flex;
+  justify-content: space-around;
+  color: #fff;
+  padding-bottom: 30px;
+}
+.weather .extra .col .info {
+  padding-bottom: 10px;
+}/*# sourceMappingURL=rasp.css.map */
