@@ -1,22 +1,21 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="form-container form-segments">
-    <h1>Przetwórz pliki Excel</h1>
+<div class="form-container">
     <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
         <div class="form-form">
-            <h2>Wgraj plik Excel</h2>
+            <h1>Przetwórz pliki Excel</h1>
             <div class="input-box">
                 <label for="excel-file">Plik Excel:</label>
                 <input type="file" id="excel-file" name="excelfile" accept=".xlsx" required>
             </div>
+            <button type="submit" class="form-button">Przetwórz plik</button>
         </div>
-        <button type="submit" class="form-button">Przetwórz plik</button>
     </form>
 </div>
 
 {% if data %}
-<div class="form-container">
+<div class="form-container form-segments">
     <h2>Edytowalne Dane</h2>
     <form method="post">
         {% csrf_token %}
@@ -24,58 +23,97 @@
             <thead>
                 <tr>
                     <th>Nazwa</th>
-                    <th>Nazwa (ang)</th>
+                    {% comment %} <th>Nazwa (ang)</th> {% endcomment %}
                     <th>Data</th>
                     <th>Godzina Rozpoczęcia</th>
                     <th>Godzina Zakończenia</th>
                     <th>Nazwa Wydarzenia</th>
-                    <th>Typ Spotkania</th>
+                    {% comment %} <th>Typ Spotkania</th> {% endcomment %}
                     <th>Pokój</th>
                     <th>Wykładowcy</th>
+                    <th>Opis</th>
                     <th>Kolor</th>
                 </tr>
             </thead>
             <tbody>
                 {% for row in data %}
                 <tr>
-                    <td><input type="text" name="nazwa" value="{{ row.nazwa }}"></td>
-                    <td><input type="text" name="nazwa_ang" value="{{ row.nazwa_ang }}"></td>
-                    <td><input type="date" name="data" value="{{ row.data }}"></td>
-                    <td><input type="time" name="godzina_rozpoczecia" value="{{ row.godzina_rozpoczecia }}"></td>
-                    <td><input type="time" name="godzina_zakonczenia" value="{{ row.godzina_zakonczenia }}"></td>
                     <td>
-                        <select name="nazwa_wydarzenia">
-                            {% for event in events %}
-                            <option value="{{ event.name }}" {% if row.nazwa_wydarzenia == event.name %}selected{% endif %}>{{ event.name }}</option>
-                            {% endfor %}
-                        </select>
+                        <div class="input-box">
+                            <input type="text" name="nazwa" value="{{ row.nazwa }}" placeholder="Wprowadź nazwę">
+                        </div>
                     </td>
-                    <td><input type="text" name="meeting_type" value="{{ row.meeting_type }}"></td>
+                    {% comment %} <td>
+                        <div class="input-box">
+                            <input type="text" name="nazwa_ang" value="{{ row.nazwa_ang }}" placeholder="Wprowadź nazwę ang">
+                        </div>
+                    </td> {% endcomment %}
                     <td>
-                        <div style="padding-left: 20px;"> <!-- Wcięcie dla pokoju -->
+                        <div class="input-box">
+                            <input type="date" name="data" value="{{ row.data }}">
+                        </div>
+                    </td>
+                    <td>
+                        <div class="input-box">
+                            <input type="time" name="godzina_rozpoczecia" value="{{ row.godzina_rozpoczecia }}">
+                        </div>
+                    </td>
+                    <td>
+                        <div class="input-box">
+                            <input type="time" name="godzina_zakonczenia" value="{{ row.godzina_zakonczenia }}">
+                        </div>
+                    </td>
+                    <td>
+                        <div class="input-box">
+                            <select name="nazwa_wydarzenia">
+                                <option value="" selected>Bez wydarzenia</option>
+                                {% for event in events %}
+                                <option value="{{ event.name }}" {% if row.nazwa_wydarzenia == event.name %}selected{% endif %}>{{ event.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </td>
+                    {% comment %} <td>
+                        <div class="input-box">
+                            <input type="text" name="meeting_type" value="{{ row.meeting_type }}">
+                        </div>
+                    </td> {% endcomment %}
+                    <td>
+                        <div class="input-box">
                             <select name="room">
                                 {% for room in rooms %}
-                                <option value="{{ room.room_number }}" {% if row.room == room.room_number %}selected{% endif %}>{{ room.room_number }}</option>
+                                <option value="{{ room.room_number }}"{% if row.room == room.room_number %}selected{% endif %}>{{ room.room_number }}</option>
                                 {% endfor %}
                             </select>
                         </div>
                     </td>
                     <td>
-                        <select name="lecturers">
-                            {% for lecturer in lecturers %}
-                            <option value="{{ lecturer.full_name }}" 
-                                {% if row.lecturers == lecturer.full_name %}selected{% endif %}>
-                                {{ lecturer.full_name }}
-                            </option>
-                            {% endfor %}
-                        </select>
+                        <div class="input-box">
+                            <select name="lecturers">
+                                {% for lecturer in lecturers %}
+                                <option value="{{ lecturer.full_name }}" 
+                                    {% if row.lecturers == lecturer.full_name %}selected{% endif %}>
+                                    {{ lecturer.full_name }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
                     </td>
-                    <td><input type="text" name="color" value="{{ row.color }}"></td>
+                    <td>
+                        <div class="input-box">
+                            <textarea name="description" id="id_description" placeholder="Wprowadź opis spotkania" rows="3"></textarea>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="input-box">
+                            <input type="color" name="color" value="#0f2d66" id="id_color">
+                        </div>
+                    </td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
-        <button type="submit" name="save_data">Zapisz do Bazy</button>
+        <button type="submit" class="form-button" name="save_data">Zapisz do Bazy</button>
     </form>
 </div>
 {% endif %}

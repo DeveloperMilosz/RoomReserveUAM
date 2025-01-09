@@ -175,8 +175,7 @@ nav ul li:hover .submenu {
   flex-wrap: wrap;
   align-items: center;
 }
-
-.form-form input {
+.input-box input {
   padding: 1rem;
   border: 1px solid black;
   border-radius: 8px;
@@ -184,6 +183,13 @@ nav ul li:hover .submenu {
   font-size: 1rem;
   font-family: inherit;
   background: transparent;
+}
+
+.set-notification-form input {
+  width: 72%;
+}
+.set-notification-form button {
+  padding: 17.5px 2rem;
 }
 
 .form-button {
@@ -231,7 +237,7 @@ form > a {
   font-size: 14px;
 }
 
-.form-form select {
+.input-box select {
   width: 100%;
   padding: 1rem;
   border: 1px solid black;
@@ -244,8 +250,8 @@ form > a {
           appearance: none;
   cursor: pointer;
 }
-.form-form input[type=color] {
-  width: 10%;
+.input-box input[type=color] {
+  width: 48px;
   height: 48px;
   padding: 0;
   border: 0;
@@ -255,10 +261,8 @@ form > a {
   -webkit-appearance: none;
      -moz-appearance: none;
           appearance: none;
-  margin-left: 8px;
 }
-.form-form textarea {
-  height: 200px;
+.input-box textarea {
   width: 100%;
   padding: 1rem;
   border: 1px solid black;
@@ -268,6 +272,13 @@ form > a {
   background-color: transparent;
   resize: vertical;
   box-sizing: border-box;
+}
+
+.form-form input[type=color] {
+  margin-left: 8px;
+}
+.form-form textarea {
+  height: 200px;
 }
 .form-form .is_recurring {
   display: flex;
@@ -435,7 +446,7 @@ form > a {
   transition: 0.3s;
 }
 .day:not(.weekly) .events .event {
-  margin-top: 5px;
+  margin-top: 1px;
 }
 .day:not(.weekly):nth-child(7n-1), .day:not(.weekly):nth-child(7n) {
   background-color: rgba(224, 255, 255, 0.5333333333);
