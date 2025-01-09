@@ -73,7 +73,7 @@ User = get_user_model()
 class UserProfileForm(forms.ModelForm):
     class Meta:
         model = User
-        fields = ["first_name", "last_name", "email", "profile_picture"]
+        fields = ["first_name", "last_name", "profile_picture"]
 
     def clean_profile_picture(self):
         picture = self.cleaned_data.get("profile_picture")
