@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+Mapa - 1 Piętro
+{% endblock %}
+
+{% block content %}
+
+<style>
+  .map-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    max-width: 1000px; /* Możesz dostosować do szerokości */
+    margin: 0 auto;
+    padding: 20px;
+    text-align: center;
+}
+
+.map-container h1 {
+    margin-bottom: 20px;
+    font-size: 24px;
+    color: rgba(15, 45, 102, 0.98);
+}
+
+.centered-map {
+    max-width: 100%; /* Dostosuj mapkę do szerokości strony */
+    height: auto;    /* Zachowaj proporcje */
+    border: 2px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0px 0px 16px -5px rgba(66, 68, 90, 0.6);
+}
+
+</style>
+<div class="map-container">
+    <h1>Mapa - 1 Piętro</h1>
+    <img src="{% static 'building_plans/mapka1pietro.png' %}" usemap="#image-map" class="centered-map">
+
+    <map name="image-map">
+      <area target="_self" alt="1.01" title="1.01" href="" coords="120,103,30,102,30,54,37,53,37,27,120,27" shape="poly">
+      <area target="_self" alt="1.02" title="1.02" href="" coords="120,187,43,187,43,194,34,195,34,153,28,154,30,104,120,104" shape="poly">
+      <area target="_self" alt="1.04" title="1.04" href="" coords="120,336,30,336,30,310,35,310,35,281,120,282" shape="poly">
+      <area target="_self" alt="1.05" title="1.05" href="" coords="30,342,120,387" shape="rect">
+      <area target="_self" alt="1.06" title="1.06" href="" coords="30,391,120,436" shape="rect">
+      <area target="_self" alt="1.07" title="1.07" href="" coords="31,442,140,523" shape="rect">
+      <area target="_self" alt="1.11" title="1.11" href="" coords="144,441,254,523" shape="rect">
+      <area target="_self" alt="1.12" title="1.12" href="" coords="167,391,254,436" shape="rect">
+      <area target="_self" alt="1.13" title="1.13" href="" coords="167,342,254,387" shape="rect">
+      <area target="_self" alt="1.34" title="1.34" href="" coords="380,232,502,303" shape="rect">
+  </map>
+
+
+</div>
+{% endblock %}

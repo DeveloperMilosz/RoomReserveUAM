@@ -18,6 +18,7 @@ from room_reserve.views import notes as notes_views
 from room_reserve.views import group_views
 from room_reserve.views import my_excel as excel_views
 from room_reserve.views import mapa as mapa_views
+from room_reserve.views import mappa as mappa_views
 
 urlpatterns = [
     # Home
@@ -127,4 +128,5 @@ urlpatterns = [
     path("import_excel/", excel_views.my_excel_import, name="my_excel_import"),
     path("building/<str:building_name>/<int:floor>/", mapa_views.building_plan_view, name="building_plan_view"),
     path("api/room-status/<int:room_id>/", search_views.room_status, name="room_status"),
+    path("mapa/1pietro/", mappa_views.mapa_pietro1, name="mapa_pietro1"),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
