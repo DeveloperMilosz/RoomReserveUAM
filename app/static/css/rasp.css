@@ -97,7 +97,7 @@ h1 {
   padding: 40px 0;
   overflow: hidden;
   border-radius: 50px;
-  background-image: linear-gradient(#30A2C5, #00242F);
+  background-image: linear-gradient(#30A2C5, rgba(15, 45, 102, 0.9803921569));
   z-index: 3;
 }
 .weather .titlebar {
