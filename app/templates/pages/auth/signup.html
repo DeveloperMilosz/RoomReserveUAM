@@ -45,6 +45,15 @@
       required
     />
   </div>
+  <div class="input-box">
+    <label class="accept-terms">
+    <a href="{% url 'terms_conditions' %}" title="regulamin">Akceptuje regulamin</a>
+    <input
+      type="checkbox"
+      required
+    />
+    </label>
+  </div>
   
   <button type="submit" class="form-button">Zarejestruj się</button> 
     <a href="{% url 'account_login' %}">Zaloguj się</a>.

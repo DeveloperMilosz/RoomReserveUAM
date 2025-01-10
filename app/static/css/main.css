@@ -280,11 +280,13 @@ form > a {
 .form-form textarea {
   height: 200px;
 }
+.form-form .accept-terms,
 .form-form .is_recurring {
   display: flex;
   width: 100%;
   justify-content: center;
 }
+.form-form .accept-terms input,
 .form-form .is_recurring input {
   width: auto;
   margin-left: 8px;
