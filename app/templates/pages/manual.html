@@ -1,11 +1,115 @@
 {% extends "base.html" %}
-
-{% block title %}Instrukcja{% endblock %}
-
 {% block content %}
-<div class="container">
-    <h1>Instrukcja użytkownika</h1>
-    <p>Tu znajdziesz szczegółowe informacje na temat używania systemu Room Reserve.</p>
-    <!-- Dodaj treść instrukcji -->
-</div>
-{% endblock %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/manual.css' %}">
+
+<div class="manual-container">
+    <ul id="slides">
+      <li class="slide showing">
+        <span>test test test test test test test test test test test test test test test test test test test<br></span>
+        <img src="{% static 'img/manual_photos/zakladanie.png' %}" alt="Tworzenie konta" class="manual-photo">
+        <span><br>tete</span><span><br>stst</span>
+      </li>
+      <li class="slide">
+        test 2
+      </li>
+      <li class="slide">
+        test 3
+      </li>
+    </ul>
+    <div class="buttons">
+      <button class="controls" id="previous">&lt;</button>  
+      <button class="controls" id="next">&gt;</button>
+    </div>
+  </div>
+
+  <script>
+    var slides = document.querySelectorAll('#slides .slide');
+    var currentSlide = 0;
+    
+    var next = document.getElementById('next');
+    var previous = document.getElementById('previous');
+    
+    function updateButtons() {
+        if (currentSlide === 0) {
+            previous.classList.add('inactive');
+        } else {
+            previous.classList.remove('inactive');
+        }
+    
+        if (currentSlide === slides.length - 1) {
+            next.classList.add('inactive');
+        } else {
+            next.classList.remove('inactive');
+        }
+    }
+    
+    function showPopup(message) {
+        var popup = document.createElement('div');
+        popup.className = 'popup-message';
+        popup.innerText = message;
+    
+        var manualContainer = document.querySelector('.manual-container');
+        
+        popup.style.position = 'absolute';
+        popup.style.bottom = '75px';
+        popup.style.right = '8px';
+        manualContainer.appendChild(popup);
+    
+        setTimeout(() => {
+            popup.remove();
+        }, 2000);
+    }
+    
+    function nextSlide() {
+        if (currentSlide < slides.length - 1) {
+            goToSlide(currentSlide + 1);
+        } else {
+            showPopup("Jesteś na ostatnim slajdzie.", next);
+        }
+    }
+    
+    function previousSlide() {
+        if (currentSlide > 0) {
+            goToSlide(currentSlide - 1);
+        } else {
+            showPopup("Jesteś na pierwszym slajdzie.", previous);
+        }
+    }
+    
+    function goToSlide(n) {
+        slides.forEach((slide, index) => {
+            const offset = index - n;
+            slide.style.transform = `translateX(${offset * 100}%)`;
+            slide.classList.remove('showing');
+        });
+    
+        currentSlide = n;
+    
+        slides[currentSlide].classList.add('showing');
+    
+        updateButtons();
+    }
+    
+    slides.forEach((slide, index) => {
+        slide.style.transform = `translateX(${index * 100}%)`;
+    });
+    updateButtons();
+    
+    next.onclick = function () {
+        if (next.classList.contains('inactive')) {
+            showPopup("Jesteś na ostatnim slajdzie.", next);
+        } else {
+            nextSlide();
+        }
+    };
+    
+    previous.onclick = function () {
+        if (previous.classList.contains('inactive')) {
+            showPopup("Jesteś na pierwszym slajdzie.", previous);
+        } else {
+            previousSlide();
+        }
+    };
+</script>
+{% endblock content %}

@@ -31,8 +31,18 @@
             <ul class="submenu">
               <li><a href="{% url 'my_groups' %}">Moje grupy</a></li>
               <li><a href="{% url 'create_group' %}">Stwórz nową grupę</a></li>
-              <li><a href="{% url 'notes_list' %}">To-Do</a></li>
+              <li><a href="{% url 'notes_list' %}">Tablica zadań</a></li>
             </ul>
+        </li>
+
+        <!-- Powiadomienia -->
+        <li class="notification-dropdown">
+          <a href="{% url 'notification_history' %}">Powiadomienia</a>
+          <ul class="submenu">
+            <li><a href="{% url 'notification_history' %}">Historia powiadomień</a></li>
+            <li><a href="{% url 'message_history' %}">Historia wiadomości</a></li>
+            <li><a href="{% url 'send_notification' %}">Wyślij wiadomość</a></li>
+          </ul>
         </li>
 
           <li>
@@ -40,20 +50,12 @@
               <ul class="submenu">
                 <li><a href="{% url 'my_profile' %}">Mój profil</a></li>
                 <li><a href="{% url 'my_reservations' %}">Moje rezerwacje</a></li>
+                <li><a href="{% url 'about' %}">O stronie</a></li>
+                <li><a href="{% url 'manual' %}">Instrukcja obsługi</a></li>
                 <li><a href="{% url 'account_password_change' %}">Reset hasła</a></li>
                 <li><a href="{% url 'account_logout' %}">Wyloguj się</a></li>
               </ul>
           </li>
-
-          <!-- Powiadomienia -->
-          <li class="notification-dropdown">
-            <a href="{% url 'notification_history' %}">Powiadomienia</a>
-            <ul class="submenu">
-              <li><a href="{% url 'notification_history' %}">Historia powiadomień</a></li>
-              <li><a href="{% url 'message_history' %}">Historia wiadomości</a></li>
-              <li><a href="{% url 'send_notification' %}">Wyślij wiadomość</a></li>
-            </ul>
-        </li>
     </nav>
   </div>
   {% else %}
@@ -64,6 +66,7 @@
           <ul>
             <li><a href="{% url 'home' %}">System rezerwacji UAM</a></li>
             <li><a href="{% url 'about' %}">O stronie</a></li>
+            <li><a href="{% url 'manual' %}">Instrukcja obsługi</a></li>
         </nav>
       </div>
     </div>
