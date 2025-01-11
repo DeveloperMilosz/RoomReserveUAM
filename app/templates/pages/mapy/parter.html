@@ -1,0 +1,151 @@
+{% load static %}
+
+{% block title %}
+Mapa - parter
+{% endblock %}
+<div class="map-container">
+  <!-- Obraz mapy -->
+  <img src="{% static 'building_plans/parter.png' %}" alt="Mapa - Parter" class="map-image">
+
+  <!-- Nakładka SVG -->
+  <svg class="overlay-svg" viewBox="0 0 1802 1088" xmlns="http://www.w3.org/2000/svg">
+    <!-- Sala 0.01 -->
+    <polygon id="room-0.01" class="room" points="226,42 229,201 55,201 55,168 42,169 42,87 57,88 58,42 132,42 180,42" data-title="0.01"></polygon>
+    <text x="140" y="120" class="room-label">0.01</text>
+    <!-- Sala 0.02 -->
+    <polygon id="room-0.02" class="room" points="229,297 229,204 43,204 43,280 55,280 55,297" data-title="0.02"></polygon>
+    <text x="140" y="250" class="room-label">0.02</text>
+    <!-- Sala 0.03 -->
+    <polygon id="room-0.03" class="room" points="56,355 217,355 219,336 229,338 229,303 56,303" data-title="0.03"></polygon>
+    <text x="140" y="330" class="room-label">0.03</text>
+    <!-- Sala 0.04 -->
+    <rect id="room-0.04" class="room" x="56" y="361" width="174" height="124" data-title="0.04"></rect>
+    <text x="140" y="420" class="room-label">0.04</text>
+    <!-- Biuro obsługi Studenta -->
+    <polygon id="room-biuro" class="room" points="55,490 467,493 467,572 480,572 480,644 42,643 42,562 55,562 55,529" data-title="Biuro obsługi Studenta"></polygon>
+    <text x="250" y="580" class="room-label">Biuro obsługi Studenta</text>
+    <!-- Biblioteka -->
+    <rect id="room-biblioteka" class="room" x="42" y="647" width="438" height="395" data-title="Biblioteka"></rect>
+    <text x="250" y="850" class="room-label">Biblioteka</text>
+    <!-- Portiernia -->
+    <rect id="room-portiernia" class="room" x="465" y="183" width="78" height="134" data-title="Portiernia"></rect>
+    <text x="500" y="250" class="room-label">Portiernia</text>
+    <!-- Szatnia -->
+    <rect id="room-szatnia" class="room" x="281" y="183" width="183" height="134" data-title="Szatnia"></rect>
+    <text x="370" y="250" class="room-label">Szatnia</text>
+    <!-- Sala 0.35 -->
+    <a href="{% url 'room_details' '0.35' %}">
+    <polygon id="room-0.35" class="room" points="1208,107 1250,342 1603,277 1560,45" data-title="0.35"></polygon>
+    <text x="1400" y="200" class="room-label">0.35</text>
+    </a>
+
+    <!-- Sala 0.54 -->
+    <a href="{% url 'room_details' '0.54' %}">
+    <polygon id="room-0.54" class="room" points="1224,564 1289,943 1773,851 1704,479" data-title="0.54"></polygon>
+    <text x="1500" y="750" class="room-label">0.54</text>
+    </a>
+  </svg>
+</div>
+
+<div class="meeting-details">
+  <h2>Aktualne Spotkania</h2>
+  <ul id="current-meetings"></ul>
+</div>
+
+<style>
+  .map-container {
+    position: relative;
+    width: 1802px; /* Szerokość obrazu */
+    height: 1088px; /* Wysokość obrazu */
+    margin: 0 auto; /* Wyśrodkowanie */
+  }
+
+  .map-image {
+    display: block;
+    width: 100%; /* Obraz ma pełną szerokość kontenera */
+    height: auto;
+  }
+
+  .overlay-svg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .room {
+    fill: gray; /* Kolor szary dla wszystkich sal */
+    stroke: black; /* Czarny obrys dla lepszej widoczności */
+    stroke-width: 1;
+  }
+
+  .room-label {
+  font-size: 16px;
+  font-weight: bold;
+  fill: black;
+  text-anchor: middle;
+  }
+  .room.occupied {
+    fill: green; /* Zielony kolor dla zajętych sal */
+  }
+
+</style>
+
+<script>
+  // Pobierz statusy wszystkich sal z API
+  fetch('/api/room-statuses/')
+    .then(response => {
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      return response.json();
+    })
+    .then(data => {
+      const meetingsList = document.getElementById('current-meetings');
+
+      data.forEach(room => {
+        // Znajdź element SVG dla sali
+        const roomElement = document.getElementById(`room-${room.room_number}`);
+        if (roomElement) {
+          if (room.has_meeting_now) {
+            // Zmień kolor na zielony, jeśli sala jest zajęta
+            roomElement.classList.remove('gray');
+            roomElement.classList.add('occupied');
+
+            // Dodaj szczegóły spotkania do listy
+            const meetingItem = document.createElement('li');
+            meetingItem.innerHTML = `
+              <strong>Sala: ${room.room_number}</strong><br>
+              Spotkanie: ${room.meeting_details?.meeting_name || 'Brak nazwy'}<br>
+              Wykładowcy: ${room.meeting_details?.lecturers.join(', ') || 'Brak danych'}<br>
+              Czas: ${room.meeting_details?.start_time || ''} - ${room.meeting_details?.end_time || ''}
+            `;
+            meetingsList.appendChild(meetingItem);
+          }
+        }
+      });
+    })
+    .catch(error => console.error('Błąd przy pobieraniu statusów sal:', error));
+
+  // Mapowanie stron
+  const redirectMap = {
+    "{% url 'mapa_parter' %}": "{% url 'mapa_pietro1' %}",
+    "{% url 'mapa_pietro1' %}": "{% url 'mapa_pietro2' %}",
+    "{% url 'mapa_pietro2' %}": "{% url 'mapa_parter' %}",
+  };
+
+  // Funkcja do przekierowania
+  const redirectToNextPage = () => {
+    const currentUrl = window.location.pathname; // Pobierz aktualną ścieżkę URL
+    const nextUrl = redirectMap[currentUrl];
+    if (nextUrl) {
+      window.location.href = nextUrl;
+    } else {
+      console.error('Nie znaleziono URL do przekierowania:', currentUrl);
+    }
+  };
+
+  // Ustaw przekierowanie co 20 sekund (20000 ms)
+  setTimeout(redirectToNextPage, 20000); // 20 sekund
+</script>

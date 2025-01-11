@@ -1,0 +1,245 @@
+{% load static %}
+
+{% block title %}
+Mapa - piętro 1
+{% endblock %}
+<div class="map-container">
+  <!-- Obraz mapy -->
+  <img src="{% static 'building_plans/pietro1.png' %}" alt="Mapa - Parter" class="map-image">
+
+  <!-- Nakładka SVG -->
+  <svg class="overlay-svg" viewBox="0 0 1823 1110" xmlns="http://www.w3.org/2000/svg">
+
+    <!-- Schody -->
+    <rect id="room-schody" class="room" x="69" y="375" width="170" height="121" data-title="Schody"></rect>
+    <text x="120" y="450" class="room-label">Schody</text>
+
+    <!-- Sala 1.14 -->
+    <rect id="room-1.14" class="room" x="315" y="583" width="170" height="56" data-title="1.14"></rect>
+    <text x="400" y="615" class="room-label">1.14</text>
+
+    <!-- Sala 1.15 -->
+    <rect id="room-1.15" class="room" x="315" y="516" width="161" height="67" data-title="1.15"></rect>
+    <text x="400" y="550" class="room-label">1.15</text>
+    <!-- WC (1) -->
+    <rect id="room-wc-1" class="room" x="315" y="254" width="149" height="113" data-title="WC"></rect>
+    <text x="390" y="310" class="room-label">WC</text>
+
+    <!-- WC (2) -->
+    <rect id="room-wc-2" class="room" x="313" y="193" width="151" height="59" data-title="WC"></rect>
+    <text x="390" y="220" class="room-label">WC</text>
+
+    <!-- Sala 1.22 -->
+    <polygon id="room-1.22" class="room" points="315,195 476,191 476,160 491,160 491,93 476,97 476,52 315,52" data-title="1.22"></polygon>
+    <text x="380" y="120" class="room-label">1.22</text>
+
+    <!-- Sala 1.23 -->
+    <polygon id="room-1.23" class="room" points="468,336 587,336 587,369 681,369 681,189 589,189 589,197 468,197" data-title="1.23"></polygon>
+    <text x="550" y="280" class="room-label">1.23</text>
+
+    <!-- Sala 1.26 -->
+    <rect id="room-1.26" class="room" x="757" y="189" width="90" height="149" data-title="1.26"></rect>
+    <text x="800" y="265" class="room-label">1.26</text>
+
+    <!-- Sala 1.24 -->
+    <polygon id="room-1.24" class="room" points="687,369 716,371 716,336 755,336 753,191 687,191" data-title="1.24"></polygon>
+    <text x="710" y="250" class="room-label">1.24</text>
+
+    <!-- Sala 1.27 -->
+    <rect id="room-1.27" class="room" x="849" y="191" width="120" height="147" data-title="1.27"></rect>
+    <text x="900" y="265" class="room-label">1.27</text>
+
+    <!-- Sala 1.28 -->
+    <polygon id="room-1.28" class="room" points="1039,369 1008,370 1006,339 971,339 973,191 1041,191" data-title="1.28"></polygon>
+    <text x="1020" y="280" class="room-label">1.28</text>
+
+    <!-- Sala 1.30 -->
+    <rect id="room-1.30" class="room" x="1043" y="192" width="94" height="109" data-title="1.30"></rect>
+    <text x="1070" y="250" class="room-label">1.30</text>
+
+    <!-- WC (3) -->
+    <rect id="room-wc-3" class="room" x="1045" y="303" width="92" height="69" data-title="WC"></rect>
+    <text x="1070" y="340" class="room-label">WC</text>
+
+    <!-- Sala 1.35 -->
+    <rect id="room-1.35" class="room" x="589" y="493" width="129" height="80" data-title="1.35"></rect>
+    <text x="650" y="540" class="room-label">1.35</text>
+
+    <!-- Sala 1.33 -->
+    <rect id="room-1.33" class="room" x="1010" y="493" width="127" height="84" data-title="1.33"></rect>
+    <text x="1070" y="540" class="room-label">1.33</text>
+    <!-- Sala 0.35-1piętro -->
+    <polygon id="room-0.35-1pietro" class="room" points="1217,122 1260,356 1614,294 1573,59" data-title="0.35-1piętro"></polygon>
+    <text x="1400" y="200" class="room-label">0.35-1piętro</text>
+    <!-- Sala 0.54-1piętro -->
+    <polygon id="room-0.54-1pietro" class="room" points="1235,575 1299,953 1778,865 1712,493" data-title="0.54-1piętro"></polygon>
+    <text x="1500" y="750" class="room-label">0.54-1piętro</text>
+       <!-- Sala 1.01 -->
+       <a href="{% url 'room_details' '1.01' %}">
+        <polygon id="room-1.01" class="room" points="227,193 53,193 55,107 69,101 69,52 227,52" data-title="1.01"></polygon>
+        <text x="140" y="120" class="room-label">1.01</text>
+      </a>
+
+      <!-- Sala 1.02 -->
+      <a href="{% url 'room_details' '1.02' %}">
+        <polygon id="room-1.02" class="room" points="227,356 84,356 84,373 65,373 69,285 55,287 55,199 227,199" data-title="1.02"></polygon>
+        <text x="140" y="290" class="room-label">1.02</text>
+      </a>
+
+      <!-- Sala 1.04 -->
+      <a href="{% url 'room_details' '1.04' %}">
+        <polygon id="room-1.04" class="room" points="229,514 84,514 84,502 69,502 69,584 57,586 57,637 227,637" data-title="1.04"></polygon>
+        <text x="140" y="570" class="room-label">1.04</text>
+      </a>
+
+      <!-- Sala 1.05 -->
+      <a href="{% url 'room_details' '1.05' %}">
+        <rect id="room-1.05" class="room" x="59" y="641" width="170" height="92" data-title="1.05"></rect>
+        <text x="145" y="690" class="room-label">1.05</text>
+      </a>
+
+      <!-- Sala 1.06 -->
+      <a href="{% url 'room_details' '1.06' %}">
+        <rect id="room-1.06" class="room" x="59" y="739" width="170" height="90" data-title="1.06"></rect>
+        <text x="145" y="780" class="room-label">1.06</text>
+      </a>
+
+      <!-- Sala 1.07 -->
+      <a href="{% url 'room_details' '1.07' %}">
+        <rect id="room-1.07" class="room" x="57" y="835" width="213" height="168" data-title="1.07"></rect>
+        <text x="165" y="920" class="room-label">1.07</text>
+      </a>
+
+      <!-- Sala 1.11 -->
+      <a href="{% url 'room_details' '1.11' %}">
+        <rect id="room-1.11" class="room" x="274" y="835" width="211" height="168" data-title="1.11"></rect>
+        <text x="380" y="920" class="room-label">1.11</text>
+      </a>
+
+      <!-- Sala 1.12 -->
+      <a href="{% url 'room_details' '1.12' %}">
+        <rect id="room-1.12" class="room" x="315" y="739" width="170" height="90" data-title="1.12"></rect>
+        <text x="400" y="780" class="room-label">1.12</text>
+      </a>
+
+      <!-- Sala 1.13 -->
+      <a href="{% url 'room_details' '1.13' %}">
+        <rect id="room-1.13" class="room" x="315" y="643" width="170" height="92" data-title="1.13"></rect>
+        <text x="400" y="690" class="room-label">1.13</text>
+      </a>
+
+      <!-- Sala 1.34 -->
+      <a href="{% url 'room_details' '1.34' %}">
+        <rect id="room-1.34" class="room" x="720" y="442" width="288" height="135" data-title="1.34"></rect>
+        <text x="840" y="520" class="room-label">1.34</text>
+      </a>
+
+    </svg>
+  </div>
+
+  <div class="meeting-details">
+    <h2>Aktualne Spotkania</h2>
+    <ul id="current-meetings"></ul>
+  </div>
+
+
+  <style>
+    .map-container {
+      position: relative;
+      width: 1823px; /* Szerokość obrazu */
+      height: 1110px; /* Wysokość obrazu */
+      margin: 0 auto; /* Wyśrodkowanie */
+    }
+
+    .map-image {
+      display: block;
+      width: 100%; /* Obraz ma pełną szerokość kontenera */
+      height: auto;
+    }
+
+    .overlay-svg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    .room {
+      fill: gray; /* Kolor szary dla wszystkich sal */
+      stroke: black; /* Czarny obrys dla lepszej widoczności */
+      stroke-width: 1;
+    }
+    .room-label {
+      font-size: 16px;
+      font-weight: bold;
+      fill: black;
+      text-anchor: middle;
+      }
+
+    .room.occupied {
+      fill: green; /* Zielony kolor dla zajętych sal */
+    }
+
+
+  </style>
+
+
+
+  <script>
+    // Pobierz statusy wszystkich sal z API
+    fetch('/api/room-statuses/')
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then(data => {
+        const meetingsList = document.getElementById('current-meetings');
+
+        data.forEach(room => {
+          // Znajdź element SVG dla sali
+          const roomElement = document.getElementById(`room-${room.room_number}`);
+          if (roomElement) {
+            if (room.has_meeting_now) {
+              // Zmień kolor na zielony, jeśli sala jest zajęta
+              roomElement.classList.remove('gray');
+              roomElement.classList.add('occupied');
+
+              // Dodaj szczegóły spotkania do listy
+              const meetingItem = document.createElement('li');
+              meetingItem.innerHTML = `
+                <strong>Sala: ${room.room_number}</strong><br>
+                Spotkanie: ${room.meeting_details?.meeting_name || 'Brak nazwy'}<br>
+                Wykładowcy: ${room.meeting_details?.lecturers.join(', ') || 'Brak danych'}<br>
+                Czas: ${room.meeting_details?.start_time || ''} - ${room.meeting_details?.end_time || ''}
+              `;
+              meetingsList.appendChild(meetingItem);
+            }
+          }
+        });
+      })
+      .catch(error => console.error('Błąd przy pobieraniu statusów sal:', error));
+
+    // Mapowanie stron
+    const redirectMap = {
+      "{% url 'mapa_parter' %}": "{% url 'mapa_pietro1' %}",
+      "{% url 'mapa_pietro1' %}": "{% url 'mapa_pietro2' %}",
+      "{% url 'mapa_pietro2' %}": "{% url 'mapa_parter' %}",
+    };
+
+    // Funkcja do przekierowania
+    const redirectToNextPage = () => {
+      const currentUrl = window.location.pathname; // Pobierz aktualną ścieżkę URL
+      const nextUrl = redirectMap[currentUrl];
+      if (nextUrl) {
+        window.location.href = nextUrl;
+      } else {
+        console.error('Nie znaleziono URL do przekierowania:', currentUrl);
+      }
+    };
+
+    // Ustaw przekierowanie co 20 sekund (20000 ms)
+    setTimeout(redirectToNextPage, 20000); // 20 sekund
+  </script>
