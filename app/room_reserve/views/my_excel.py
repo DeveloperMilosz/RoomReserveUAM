@@ -1,64 +1,114 @@
-from room_reserve.models import Room, Event, Lecturers  # Import modeli
-from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, redirect
 import pandas as pd
+import json
 from datetime import datetime
+from room_reserve.models import Meeting, Room, Event, Lecturers
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+
 
 @login_required
 def my_excel_import(request):
     data = []
-    rooms = Room.objects.all()  # Pobieranie wszystkich pokoi
-    events = Event.objects.all()  # Pobieranie wszystkich wydarzeń
+    rooms = Room.objects.all()
+    events = Event.objects.all()
     lecturers = [
         {"id": lecturer.id, "full_name": f"{lecturer.first_name} {lecturer.last_name}"}
         for lecturer in Lecturers.objects.all()
-    ]  # Pobieranie wszystkich wykładowców z pełnym imieniem i nazwiskiem
+    ]
 
     if request.method == "POST" and "excelfile" in request.FILES:
-        # Przetwarzanie pliku Excel przy użyciu Pandas
         excel_file = request.FILES["excelfile"]
-        df = pd.read_excel(excel_file)  # Wczytaj plik Excel do DataFrame
+        try:
+            # Wczytanie pliku Excel do DataFrame
+            df = pd.read_excel(excel_file)
 
-        # Konwersja danych do listy słowników
-        for _, row in df.iterrows():
-            # Obsługa konwersji godzin
-            godzina_rozpoczecia = row.get("godzina_rozpoczecia", "")
-            if pd.notnull(godzina_rozpoczecia):
-                try:
-                    # Jeśli wartość jest czasem w Pandas
-                    if isinstance(godzina_rozpoczecia, pd.Timestamp):
-                        godzina_rozpoczecia = godzina_rozpoczecia.strftime("%H:%M:%S")
-                    else:
-                        # Próba parsowania z ciągu
-                        godzina_rozpoczecia = datetime.strptime(str(godzina_rozpoczecia), "%H:%M:%S").strftime("%H:%M:%S")
-                except ValueError:
-                    godzina_rozpoczecia = ""  # Jeśli nie można sparsować, pozostaw puste
+            # Parsowanie dat i godzin z obsługą różnych formatów
+            if "data" in df.columns:
+                df["data"] = pd.to_datetime(df["data"], errors="coerce")
+            if "godzina rozpoczecia" in df.columns:
+                df["godzina rozpoczecia"] = pd.to_datetime(
+                    df["godzina rozpoczecia"], format="%H:%M:%S", errors="coerce"
+                ).dt.time
+            if "godzina zakończenia" in df.columns:
+                df["godzina zakończenia"] = pd.to_datetime(
+                    df["godzina zakończenia"], format="%H:%M:%S", errors="coerce"
+                ).dt.time
 
-            godzina_zakonczenia = row.get("godzina_zakonczenia", "")
-            if pd.notnull(godzina_zakonczenia):
-                try:
-                    if isinstance(godzina_zakonczenia, pd.Timestamp):
-                        godzina_zakonczenia = godzina_zakonczenia.strftime("%H:%M:%S")
-                    else:
-                        godzina_zakonczenia = datetime.strptime(str(godzina_zakonczenia), "%H:%M:%S").strftime("%H:%M:%S")
-                except ValueError:
-                    godzina_zakonczenia = ""
+            # Usunięcie duplikatów w danych
+            df = df.drop_duplicates()
 
-            data.append({
-                "nazwa": row.get("nazwa", ""),
-                "nazwa_ang": row.get("nazwa_ang", ""),
-                "data": row.get("data", "").strftime("%Y-%m-%d") if pd.notnull(row.get("data")) else "",
-                "godzina_rozpoczecia": godzina_rozpoczecia,
-                "godzina_zakonczenia": godzina_zakonczenia,
-                "nazwa_wydarzenia": row.get("nazwa_wydarzenia", ""),
-                "meeting_type": row.get("meeting_type", ""),
-                "room": row.get("room", ""),
-                "lecturers": row.get("lecturers", ""),
-                "color": row.get("color", ""),
-            })
+            # Przygotowanie danych do wyświetlenia
+            for _, row in df.iterrows():
+                data.append(
+                    {
+                        "nazwa": row.get("nazwa", ""),
+                        "nazwa_ang": row.get("nazwa_ang", ""),
+                        "data": row["data"].strftime("%Y-%m-%d") if pd.notnull(row["data"]) else "",
+                        "godzina_rozpoczecia": (
+                            row["godzina rozpoczecia"].strftime("%H:%M:%S")
+                            if pd.notnull(row["godzina rozpoczecia"])
+                            else ""
+                        ),
+                        "godzina_zakonczenia": (
+                            row["godzina zakończenia"].strftime("%H:%M:%S")
+                            if pd.notnull(row["godzina zakończenia"])
+                            else ""
+                        ),
+                        "nazwa_wydarzenia": row.get("nazwa_wydarzenia", ""),
+                        "meeting_type": row.get("meeting_type", ""),
+                        "room": row.get("room", ""),
+                        "lecturers": row.get("lecturers", ""),
+                        "color": row.get("color", ""),
+                    }
+                )
+
+        except Exception as e:
+            messages.error(request, f"Błąd podczas przetwarzania pliku: {str(e)}")
+            return redirect("import_excel")
 
     elif request.method == "POST" and "save_data" in request.POST:
-        # Zapisanie danych do bazy (bez zmian)
-        pass
+        try:
+            # Zapisanie danych do bazy
+            for item in request.POST.getlist("data"):
+                meeting_data = json.loads(item)
 
-    return render(request, "pages/calendar/import_excel.html", {"data": data, "rooms": rooms, "events": events, "lecturers": lecturers})
+                room = Room.objects.get(id=meeting_data["room"]) if meeting_data["room"] else None
+                event = (
+                    Event.objects.get(id=meeting_data["nazwa_wydarzenia"]) if meeting_data["nazwa_wydarzenia"] else None
+                )
+
+                # Tworzenie obiektu Meeting
+                meeting = Meeting.objects.create(
+                    name_pl=meeting_data["nazwa"],
+                    name_en=meeting_data["nazwa_ang"],
+                    start_time=f"{meeting_data['data']} {meeting_data['godzina_rozpoczecia']}",
+                    end_time=f"{meeting_data['data']} {meeting_data['godzina_zakonczenia']}",
+                    meeting_type=meeting_data["meeting_type"],
+                    room=room,
+                    event=event,
+                    color=meeting_data["color"] or "#2873FF",
+                    is_rejected=False,
+                    is_excel=True,
+                )
+
+                # Dodanie wykładowców (ManyToMany)
+                if meeting_data["lecturers"]:
+                    lecturer_ids = map(int, meeting_data["lecturers"].split(","))
+                    lecturers = Lecturers.objects.filter(id__in=lecturer_ids)
+                    meeting.lecturers.set(lecturers)
+
+                meeting.save()
+
+            messages.success(request, "Dane zostały pomyślnie zapisane.")
+            return redirect("import_excel")
+
+        except Exception as e:
+            messages.error(request, f"Błąd podczas zapisywania danych: {str(e)}")
+            return redirect("import_excel")
+
+    return render(
+        request,
+        "pages/calendar/import_excel.html",
+        {"data": data, "rooms": rooms, "events": events, "lecturers": lecturers},
+    )
