@@ -17,7 +17,8 @@ from django.contrib import messages
 import json
 from room_reserve.tasks import send_scheduled_email
 from django import forms
-from django.utils.timezone import now, make_aware
+from django.utils.timezone import now, make_aware, is_aware
+
 
 def get_meetings(request):
     current_user = request.user if request.user.is_authenticated else None
@@ -43,10 +44,7 @@ def get_meetings(request):
             "title": meeting.name_pl,
             "color": meeting.color,
             "room": meeting.room.room_number if meeting.room else None,
-            "lecturer": [
-                f"{lecturer.first_name} {lecturer.last_name}"
-                for lecturer in meeting.lecturers.all()
-            ],
+            "lecturer": [f"{lecturer.first_name} {lecturer.last_name}" for lecturer in meeting.lecturers.all()],
             "is_canceled": meeting.is_canceled,
             "event_name": meeting.event.name if meeting.event else None,
             "invited": [
@@ -99,11 +97,7 @@ class ScheduleEmailForm(forms.Form):
     schedule_date = forms.DateTimeField(
         label="Wybierz datę i godzinę wysyłki",
         widget=forms.DateTimeInput(
-            attrs={
-                "type": "datetime-local",
-                "class": "form-control",
-                "step": "300"  # 300 seconds = 5 minutes
-            }
+            attrs={"type": "datetime-local", "class": "form-control", "step": "300"}  # 300 seconds = 5 minutes
         ),
     )
 
@@ -118,9 +112,9 @@ def meeting_details(request, meeting_id):
 
     # Check permissions
     can_edit = (
-        request.user.user_type == "Admin" or
-        request.user in meeting.lecturers.all() or
-        (meeting.event and request.user in meeting.event.organizer.all())
+        request.user.user_type == "Admin"
+        or request.user in meeting.lecturers.all()
+        or (meeting.event and request.user in meeting.event.organizer.all())
     )
 
     if request.method == "POST":
@@ -161,6 +155,7 @@ def meeting_details(request, meeting_id):
         },
     )
 
+
 @login_required
 def event_details(request, event_id):
     event = get_object_or_404(Event, pk=event_id)
@@ -170,12 +165,17 @@ def event_details(request, event_id):
     # Check if the user has permission to edit
     can_edit = request.user.user_type == "Admin" or request.user in organizers
 
-    return render(request, "pages/calendar/event_details.html", {
-        "event": event,
-        "meetings": meetings,
-        "organizers": organizers,
-        "can_edit": can_edit,  # Pass the permission to the template
-    })
+    return render(
+        request,
+        "pages/calendar/event_details.html",
+        {
+            "event": event,
+            "meetings": meetings,
+            "organizers": organizers,
+            "can_edit": can_edit,  # Pass the permission to the template
+        },
+    )
+
 
 @login_required
 def room_details(request, room_number):
@@ -195,6 +195,7 @@ def room_details(request, room_number):
         },
     )
 
+
 @login_required
 def new_meeting(request):
     """
@@ -210,75 +211,35 @@ def new_meeting(request):
         if form.is_valid():
             meeting_data = form.cleaned_data
 
-            # Extract form fields
+            # Pobranie podstawowych danych z formularza
             is_recurring = meeting_data.get("is_recurring")
             frequency_select = meeting_data.get("frequency_select")
-            days_of_week = meeting_data.get("days_of_week")
+            days_of_week = meeting_data.get("days_of_week", [])
             cycle_end_date = meeting_data.get("cycle_end_date")
             start_time = meeting_data.get("start_time")
             end_time = meeting_data.get("end_time")
             selected_lecturers = meeting_data.get("lecturers")
-            selected_groups = meeting_data.get("groups")
+            selected_groups = request.POST.getlist("groups[]")  # Pobranie listy grup z formularza
 
-            # Handle recurring meetings
+            # Obsługa spotkań cyklicznych
             if is_recurring and frequency_select and cycle_end_date:
                 current_date = start_time.date()
                 while current_date <= cycle_end_date:
-                    should_add = False
-
-                    if frequency_select == "daily":
-                        should_add = True
-                    elif frequency_select == "weekly":
-                        should_add = (current_date - start_time.date()).days % 7 == 0
-                    elif frequency_select == "biweekly":
-                        should_add = (current_date - start_time.date()).days % 14 == 0
-                    elif frequency_select == "monthly":
-                        should_add = current_date.day == start_time.date().day
-                    elif frequency_select == "custom_days":
-                        should_add = str(current_date.weekday()) in days_of_week
-
-                    if should_add:
-                        meeting = Meeting.objects.create(
-                            name_pl=meeting_data["name_pl"],
-                            name_en=meeting_data["name_en"],
-                            start_time=datetime.combine(current_date, start_time.time()),
-                            end_time=datetime.combine(current_date, end_time.time()),
-                            room=meeting_data["room"],
-                            description=meeting_data["description"],
-                            color=meeting_data["color"],
-                            capacity=meeting_data["capacity"],
-                            is_updated=False,
-                            is_approved=False,
-                            event=meeting_data.get("event"),
-                            submitted_by=request.user,
+                    if _should_add_meeting(frequency_select, current_date, start_time, days_of_week):
+                        _create_meeting(
+                            request,
+                            meeting_data,
+                            selected_lecturers,
+                            selected_groups,
+                            datetime.combine(current_date, start_time.time()),
+                            datetime.combine(current_date, end_time.time()),
                         )
+                    # Następna data
+                    current_date = _advance_date(frequency_select, current_date)
 
-                        # Add lecturers and groups
-                        if selected_lecturers:
-                            meeting.lecturers.set(selected_lecturers)
-
-                        if selected_groups:
-                            meeting.groups.set(selected_groups)
-
-                    # Advance to the next date
-                    if frequency_select in ["daily", "weekly", "biweekly", "custom_days"]:
-                        current_date += timedelta(days=1)
-                    elif frequency_select == "monthly":
-                        # Advance to the next month
-                        next_month = (current_date.month % 12) + 1
-                        current_date = current_date.replace(month=next_month)
-
-            # Handle a single meeting
+            # Obsługa pojedynczego spotkania
             else:
-                meeting = form.save(commit=False)
-                meeting.submitted_by = request.user
-                meeting.is_approved = False
-                meeting.save()
-                form.save_m2m()  # Save the many-to-many relationships
-
-            # Notify user and admins
-            notify_meeting_submission(request.user, meeting_data["name_pl"], submitted_by=request.user)
-            notify_admin_meeting_submission(meeting_data["name_pl"], submitted_by=request.user)
+                _create_meeting(request, meeting_data, selected_lecturers, selected_groups, start_time, end_time)
 
             messages.success(request, "Meeting request submitted successfully.")
             return redirect("home")
@@ -300,15 +261,82 @@ def new_meeting(request):
     )
 
 
+def _should_add_meeting(frequency_select, current_date, start_time, days_of_week):
+    """
+    Check if a meeting should be added based on frequency and days of the week.
+    """
+    if frequency_select == "daily":
+        return True
+    elif frequency_select == "weekly":
+        return (current_date - start_time.date()).days % 7 == 0
+    elif frequency_select == "biweekly":
+        return (current_date - start_time.date()).days % 14 == 0
+    elif frequency_select == "monthly":
+        return current_date.day == start_time.date().day
+    elif frequency_select == "custom_days":
+        return str(current_date.weekday()) in days_of_week
+    return False
+
+
+def _advance_date(frequency_select, current_date):
+    """
+    Advance the date based on the frequency selection.
+    """
+    if frequency_select in ["daily", "weekly", "biweekly", "custom_days"]:
+        return current_date + timedelta(days=1)
+    elif frequency_select == "monthly":
+        next_month = (current_date.month % 12) + 1
+        return current_date.replace(month=next_month)
+    return current_date
+
+
+def _create_meeting(request, meeting_data, selected_lecturers, selected_groups, start_time, end_time):
+    """
+    Create a single meeting and assign lecturers and groups.
+    """
+    # Upewnij się, że daty są świadome
+    if not is_aware(start_time):
+        start_time = make_aware(start_time)
+    if not is_aware(end_time):
+        end_time = make_aware(end_time)
+
+    meeting = Meeting.objects.create(
+        name_pl=meeting_data["name_pl"],
+        name_en=meeting_data["name_en"],
+        start_time=start_time,
+        end_time=end_time,
+        room=meeting_data["room"],
+        description=meeting_data["description"],
+        color=meeting_data["color"],
+        capacity=meeting_data["capacity"],
+        is_approved=False,
+        submitted_by=request.user,
+        event=meeting_data.get("event"),
+    )
+
+    # Dodaj wykładowców
+    if selected_lecturers:
+        meeting.lecturers.set(selected_lecturers)
+
+    # Dodaj grupy
+    if selected_groups:
+        groups = Group.objects.filter(id__in=selected_groups)
+        meeting.assigned_groups.set(groups)
+
+    # Powiadomienia
+    notify_meeting_submission(request.user, meeting.name_pl, submitted_by=request.user)
+    notify_admin_meeting_submission(meeting.name_pl, submitted_by=request.user)
+
+
 @login_required
 def edit_meeting(request, meeting_id):
     meeting = get_object_or_404(Meeting, pk=meeting_id)
 
     # Permission check
     if not (
-        request.user.user_type == "Admin" or
-        request.user in meeting.lecturers.all() or
-        (meeting.event and request.user in meeting.event.organizer.all())
+        request.user.user_type == "Admin"
+        or request.user in meeting.lecturers.all()
+        or (meeting.event and request.user in meeting.event.organizer.all())
     ):
         return HttpResponseForbidden("Nie masz uprawnień do edycji tego spotkania.")
 
@@ -347,6 +375,7 @@ def edit_meeting(request, meeting_id):
         },
     )
 
+
 @login_required
 def new_event(request):
     users = User.objects.filter(user_type__in=["Lecturer", "Organizer"])  # Fetch appropriate users
@@ -382,6 +411,7 @@ def new_event(request):
         },
     )
 
+
 @login_required
 def delete_meeting(request, meeting_id):
     if request.method == "POST":
@@ -389,6 +419,7 @@ def delete_meeting(request, meeting_id):
         meeting.delete()
         return JsonResponse({"message": "Meeting deleted successfully"}, status=200)
     return JsonResponse({"error": "Invalid request method"}, status=400)
+
 
 @login_required
 def search_view(request):
