@@ -19,38 +19,23 @@ from room_reserve.tasks import send_scheduled_email
 from django import forms
 from django.utils.timezone import now, make_aware
 
-# @login_required
-# def new_meeting(request):
-#     rooms = Room.objects.all()
-#     events = Event.objects.all()
-#     lecturers = Lecturers.objects.all()
-#     if request.method == "POST":
-#         form = MeetingForm(request.POST)
-#         if form.is_valid():
-#             meeting = form.save(commit=False)
-#             meeting.is_approved = False
-#             meeting.submitted_by = request.user
-#             meeting.save()
-#             form.save_m2m()
-#             return redirect("home")
-#     else:
-#         form = MeetingForm()
-#     return render(
-#         request,
-#         "pages/calendar/new_meeting.html",
-#         {"form": form, "rooms": rooms, "events": events, "lecturers": lecturers},
-#     )
-
-
 def get_meetings(request):
+    current_user = request.user if request.user.is_authenticated else None
+
     meetings = (
         Meeting.objects.select_related("room", "event")
-        .prefetch_related("lecturers")
+        .prefetch_related("lecturers", "assigned_groups__members")
         .filter(is_approved=True)
         .order_by("start_time")
     )
+
     events = []
     for meeting in meetings:
+        invited_users = set()
+        for group in meeting.assigned_groups.all():
+            invited_users.update(group.members.all())
+        invited_users.update(meeting.lecturers.all())
+
         event_data = {
             "id": meeting.id,
             "start_time": meeting.start_time.isoformat(),
@@ -58,12 +43,21 @@ def get_meetings(request):
             "title": meeting.name_pl,
             "color": meeting.color,
             "room": meeting.room.room_number if meeting.room else None,
-            "lecturer": [f"{lecturer.first_name} {lecturer.last_name}" for lecturer in meeting.lecturers.all()],
+            "lecturer": [
+                f"{lecturer.first_name} {lecturer.last_name}"
+                for lecturer in meeting.lecturers.all()
+            ],
             "is_canceled": meeting.is_canceled,
             "event_name": meeting.event.name if meeting.event else None,
+            "invited": [
+                {
+                    "full_name": f"{user.first_name} {user.last_name}",
+                    "email": user.email,
+                }
+                for user in invited_users
+            ],
+            "user_email": current_user.email if current_user else None,
         }
-
-        print(meeting.is_canceled)
 
         if meeting.event and meeting.event.logo:
             event_data["logo"] = request.build_absolute_uri(meeting.event.logo.url)
