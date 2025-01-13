@@ -1,115 +1,61 @@
 {% extends "base.html" %}
-
 {% block content %}
 <div class="form-container">
     <h1>Mój Profil</h1>
-    <style>
-        .form-container {
-            width: 40rem;
-            max-width: 100%;
-            margin: 2rem auto;
-            box-shadow: 0px 0px 16px -5px rgb(66, 68, 90);
-            border-radius: 24px;
-            padding: 20px;
-            background-color: #ffffff;
-            text-align: center;
-        }
-
-        h1, h2 {
-            font-family: Lato, Roboto, sans-serif;
-            color: black;
-            margin-bottom: 20px;
-        }
-
-        h1 {
-            font-size: 2rem;
-        }
-
-        h2 {
-            font-size: 1.5rem;
-            margin-bottom: 15px;
-        }
-
-        .form-section {
-            margin-bottom: 20px;
-            text-align: left;
-        }
-
-        .form-section label {
-            display: block;
-            font-weight: bold;
-            margin-bottom: 5px;
-            color: black;
-        }
-
-        .form-section input, .form-section select, .form-section textarea {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 10px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            font-size: 1rem;
-            font-family: inherit;
-            background-color: #f9f9f9;
-            color: black;
-        }
-
-        .form-section textarea {
-            resize: vertical;
-        }
-
-        .form-button {
-            margin: 10px auto;
-            padding: 0.5rem 2rem;
-            color: white;
-            background-color: rgba(15, 45, 102, 0.98);
-            box-shadow: 2px 2px 2px 0 rgba(0, 0, 0, 0.2);
-            transition: background-color 0.3s;
-            min-height: 48px;
-            border-radius: 8px;
-            font-family: inherit;
-            font-size: 14px;
-            border: none;
-            cursor: pointer;
-        }
-
-        .profile-picture img {
-            border-radius: 10px;
-            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-            margin-bottom: 20px;
-        }
-
-        .form-button:hover {
-            background-color: #0056b3;
-        }
-
-        hr {
-            margin: 20px 0;
-            border: none;
-            border-top: 1px solid #ddd;
-        }
-    </style>
+    <!-- Sekcja wyświetlania zdjęcia profilowego u góry strony -->
     <div class="profile-picture">
         {% if user.profile_picture %}
             <img src="{{ user.profile_picture.url }}" alt="Profile Picture" style="width: 492px; height: 633px;">
         {% else %}
-            <p><em>No profile picture uploaded.</em></p>
+            <p><em>Brak zdjęcia profilowego.</em></p>
         {% endif %}
     </div>
-    <form method="post" enctype="multipart/form-data">
+
+    <!-- Formularz do aktualizacji danych i zdjęcia profilowego -->
+    <form method="post" enctype="multipart/form-data" class="form-form">
         {% csrf_token %}
+        
         <h2>Aktualizuj dane:</h2>
         <div class="form-section">
-            {{ profile_form.as_p }}
+            <div class="input-box">
+                <label for="id_first_name">Imie:</label>
+                <input type="text" name="first_name" maxlength="50" id="id_first_name">
+            </div>
+
+            <div class="input-box">
+                <label for="id_last_name">Nazwisko:</label>
+                <input type="text" name="last_name" maxlength="50" id="id_last_name">
+            </div>
+
+            <div class="input-box">
+                <label for="id_profile_picture">Zdjęcie Profilowe:</label>
+                <input type="file" name="profile_picture" accept="image/*" id="id_profile_picture">
+            </div>
         </div>
         <button type="submit" class="form-button">Zaktualizuj Profil</button>
     </form>
+
     <hr>
-    <form method="post">
+
+    <!-- Formularz do złożenia prośby o zmianę typu konta -->
+    <form method="post" class="form-form">
         {% csrf_token %}
+        
         <h2>Poproś o zmianę typu konta:</h2>
         <div class="form-section">
-            {{ type_request_form.as_p }}
+            <div class="input-box">
+                <label for="id_requested_user_type">Nowy typ konta:</label>
+                <select name="requested_user_type" id="id_requested_user_type">
+                    <option value="Student">Student</option>
+                    <option value="Lecturer">Wykładowca</option>
+                    <option value="Organizer">Organizator</option>
+                </select>
+            </div>
+
+            <div class="input-box">
+                <label for="id_reason">Powód zmiany typu konta:</label>
+                <textarea name="reason" cols="40" rows="10" required id="id_reason"></textarea>
+            </div>
         </div>
         <button type="submit" class="form-button">Zgłoś prośbę</button>
     </form>

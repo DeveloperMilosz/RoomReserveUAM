@@ -29,6 +29,11 @@ a.event:hover {
   padding: 5px 2px;
 }
 
+hr {
+  padding: 16px;
+  margin-top: 48px;
+}
+
 #logo {
   display: block;
   margin: 30px auto 50px;
