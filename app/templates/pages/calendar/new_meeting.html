@@ -11,7 +11,7 @@
     <div class="form-form">
         <form method="post">
             {% csrf_token %}
-            
+
             <!-- Nazwa Spotkania (PL) -->
             <div class="input-box">
                 <label for="id_name_pl">Nazwa spotkania (PL):</label>
@@ -65,13 +65,14 @@
             </div>
 
             <div class="input-box">
-                <label for="id_groups">Wybierz grupy:</label>
-                <select name="groups[]" id="id_groups" multiple>
-                    {% for group in groups %}
-                    <option value="{{ group.id }}">{{ group.name }}</option>
-                    {% endfor %}
-                </select>
-            </div>
+              <label for="id_groups">Wybierz grupy:</label>
+              <select name="groups[]" id="id_groups" multiple>
+                  {% for group in groups %}
+                  <option value="{{ group.id }}">{{ group.name }}</option>
+                  {% endfor %}
+              </select>
+          </div>
+
 
             <!-- Liczba Uczestników -->
             <div class="input-box">
@@ -119,7 +120,7 @@
                     <input type="checkbox" name="is_recurring" id="id_is_recurring" onclick="toggleRecurringFields()">
                 </label>
             </div>
-            
+
             <!-- Wybór częstotliwości -->
             <div class="input-box recurring-field" style="display: none;">
                 <label for="id_frequency_select">Częstotliwość spotkań:</label>
@@ -132,7 +133,7 @@
                     <option value="custom_days">Wybierz dni</option>
                 </select>
             </div>
-            
+
             <!-- Wybór dni tygodnia -->
             <div class="input-box days-selection" style="display: none;">
                 <label>Wybierz dni tygodnia:</label>
@@ -146,7 +147,7 @@
                     <label><input type="checkbox" name="days_of_week" value="6"> Niedziela</label>
                 </div>
             </div>
-            
+
             <!-- Data zakończenia cyklu -->
             <div class="input-box recurring-field" style="display: none;">
                 <label for="id_cycle_end_date">Data zakończenia cyklu:</label>
@@ -167,23 +168,23 @@
         const recurringFields = document.querySelectorAll('.recurring-field');
         const daysSelection = document.querySelector('.days-selection');
         const frequencySelect = document.getElementById('id_frequency_select');
-    
+
         // Pokaż/ukryj pola dla cykliczności
         recurringFields.forEach(field => {
             field.style.display = isRecurringChecked ? 'flex' : 'none';
         });
-    
+
         // Ukryj wybór dni tygodnia domyślnie
         if (!isRecurringChecked || frequencySelect.value !== 'custom_days') {
             daysSelection.style.display = 'none';
             frequencySelect.value = ""; // Resetujemy wybór częstotliwości
         }
     }
-    
+
     function toggleDaysSelection() {
         const frequencySelect = document.getElementById('id_frequency_select');
         const daysSelection = document.querySelector('.days-selection');
-    
+
         // Pokaż/ukryj wybór dni tygodnia na podstawie częstotliwości
         if (frequencySelect.value === 'custom_days') {
             daysSelection.style.display = 'flex';
