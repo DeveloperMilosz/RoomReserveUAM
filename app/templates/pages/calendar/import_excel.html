@@ -91,6 +91,7 @@
                         <div class="input-box">
                             <select name="lecturers">
                                 {% for lecturer in lecturers %}
+                                <option value="Wybierz wykladowców" disabled selected>
                                 <option value="{{ lecturer.full_name }}"
                                     {% if row.lecturers == lecturer.full_name %}selected{% endif %}>
                                     {{ lecturer.full_name }}
