@@ -1,34 +1,104 @@
 {% extends "base.html" %}
+
+{% block title %}
+Szukaj Grup
+{% endblock %}
+
 {% block content %}
+<div class="form-container">
+    <h1>Szukaj Grup</h1>
+    <form method="get" class="form-form">
+        <div class="input-box">
+            <label for="group_name">Nazwa grupy:</label>
+            <input
+                type="text"
+                name="name"
+                id="group_name"
+                placeholder="Wprowadź nazwę grupy"
+                value="{{ request.GET.name|default_if_none:'' }}"
+            >
+        </div>
 
-<h1>Wyszukiwarka grup</h1>
+        <div class="input-box">
+            <label for="group_type">Typ grupy:</label>
+            <select name="group_type" id="group_type">
+                {% for choice in filter.form.fields.group_type.choices %}
+                <option
+                    value="{{ choice.0 }}"
+                    {% if request.GET.group_type == choice.0|stringformat:'s' %}selected{% endif %}
+                >
+                    {{ choice.1 }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
 
-<form method="get">
-    {{ filter.form.as_p }}
-    <button type="submit" class="btn btn-primary">Szukaj</button>
-</form>
+        <!-- Przykładowe pola dla email administratora/członka, o ile są w filtrze -->
+        <div class="input-box">
+            <label for="admin_email">Email administratora:</label>
+            <input
+                type="text"
+                name="admin_email"
+                id="admin_email"
+                placeholder="Wprowadź email administratora"
+                value="{{ request.GET.admin_email|default_if_none:'' }}"
+            >
+        </div>
 
-<h2>Wyniki wyszukiwania:</h2>
-<ul>
-    {% for group in filter.qs %}
-    <li>
-        <a href="{% url 'group_detail' group.id %}">
-            <strong>{{ group.name }}</strong>
-        </a>
-        ({{ group.get_group_type_display }})<br>
-        Opis: {{ group.description|default:"Brak opisu" }}<br>
-        Administratorzy:
-        {% for admin in group.admins.all %}
-            {{ admin.get_full_name }} ({{ admin.email }})
-        {% empty %}
-            Brak administratorów
+        <div class="input-box">
+            <label for="member_email">Email członka:</label>
+            <input
+                type="text"
+                name="member_email"
+                id="member_email"
+                placeholder="Wprowadź email członka"
+                value="{{ request.GET.member_email|default_if_none:'' }}"
+            >
+        </div>
+
+        <button type="submit" class="form-button">Szukaj</button>
+    </form>
+</div>
+
+{% if filter.qs and filter.qs.count %}
+<!-- Tabela wzorowana na podanym przykładzie -->
+<table class="data-table tabela" display="none">
+    <thead>
+        <tr>
+            <th>Nazwa grupy</th>
+            <th>Typ grupy</th>
+            <th>Opis</th>
+            <th>Administratorzy</th>
+            <th>Liczba członków</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for group in filter.qs %}
+        <tr>
+            <td>
+                <a href="{% url 'group_detail' group.id %}" class="link">
+                    {{ group.name }}
+                </a>
+            </td>
+            <td>{{ group.get_group_type_display }}</td>
+            <td>{{ group.description|default:"Brak opisu" }}</td>
+            <td>
+                {% if group.admins.count %}
+                    {% for admin in group.admins.all %}
+                        {{ admin.get_full_name }} ({{ admin.email }}){% if not forloop.last %}, {% endif %}
+                    {% endfor %}
+                {% else %}
+                    <a href="{% url 'edit_group' group.id %}">
+                        brak administratorów, edytuj
+                    </a>
+                {% endif %}
+            </td>
+            <td>{{ group.members.count }}</td>
+        </tr>
         {% endfor %}
-        <br>
-        Liczba członków: {{ group.members.count }}
-    </li>
-    {% empty %}
-    <li>Brak wyników.</li>
-    {% endfor %}
-</ul>
-
+    </tbody>
+</table>
+{% else %}
+<p class="no-results">Nie znaleziono grup pasujących do kryteriów wyszukiwania.</p>
+{% endif %}
 {% endblock %}

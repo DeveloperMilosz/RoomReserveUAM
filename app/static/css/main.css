@@ -130,9 +130,9 @@ nav ul li:hover .submenu {
 }
 
 .form-container {
-  width: 40rem;
+  width: 640px;
   max-width: 100%;
-  margin: 2rem auto;
+  margin: 32px auto;
   box-shadow: 0px 0px 16px -5px rgb(66, 68, 90);
   border-radius: 24px;
   padding: 8px;
@@ -150,10 +150,10 @@ nav ul li:hover .submenu {
   align-items: center;
 }
 .form-container .form-form {
-  padding: 0 1rem;
-  margin: 0 auto 1rem;
+  padding: 0 16px;
+  margin: 0 auto 16px;
   width: 100%;
-  max-width: 28rem;
+  max-width: 448px;
   display: block;
   border-width: 0;
   box-sizing: border-box;
@@ -163,7 +163,7 @@ nav ul li:hover .submenu {
   border: 0;
 }
 .form-container.form-segments form #segments-container .form-form {
-  margin: 0 0.5rem 1rem;
+  margin: 0 8px 16px;
 }
 
 .input-box {
@@ -176,11 +176,11 @@ nav ul li:hover .submenu {
   align-items: center;
 }
 .input-box input {
-  padding: 1rem;
+  padding: 16px;
   border: 1px solid black;
   border-radius: 8px;
   width: 100%;
-  font-size: 1rem;
+  font-size: 16px;
   font-family: inherit;
   background: transparent;
 }
@@ -189,12 +189,12 @@ nav ul li:hover .submenu {
   width: 72%;
 }
 .set-notification-form button {
-  padding: 17.5px 2rem;
+  padding: 17.5px 32px;
 }
 
 .form-button {
   margin: 8px auto;
-  padding: 0.5rem 2rem;
+  padding: 8px 32px;
   color: white;
   background-color: rgb(15, 45, 102);
   box-shadow: 2px 2px 2px 0 rgba(0, 0, 0, 0.2);
@@ -239,10 +239,10 @@ form > a {
 
 .input-box select {
   width: 100%;
-  padding: 1rem;
+  padding: 16px;
   border: 1px solid black;
   border-radius: 8px;
-  font-size: 1rem;
+  font-size: 16px;
   font-family: inherit;
   background-color: transparent;
   -webkit-appearance: none;
@@ -264,10 +264,10 @@ form > a {
 }
 .input-box textarea {
   width: 100%;
-  padding: 1rem;
+  padding: 16px;
   border: 1px solid black;
   border-radius: 8px;
-  font-size: 1rem;
+  font-size: 16px;
   font-family: inherit;
   background-color: transparent;
   resize: vertical;
@@ -303,10 +303,10 @@ form > a {
 }
 
 .form-container.about-page {
-  width: 64rem;
+  width: 1024px;
 }
 .form-container.about-page .form-form {
-  max-width: 60rem;
+  max-width: 960px;
 }
 
 .calendar-menu {
@@ -512,9 +512,9 @@ form > a {
 }
 
 .meeting-detail {
-  width: 40rem;
+  width: 640px;
   max-width: 100%;
-  margin: 2rem auto;
+  margin: 32px auto;
   box-shadow: 0px 0px 16px -5px rgb(66, 68, 90);
   border-radius: 24px;
   padding: 8px;
@@ -774,7 +774,7 @@ table a:hover {
   width: 73%;
 }
 .form-form.set-notification-form .meeting-detail-row .input-box input {
-  padding: 0.5rem 1rem;
+  padding: 8px 16px;
   margin-right: 6px;
 }
 .form-form.set-notification-form .meeting-detail-row .form-button {
@@ -792,4 +792,11 @@ table a:hover {
 }
 .group-edit h2 {
   margin-bottom: 4px;
+}
+
+section {
+  max-width: 1924px;
+  padding: 0px 12px;
+  width: 100%;
+  margin: 0 auto;
 }/*# sourceMappingURL=main.css.map */

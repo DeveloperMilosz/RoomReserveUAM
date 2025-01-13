@@ -1,137 +1,203 @@
 {% extends "base.html" %}
 
+{% block title %}
+Moje Rezerwacje
+{% endblock %}
+
 {% block content %}
-<style>
-  .filter-form {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-bottom: 20px;
-}
-
-.filter-fields {
-    display: flex;
-    gap: 10px;
-}
-
-.filter-fields input {
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    font-size: 16px;
-}
-
-.form-button {
-    padding: 10px 20px;
-    border: none;
-    background-color: #0f2d66;
-    color: white;
-    font-size: 16px;
-    border-radius: 5px;
-    cursor: pointer;
-}
-
-.form-button:hover {
-    background-color: #018dc4;
-}
-
-.no-data {
-    text-align: center;
-    font-style: italic;
-    color: #888888;
-    margin-top: 20px;
-}
-</style>
-
-<div class="container">
+<div class="form-container">
     <h1>Moje Rezerwacje</h1>
-
-    <!-- Formularz filtrowania -->
-    <form method="get" class="filter-form">
-        <div class="filter-fields">
-            <input type="text" name="name" placeholder="Nazwa" value="{{ request.GET.name }}">
-            <input type="date" name="start_date" placeholder="Od daty" value="{{ request.GET.start_date }}">
-            <input type="date" name="end_date" placeholder="Do daty" value="{{ request.GET.end_date }}">
+    <form method="get" class="form-form">
+        <div class="input-box">
+            <input 
+                type="text" 
+                name="name" 
+                placeholder="Nazwa" 
+                value="{{ request.GET.name|default_if_none:'' }}"
+            >
+        </div>
+        <div class="input-box">
+            <input 
+                type="date" 
+                name="start_date" 
+                placeholder="Od daty" 
+                value="{{ request.GET.start_date|default_if_none:'' }}"
+            >
+        </div>
+        <div class="input-box">
+            <input 
+                type="date" 
+                name="end_date" 
+                placeholder="Do daty" 
+                value="{{ request.GET.end_date|default_if_none:'' }}"
+            >
         </div>
         <button type="submit" class="form-button">Filtruj</button>
     </form>
-
-    <!-- Oczekujące -->
-    <section>
-        <h2>Oczekujące na rozpatrzenie</h2>
-        {% if pending_meetings or pending_events %}
-            <ul>
-                {% for meeting in pending_meetings %}
-                    <li>
-                        <strong>Spotkanie: <a href="{% url 'meeting_details' meeting.id %}">{{ meeting.name_pl }}</a></strong><br>
-                        Data rozpoczęcia: {{ meeting.start_time }}<br>
-                        Data zakończenia: {{ meeting.end_time }}<br>
-                        Sala: {{ meeting.room.room_number }}
-                    </li>
-                {% endfor %}
-                {% for event in pending_events %}
-                    <li>
-                        <strong>Wydarzenie: <a href="{% url 'event_details' event.id %}">{{ event.name }}</a></strong><br>
-                        Data rozpoczęcia: {{ event.start_date }}<br>
-                        Data zakończenia: {{ event.end_date }}
-                    </li>
-                {% endfor %}
-            </ul>
-        {% else %}
-            <p class="no-data">Brak oczekujących wniosków i rezerwacji.</p>
-        {% endif %}
-    </section>
-
-    <!-- Zatwierdzone -->
-    <section>
-        <h2>Zaakceptowane</h2>
-        {% if approved_meetings or approved_events %}
-            <ul>
-                {% for meeting in approved_meetings %}
-                    <li>
-                        <strong>Spotkanie: <a href="{% url 'meeting_details' meeting.id %}">{{ meeting.name_pl }}</a></strong><br>
-                        Data rozpoczęcia: {{ meeting.start_time }}<br>
-                        Data zakończenia: {{ meeting.end_time }}<br>
-                        Sala: {{ meeting.room.room_number }}
-                    </li>
-                {% endfor %}
-                {% for event in approved_events %}
-                    <li>
-                        <strong>Wydarzenie: <a href="{% url 'event_details' event.id %}">{{ event.name }}</a></strong><br>
-                        Data rozpoczęcia: {{ event.start_date }}<br>
-                        Data zakończenia: {{ event.end_date }}
-                    </li>
-                {% endfor %}
-            </ul>
-        {% else %}
-            <p class="no-data">Brak zaakceptowanych wniosków i rezerwacji.</p>
-        {% endif %}
-    </section>
-
-    <!-- Odrzucone -->
-    <section>
-        <h2>Odrzucone</h2>
-        {% if rejected_meetings or rejected_events %}
-            <ul>
-                {% for meeting in rejected_meetings %}
-                    <li>
-                        <strong>Spotkanie: <a href="{% url 'meeting_details' meeting.id %}">{{ meeting.name_pl }}</a></strong><br>
-                        Data rozpoczęcia: {{ meeting.start_time }}<br>
-                        Data zakończenia: {{ meeting.end_time }}<br>
-                        Sala: {{ meeting.room.room_number }}
-                    </li>
-                {% endfor %}
-                {% for event in rejected_events %}
-                    <li>
-                        <strong>Wydarzenie: <a href="{% url 'event_details' event.id %}">{{ event.name }}</a></strong><br>
-                        Data rozpoczęcia: {{ event.start_date }}<br>
-                        Data zakończenia: {{ event.end_date }}
-                    </li>
-                {% endfor %}
-            </ul>
-        {% else %}
-            <p class="no-data">Brak odrzuconych wniosków i rezerwacji.</p>
-        {% endif %}
-    </section>
 </div>
+
+<!-- Oczekujące -->
+<section>
+    <h2>Oczekujące na rozpatrzenie</h2>
+    {% if pending_meetings or pending_events %}
+    <table class="data-table tabela" display="none">
+        <thead>
+            <tr>
+                <th>Typ</th>
+                <th>Nazwa</th>
+                <th>Data rozpoczęcia</th>
+                <th>Data zakończenia</th>
+                <th>Sala</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for meeting in pending_meetings %}
+            <tr>
+                <td>Spotkanie</td>
+                <td>
+                    <a href="{% url 'meeting_details' meeting.id %}">
+                        {{ meeting.name_pl }}
+                    </a>
+                </td>
+                <td>{{ meeting.start_time }}</td>
+                <td>{{ meeting.end_time }}</td>
+                <td>
+                    {% if meeting.room %}
+                        {{ meeting.room.room_number }}
+                    {% else %}
+                        brak sali
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+
+            {% for event in pending_events %}
+            <tr>
+                <td>Wydarzenie</td>
+                <td>
+                    <a href="{% url 'event_details' event.id %}">
+                        {{ event.name }}
+                    </a>
+                </td>
+                <td>{{ event.start_date }}</td>
+                <td>{{ event.end_date }}</td>
+                <td>-</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p class="no-results">Brak oczekujących wniosków i rezerwacji.</p>
+    {% endif %}
+</section>
+
+<!-- Zatwierdzone -->
+<section>
+    <h2>Zaakceptowane</h2>
+    {% if approved_meetings or approved_events %}
+    <table class="data-table tabela" display="none">
+        <thead>
+            <tr>
+                <th>Typ</th>
+                <th>Nazwa</th>
+                <th>Data rozpoczęcia</th>
+                <th>Data zakończenia</th>
+                <th>Sala</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for meeting in approved_meetings %}
+            <tr>
+                <td>Spotkanie</td>
+                <td>
+                    <a href="{% url 'meeting_details' meeting.id %}">
+                        {{ meeting.name_pl }}
+                    </a>
+                </td>
+                <td>{{ meeting.start_time }}</td>
+                <td>{{ meeting.end_time }}</td>
+                <td>
+                    {% if meeting.room %}
+                        {{ meeting.room.room_number }}
+                    {% else %}
+                        brak sali
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+
+            {% for event in approved_events %}
+            <tr>
+                <td>Wydarzenie</td>
+                <td>
+                    <a href="{% url 'event_details' event.id %}">
+                        {{ event.name }}
+                    </a>
+                </td>
+                <td>{{ event.start_date }}</td>
+                <td>{{ event.end_date }}</td>
+                <td>-</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p class="no-results">Brak zaakceptowanych wniosków i rezerwacji.</p>
+    {% endif %}
+</section>
+
+<!-- Odrzucone -->
+<section>
+    <h2>Odrzucone</h2>
+    {% if rejected_meetings or rejected_events %}
+    <table class="data-table tabela" display="none">
+        <thead>
+            <tr>
+                <th>Typ</th>
+                <th>Nazwa</th>
+                <th>Data rozpoczęcia</th>
+                <th>Data zakończenia</th>
+                <th>Sala</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for meeting in rejected_meetings %}
+            <tr>
+                <td>Spotkanie</td>
+                <td>
+                    <a href="{% url 'meeting_details' meeting.id %}">
+                        {{ meeting.name_pl }}
+                    </a>
+                </td>
+                <td>{{ meeting.start_time }}</td>
+                <td>{{ meeting.end_time }}</td>
+                <td>
+                    {% if meeting.room %}
+                        {{ meeting.room.room_number }}
+                    {% else %}
+                        brak sali
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+
+            {% for event in rejected_events %}
+            <tr>
+                <td>Wydarzenie</td>
+                <td>
+                    <a href="{% url 'event_details' event.id %}">
+                        {{ event.name }}
+                    </a>
+                </td>
+                <td>{{ event.start_date }}</td>
+                <td>{{ event.end_date }}</td>
+                <td>-</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p class="no-results">Brak odrzuconych wniosków i rezerwacji.</p>
+    {% endif %}
+</section>
 {% endblock %}
