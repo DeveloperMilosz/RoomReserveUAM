@@ -76,7 +76,7 @@
                     {% comment %} <td>
                         <div class="input-box">
                             <input type="text" name="meeting_type" value="{{ row.meeting_type }}">
-                        </div>
+                        </div>/
                     </td> {% endcomment %}
                     <td>
                         <div class="input-box">
@@ -91,7 +91,7 @@
                         <div class="input-box">
                             <select name="lecturers">
                                 {% for lecturer in lecturers %}
-                                <option value="{{ lecturer.full_name }}" 
+                                <option value="{{ lecturer.full_name }}"
                                     {% if row.lecturers == lecturer.full_name %}selected{% endif %}>
                                     {{ lecturer.full_name }}
                                 </option>

@@ -7,6 +7,9 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 
 
+# re
+
+
 @login_required
 def my_excel_import(request):
     data = []
