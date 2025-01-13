@@ -5,6 +5,7 @@
     height: 100%;
     max-width: 1900px;
     width: calc(100% - 16px);
+    overflow: hidden;
 
     #slides {
         display: flex;
