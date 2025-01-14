@@ -2,43 +2,49 @@
 {% block content %}
 {% load static %}
 
-<div class="form-container">
-    <img src="{% static 'img/logo_pl.png' %}" id="logo" alt="logo UAM" aria-hidden="true">
-
-    <h1>Edytuj Spotkanie</h1>
-    <p>Wprowadź szczegóły wydarzenia poniżej, aby edytować wydarzenie.</p>
 
     <div class="form-form">
-        <form method="post">
+      <div class="form-container">
+        <img src="{% static 'img/logo_pl.png' %}" id="logo" alt="logo UAM" aria-hidden="true">
+
+        <h1>Edytuj Spotkanie</h1>
+        <p>Wprowadź szczegóły wydarzenia poniżej, aby edytować wydarzenie.</p>
+
+        <form method="post" class="form-form">
             {% csrf_token %}
+            {{ form.non_field_errors }}
 
             <div class="input-box">
-                <input type="text" name="name_pl" value="{{ meeting.name_pl }}" maxlength="255" required id="id_name_pl" placeholder="Nazwa spotkania (PL)">
+                {{ form.name_pl.errors }}
+                <input type="text" name="name_pl" value="{{ form.name_pl.value }}" maxlength="255" required id="id_name_pl" placeholder="Nazwa spotkania (PL)">
             </div>
 
             <div class="input-box">
-                <input type="text" name="name_en" value="{{ meeting.name_en }}" maxlength="255" required id="id_name_en" placeholder="Nazwa spotkania (EN)">
+                {{ form.name_en.errors }}
+                <input type="text" name="name_en" value="{{ form.name_en.value }}" maxlength="255" required id="id_name_en" placeholder="Nazwa spotkania (EN)">
             </div>
 
             <div class="input-box">
-                <input type="datetime-local" name="start_time" value="{{ meeting.start_time|date:'Y-m-d\\TH:i' }}" required id="id_start_time" placeholder="Czas rozpoczęcia" >
+                {{ form.start_time.errors }}
+                <input type="datetime-local" name="start_time" value="{{ form.start_time.value|date:'Y-m-d\\TH:i' }}" required id="id_start_time" placeholder="Czas rozpoczęcia">
             </div>
 
             <div class="input-box">
-                <input type="datetime-local" name="end_time" value="{{ meeting.end_time|date:'Y-m-d\\TH:i' }}" required id="id_end_time" placeholder="Czas zakończenia">
+                {{ form.end_time.errors }}
+                <input type="datetime-local" name="end_time" value="{{ form.end_time.value|date:'Y-m-d\\TH:i' }}" required id="id_end_time" placeholder="Czas zakończenia">
             </div>
 
             <div class="input-box">
-                <textarea name="description" placeholder="{{ meeting.description }}" id="id_description"
-                    oninput='this.style.height = "";this.style.height = this.scrollHeight + "px"'></textarea>
+                {{ form.description.errors }}
+                <textarea name="description" id="id_description" placeholder="Opis wydarzenia">{{ form.description.value }}</textarea>
             </div>
 
             <div class="input-box">
+                {{ form.room.errors }}
                 <select name="room" id="id_room" required>
                     <option value="" disabled>Wybierz salę</option>
                     {% for room in rooms %}
-                        <option value="{{ room.id }}"
-                            {% if room == meeting.room %}selected{% endif %}>
+                        <option value="{{ room.id }}" {% if room.id == form.room.value %}selected{% endif %}>
                             {{ room.room_number }} ({{ room.building_name_pl }})
                         </option>
                     {% endfor %}
@@ -47,43 +53,20 @@
 
             <div class="input-box">
                 <label for="id_lecturers">Wybierz prowadzących (Organizatorów/Wykładowców):</label>
-                <select name="lecturers[]" id="id_lecturers" multiple>
+                {{ form.lecturers.errors }}
+                <select name="lecturers" id="id_lecturers" multiple>
                     {% for user in form.fields.lecturers.queryset %}
-                    <option value="{{ user.id }}">{{ user.first_name }} {{ user.last_name }} ({{ user.user_type }})</option>
-                    {% endfor %}
-                </select>
-            </div>
-
-            <div class="input-box">
-                <select name="event" id="id_event">
-                    <option value="" selected>Bez wydarzenia</option>
-                    {% for event in events %}
-                        <option value="{{ event.id }}"
-                            {% if event == meeting.event %}selected{% endif %}>
-                            {{ event.name }}
-                        </option>
-                    {% endfor %}
-                </select>
-            </div>
-
-            <!-- Formularz przypisywania grup -->
-            <div class="input-box">
-                <select name="groups" id="groups" multiple>
-                    {% for group in groups %}
-                        <option value="{{ group.id }}" {% if group in meeting.assigned_groups.all %}selected{% endif %}>
-                            {{ group.name }}
+                        <option value="{{ user.id }}" {% if user.id in form.lecturers.value %}selected{% endif %}>
+                            {{ user.first_name }} {{ user.last_name }} ({{ user.user_type }})
                         </option>
                     {% endfor %}
                 </select>
             </div>
 
             <div class="input-box">
+                {{ form.color.errors }}
                 <label for="id_color">Wybierz kolor:</label>
-                <input type="color" name="color" value="{{ meeting.color }}" id="id_color">
-            </div>
-
-            <div class="input-box">
-                <input type="text" name="capacity" value="{{ meeting.capacity }}" maxlength="4" required id="capacity" placeholder="Liczba miejsc">
+                <input type="color" name="color" value="{{ form.color.value }}" id="id_color">
             </div>
 
             <button type="submit" class="form-button">Edytuj spotkanie</button>
@@ -104,6 +87,6 @@
             {% endif %}
         </div>
     </div>
-</div>
+
 
 {% endblock content %}
