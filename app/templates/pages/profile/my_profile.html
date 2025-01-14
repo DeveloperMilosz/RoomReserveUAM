@@ -14,17 +14,17 @@
     <!-- Formularz do aktualizacji danych i zdjęcia profilowego -->
     <form method="post" enctype="multipart/form-data" class="form-form">
         {% csrf_token %}
-        
+
         <h2>Aktualizuj dane:</h2>
         <div class="form-section">
             <div class="input-box">
                 <label for="id_first_name">Imie:</label>
-                <input type="text" name="first_name" maxlength="50" id="id_first_name">
+                <input type="text" name="first_name" maxlength="50" id="id_first_name" value="{{ user.first_name }}">
             </div>
 
             <div class="input-box">
                 <label for="id_last_name">Nazwisko:</label>
-                <input type="text" name="last_name" maxlength="50" id="id_last_name">
+                <input type="text" name="last_name" maxlength="50" id="id_last_name" value="{{ user.last_name }}">
             </div>
 
             <div class="input-box">
@@ -40,7 +40,7 @@
     <!-- Formularz do złożenia prośby o zmianę typu konta -->
     <form method="post" class="form-form">
         {% csrf_token %}
-        
+
         <h2>Poproś o zmianę typu konta:</h2>
         <div class="form-section">
             <div class="input-box">
