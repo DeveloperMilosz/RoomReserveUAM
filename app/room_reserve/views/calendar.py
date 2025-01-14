@@ -332,7 +332,7 @@ def _create_meeting(request, meeting_data, selected_lecturers, selected_groups, 
 def edit_meeting(request, meeting_id):
     meeting = get_object_or_404(Meeting, pk=meeting_id)
 
-    # Permission check
+    # Sprawdzenie uprawnień
     if not (
         request.user.user_type == "Admin"
         or request.user in meeting.lecturers.all()
@@ -354,11 +354,11 @@ def edit_meeting(request, meeting_id):
             meeting = form.save(commit=False)
             meeting.assigned_groups.set(selected_groups)
             meeting.save()
-            form.save_m2m()
-            messages.success(request, "Meeting updated successfully.")
-            return redirect("meeting_details", meeting_id=meeting.id)
+            form.save_m2m()  # Zapisanie relacji many-to-many
+            messages.success(request, "Spotkanie zostało pomyślnie zaktualizowane.")
+            return redirect("meeting_details", meeting_id=meeting.id)  # Przekierowanie
         else:
-            messages.error(request, "There was an error updating the meeting.")
+            messages.error(request, "Wystąpił błąd podczas aktualizacji spotkania.")
     else:
         form = EditMeetingForm(instance=meeting)
 
