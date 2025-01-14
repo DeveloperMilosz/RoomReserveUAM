@@ -134,4 +134,5 @@ urlpatterns = [
     path("mapa/pietro1/", mappa_views.pietro1, name="mapa_pietro1"),
     path("mapa/pietro2/", mappa_views.pietro2, name="mapa_pietro2"),
     path("mapa/parter/", mappa_views.parter, name="mapa_parter"),
+    path("api/room-points/", search_views.RoomPointsAPIView.as_view(), name="room_points"),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

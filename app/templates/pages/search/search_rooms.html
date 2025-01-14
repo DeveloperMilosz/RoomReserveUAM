@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block title %}
 Szukaj Sal
@@ -7,9 +8,9 @@ Szukaj Sal
 {% block content %}
 <div class="form-container">
     <h1>Szukaj Sale</h1>
-    <form method="get" class="form-form">
+    <form method="get" class="form-form" id="search-form">
         <div class="input-box">
-            <label for="room_number">Number sali:</label>
+            <label for="room_number">Numer sali:</label>
             <input type="text" name="room_number" id="room_number" placeholder="Wprowadź nazwę sali">
         </div>
         <div class="input-box">
@@ -20,20 +21,150 @@ Szukaj Sal
                 {% endfor %}
             </select>
         </div>
+        <div class="input-box">
+            <label for="floor">Piętro:</label>
+            <select name="floor" id="floor">
+                <option value="parter">Parter</option>
+                <option value="pietro1">Piętro 1</option>
+                <option value="pietro2">Piętro 2</option>
+            </select>
+        </div>
         <button type="submit" class="form-button">Szukaj</button>
     </form>
 </div>
 
-{% if filter.qs %}
-
-<div class="tiles_container">
-{% for room in filter.qs %}
-    <a href="{% url 'room_details' room.room_number %}">
-        {{ room.room_number }}
-    </a>
-    {% endfor %}
+<!-- Mapa dla poszczególnych pięter -->
+<div id="map-container-parter" class="map-container" style="display: none;">
+    <img src="{% static 'building_plans/parter.png' %}" alt="Mapa - Parter" class="map-image">
+    <svg class="overlay-svg" viewBox="0 0 1802 1088" xmlns="http://www.w3.org/2000/svg" id="map-overlay-parter"></svg>
 </div>
-{% else %}
-<p class="no-results">Nie znaleziono sal pasujących do kryteriów wyszukiwania.</p>
-{% endif %}
+
+<div id="map-container-pietro1" class="map-container" style="display: none;">
+    <img src="{% static 'building_plans/pietro1.png' %}" alt="Mapa - Piętro 1" class="map-image">
+    <svg class="overlay-svg" viewBox="0 0 1823 1110" xmlns="http://www.w3.org/2000/svg" id="map-overlay-pietro1"></svg>
+</div>
+
+<div id="map-container-pietro2" class="map-container" style="display: none;">
+    <img src="{% static 'building_plans/pietro2.png' %}" alt="Mapa - Piętro 2" class="map-image">
+    <svg class="overlay-svg" viewBox="0 0 1697 1175" xmlns="http://www.w3.org/2000/svg" id="map-overlay-pietro2"></svg>
+</div>
+
+<script>
+  const form = document.getElementById("search-form");
+  const parterOverlay = document.getElementById("map-overlay-parter");
+  const pietro1Overlay = document.getElementById("map-overlay-pietro1");
+  const pietro2Overlay = document.getElementById("map-overlay-pietro2");
+
+  const mapContainers = {
+      parter: document.getElementById("map-container-parter"),
+      pietro1: document.getElementById("map-container-pietro1"),
+      pietro2: document.getElementById("map-container-pietro2")
+  };
+
+  form.addEventListener("submit", function (e) {
+    e.preventDefault(); // Zapobiega przeładowaniu strony
+    const formData = new FormData(form);
+    const selectedFloor = formData.get("floor");
+    const roomNumber = formData.get("room_number")?.toLowerCase();
+    const attributes = formData.getAll("attribute");
+
+    fetch("/api/room-points/")
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            // Wyczyszczenie map
+            parterOverlay.innerHTML = "";
+            pietro1Overlay.innerHTML = "";
+            pietro2Overlay.innerHTML = "";
+
+            // Ukrywanie i pokazywanie map dla wybranego piętra
+            Object.keys(mapContainers).forEach(floor => {
+                mapContainers[floor].style.display = floor === selectedFloor ? "block" : "none";
+            });
+
+            data.forEach(room => {
+                if (
+                    room.floor === selectedFloor &&
+                    (!roomNumber || room.room_number.toLowerCase().includes(roomNumber)) &&
+                    (!attributes.length || room.attributes?.some(attr => attributes.includes(attr)))
+                ) {
+                    const roomElement = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
+                    roomElement.setAttribute("points", room.points);
+                    roomElement.setAttribute("class", "room occupied");
+                    roomElement.setAttribute("data-title", room.room_number);
+
+                    // Obsługa kliknięcia na salę
+                    roomElement.addEventListener("click", () => {
+                        window.location.href = `/room/${room.room_number}/`; // Przekierowanie
+                    });
+
+                    const textElement = document.createElementNS("http://www.w3.org/2000/svg", "text");
+                    textElement.setAttribute("x", room.label_x);
+                    textElement.setAttribute("y", room.label_y);
+                    textElement.setAttribute("class", "room-label");
+                    textElement.textContent = room.room_number;
+
+                    const overlay = selectedFloor === "parter" ? parterOverlay :
+                                    selectedFloor === "pietro1" ? pietro1Overlay : pietro2Overlay;
+
+                    overlay.appendChild(roomElement);
+                    overlay.appendChild(textElement);
+                }
+            });
+        })
+        .catch(error => console.error("Błąd przy pobieraniu danych:", error));
+});
+
+
+</script>
+
+
+<style>
+    .map-container {
+        position: relative;
+        width: 100%;
+        max-width: 1823px;
+        margin: 0 auto;
+    }
+
+    .map-image {
+        display: block;
+        width: 100%;
+        height: auto;
+    }
+
+    .overlay-svg {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+    }
+
+    .room {
+        fill: gray;
+        stroke: black;
+        stroke-width: 1;
+    }
+
+    .room.occupied {
+        fill: green;
+    }
+
+    .room:hover {
+        fill: blue;
+        cursor: pointer;
+    }
+
+    .room-label {
+        font-size: 16px;
+        font-weight: bold;
+        fill: black;
+        text-anchor: middle;
+    }
+</style>
 {% endblock %}
