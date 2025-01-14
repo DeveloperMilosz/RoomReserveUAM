@@ -2,10 +2,13 @@ from django.shortcuts import render
 from room_reserve.models import Meeting, Event, Room, Group, RoomAttribute
 from room_reserve.filters import MeetingFilter, EventFilter, RoomFilter, FreeRoomFilter, GroupFilter
 from django.http import JsonResponse
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, APIView
 from rest_framework.response import Response
 from rest_framework import status
 from django.utils.timezone import now
+import json
+from django.conf import settings
+from django.db.models import Prefetch
 
 
 def search_meetings(request):
@@ -34,18 +37,57 @@ def search_events(request):
 
 def search_rooms(request):
     """Wyszukaj sale."""
+    # Ścieżka do pliku JSON
+    json_path = settings.BASE_DIR / "static" / "data" / "punkty.json"
+
+    # Wczytanie danych z pliku JSON
+    try:
+        with open(json_path, "r", encoding="utf-8") as file:
+            points_data = json.load(file)
+    except FileNotFoundError:
+        return JsonResponse({"error": "Plik punkty.json nie został znaleziony."}, status=404)
+    except json.JSONDecodeError:
+        return JsonResponse({"error": "Błąd w odczycie pliku punkty.json."}, status=500)
+
+    # Filtrowanie danych na podstawie kryteriów
     if request.GET:
-        room_filter = RoomFilter(request.GET, queryset=Room.objects.prefetch_related('attributes').distinct())
+        room_filter = RoomFilter(
+            request.GET,
+            queryset=Room.objects.prefetch_related(
+                Prefetch("attributes", queryset=RoomAttribute.objects.all())
+            ).distinct(),
+        )
     else:
         room_filter = RoomFilter(queryset=Room.objects.none())
-    return render(request, "pages/search/search_rooms.html", {"filter": room_filter})
 
+    # Obsługa zapytań AJAX
+    if request.headers.get("X-Requested-With") == "XMLHttpRequest":
+        # Pobierz przefiltrowane numery sal i atrybuty z bazy danych
+        filtered_rooms = room_filter.qs
+        filtered_room_numbers = filtered_rooms.values_list("room_number", flat=True)
+        selected_attributes = request.GET.getlist("attribute")  # Pobierz wybrane atrybuty z formularza
+
+        # Filtruj dane JSON
+        filtered_data = [
+            point
+            for point in points_data
+            if point["room_number"] in filtered_room_numbers
+            and (
+                "attributes" not in point
+                or (selected_attributes and all(attr in point.get("attributes", []) for attr in selected_attributes))
+            )
+        ]
+
+        return JsonResponse(filtered_data, safe=False)
+
+    # Renderowanie strony HTML dla standardowego żądania GET
+    return render(request, "pages/search/search_rooms.html", {"filter": room_filter})
 
 
 def search_free_rooms(request):
     """Wyszukaj wolne sale."""
     if request.GET:
-        room_filter = FreeRoomFilter(request.GET, queryset=Room.objects.prefetch_related('attributes').distinct())
+        room_filter = FreeRoomFilter(request.GET, queryset=Room.objects.prefetch_related("attributes").distinct())
     else:
         room_filter = FreeRoomFilter(queryset=Room.objects.none())
     return render(request, "pages/search/search_free_rooms.html", {"filter": room_filter})
@@ -110,3 +152,22 @@ def room_status(request, room_id):
         return Response(data, status=status.HTTP_200_OK)
     except Room.DoesNotExist:
         return Response({"error": "Room not found"}, status=status.HTTP_404_NOT_FOUND)
+
+
+class RoomPointsAPIView(APIView):
+    def get(self, request, *args, **kwargs):
+        json_path = settings.BASE_DIR / "static" / "data" / "punkty.json"
+
+        try:
+            with open(json_path, "r", encoding="utf-8") as file:
+                points_data = json.load(file)
+
+            # Opcjonalne filtrowanie sal na podstawie istniejących w bazie
+            room_numbers = Room.objects.values_list("room_number", flat=True)
+            filtered_data = [point for point in points_data if point["room_number"] in room_numbers]
+
+            return JsonResponse(filtered_data, safe=False)
+        except FileNotFoundError:
+            return JsonResponse({"error": "Plik punkty.json nie został znaleziony."}, status=404)
+        except json.JSONDecodeError:
+            return JsonResponse({"error": "Błąd w odczycie pliku punkty.json."}, status=500)
