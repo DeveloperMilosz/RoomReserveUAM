@@ -69,7 +69,7 @@
                 <input type="color" name="color" value="{{ form.color.value }}" id="id_color">
             </div>
 
-            <button type="submit" class="form-button">Edytuj spotkanie</button>
+            <button type="submit" class="form-button">Zapisz zmiany</button>
         </form>
 
         <!-- Sekcja "Odwołaj Spotkanie" i "Przywróć Spotkanie" -->
@@ -77,12 +77,12 @@
             {% if meeting.is_canceled %}
                 <form method="post" action="{% url 'restore_meeting' meeting.id %}" onsubmit="return confirm('Czy na pewno chcesz przywrócić to spotkanie?');">
                     {% csrf_token %}
-                    <button type="submit" class="form-button" style="background-color: green;">Przywróć spotkanie</button>
+                    <button type="submit" class="form-button" style="background-color: red;margin-top: -16px;">Przywróć spotkanie</button>
                 </form>
             {% else %}
                 <form method="post" action="{% url 'cancel_meeting' meeting.id %}" onsubmit="return confirm('Czy na pewno chcesz odwołać to spotkanie?');">
                     {% csrf_token %}
-                    <button type="submit" class="form-button" style="background-color: red;">Odwołaj spotkanie</button>
+                    <button type="submit" class="form-button" style="background-color: red;margin-top: -16px;">Odwołaj spotkanie</button>
                 </form>
             {% endif %}
         </div>
