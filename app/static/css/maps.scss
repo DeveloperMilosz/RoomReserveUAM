@@ -47,6 +47,14 @@
                 fill: lighten(lightgreen, 5%);
             }
         }
+
+        &.blocked {
+            fill: gray;
+
+            &:hover{
+                fill: lighten(gray, 5%);
+            }
+        }
     }
 
     .room-label {

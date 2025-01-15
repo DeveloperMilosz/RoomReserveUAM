@@ -41,6 +41,12 @@
 .map-container .room.occupied:hover {
   fill: #a6f1a6;
 }
+.map-container .room.blocked {
+  fill: gray;
+}
+.map-container .room.blocked:hover {
+  fill: #8d8d8d;
+}
 .map-container .room-label {
   font-size: 16px;
   font-weight: bold;
