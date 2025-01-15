@@ -1,6 +1,6 @@
 .manual-container {
   position: relative;
-  min-height: 900px;
+  min-height: 1200px;
   margin: 24px auto;
   height: 100%;
   max-width: 1900px;
@@ -28,6 +28,9 @@
 }
 .manual-container #slides .slide.showing {
   opacity: 1;
+}
+.manual-container #slides .slide h2 {
+  height: 10px;
 }
 .manual-container .buttons {
   position: absolute;
