@@ -1,8 +1,6 @@
 {% load static %}
+<link rel="stylesheet" href="{% static 'css/maps.css' %}">
 
-{% block title %}
-Mapa - piętro 2
-{% endblock %}
   <div class="map-container">
     <!-- Obraz mapy -->
     <img src="{% static 'building_plans/pietro2.png' %}" alt="Mapa - piętro 2" class="map-image">
@@ -179,50 +177,6 @@ Mapa - piętro 2
     <h2>Aktualne Spotkania</h2>
     <ul id="current-meetings"></ul>
   </div>
-
-
-  <style>
-    .map-container {
-      position: relative;
-      width: 1697px; /* Szerokość obrazu */
-      height: 1175px; /* Wysokość obrazu */
-      margin: 0 auto; /* Wyśrodkowanie */
-    }
-
-    .map-image {
-      display: block;
-      width: 100%; /* Obraz ma pełną szerokość kontenera */
-      height: auto;
-    }
-
-    .overlay-svg {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-    }
-
-    .room {
-      fill: gray; /* Kolor szary dla wszystkich sal */
-      stroke: black; /* Czarny obrys dla lepszej widoczności */
-      stroke-width: 1;
-    }
-    .room-label {
-      font-size: 16px;
-      font-weight: bold;
-      fill: black;
-      text-anchor: middle;
-      }
-
-    .room.occupied {
-      fill: green; /* Zielony kolor dla zajętych sal */
-    }
-
-
-  </style>
-
-
 
   <script>
     // Pobierz statusy wszystkich sal z API

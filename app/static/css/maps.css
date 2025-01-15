@@ -1,0 +1,42 @@
+.map-container {
+  position: relative;
+  margin: 0 auto;
+}
+.map-container.map0 {
+  width: 1802px;
+  height: 1088px;
+}
+.map-container.map1 {
+  width: 1823px;
+  height: 1110px;
+}
+.map-container.map2 {
+  width: 1697px;
+  height: 1175px;
+}
+.map-container .map-image {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.map-container .overlay-svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+.map-container .room {
+  fill: lightgray;
+  stroke: black;
+  stroke-width: 1;
+}
+.map-container .room-label {
+  font-size: 16px;
+  font-weight: bold;
+  fill: black;
+  text-anchor: middle;
+}
+.map-container .room.occupied {
+  fill: lightgreen;
+}/*# sourceMappingURL=maps.css.map */

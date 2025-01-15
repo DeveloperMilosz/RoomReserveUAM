@@ -1,0 +1,49 @@
+.map-container{
+    position: relative;
+    margin: 0 auto;
+
+    &.map0{
+        width: 1802px;
+        height: 1088px;
+    }
+    &.map1 {
+        width: 1823px;
+        height: 1110px;
+    }
+
+    &.map2 {
+        width: 1697px;
+        height: 1175px;
+    }
+
+    .map-image {
+        display: block;
+        width: 100%;
+        height: auto;
+    }
+    
+    .overlay-svg {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+    }
+
+    .room {
+        fill: lightgray;
+        stroke: black;
+        stroke-width: 1;
+    }
+
+    .room-label {
+        font-size: 16px;
+        font-weight: bold;
+        fill: black;
+        text-anchor: middle;
+    }
+
+    .room.occupied {
+        fill: lightgreen;
+    }
+}

@@ -1,9 +1,6 @@
 {% load static %}
-
-{% block title %}
-Mapa - parter
-{% endblock %}
-<div class="map-container">
+<link rel="stylesheet" href="{% static 'css/maps.css' %}">
+<div class="map-container map0">
   <!-- Obraz mapy -->
   <img src="{% static 'building_plans/parter.png' %}" alt="Mapa - Parter" class="map-image">
 
@@ -51,46 +48,6 @@ Mapa - parter
   <h2>Aktualne Spotkania</h2>
   <ul id="current-meetings"></ul>
 </div>
-
-<style>
-  .map-container {
-    position: relative;
-    width: 1802px; /* Szerokość obrazu */
-    height: 1088px; /* Wysokość obrazu */
-    margin: 0 auto; /* Wyśrodkowanie */
-  }
-
-  .map-image {
-    display: block;
-    width: 100%; /* Obraz ma pełną szerokość kontenera */
-    height: auto;
-  }
-
-  .overlay-svg {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-  }
-
-  .room {
-    fill: gray; /* Kolor szary dla wszystkich sal */
-    stroke: black; /* Czarny obrys dla lepszej widoczności */
-    stroke-width: 1;
-  }
-
-  .room-label {
-  font-size: 16px;
-  font-weight: bold;
-  fill: black;
-  text-anchor: middle;
-  }
-  .room.occupied {
-    fill: green; /* Zielony kolor dla zajętych sal */
-  }
-
-</style>
 
 <script>
   // Pobierz statusy wszystkich sal z API

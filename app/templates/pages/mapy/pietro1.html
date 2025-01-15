@@ -1,9 +1,6 @@
 {% load static %}
-
-{% block title %}
-Mapa - piętro 1
-{% endblock %}
-<div class="map-container">
+<link rel="stylesheet" href="{% static 'css/maps.css' %}">
+<div class="map-container map1">
   <!-- Obraz mapy -->
   <img src="{% static 'building_plans/pietro1.png' %}" alt="Mapa - Parter" class="map-image">
 
@@ -106,7 +103,7 @@ Mapa - piętro 1
 
       <!-- Sala 1.07 -->
       <a href="{% url 'room_details' '1.07' %}">
-        <rect id="room-1.07" class="room" x="57" y="835" width="213" height="168" data-title="1.07"></rect>
+        <rect id="room-1.07" class="room occupied" x="57" y="835" width="213" height="168" data-title="1.07"></rect>
         <text x="165" y="920" class="room-label">1.07</text>
       </a>
 
@@ -141,50 +138,6 @@ Mapa - piętro 1
     <h2>Aktualne Spotkania</h2>
     <ul id="current-meetings"></ul>
   </div>
-
-
-  <style>
-    .map-container {
-      position: relative;
-      width: 1823px; /* Szerokość obrazu */
-      height: 1110px; /* Wysokość obrazu */
-      margin: 0 auto; /* Wyśrodkowanie */
-    }
-
-    .map-image {
-      display: block;
-      width: 100%; /* Obraz ma pełną szerokość kontenera */
-      height: auto;
-    }
-
-    .overlay-svg {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-    }
-
-    .room {
-      fill: gray; /* Kolor szary dla wszystkich sal */
-      stroke: black; /* Czarny obrys dla lepszej widoczności */
-      stroke-width: 1;
-    }
-    .room-label {
-      font-size: 16px;
-      font-weight: bold;
-      fill: black;
-      text-anchor: middle;
-      }
-
-    .room.occupied {
-      fill: green; /* Zielony kolor dla zajętych sal */
-    }
-
-
-  </style>
-
-
 
   <script>
     // Pobierz statusy wszystkich sal z API
