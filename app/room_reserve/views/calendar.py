@@ -2,7 +2,7 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from django.utils.dateparse import parse_date
+from django.utils.dateparse import parse_date, parse_datetime
 from django.db.models import Q
 from room_reserve.models import Meeting, Event, Room, Lecturers, RoomAttribute, Group, User
 from room_reserve.forms.calendar import MeetingForm, EventForm, EditMeetingForm
@@ -376,42 +376,63 @@ def edit_meeting(request, meeting_id):
     )
 
 
+from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from room_reserve.models import Event, Group, User, Room, Meeting
+from django.utils.dateparse import parse_datetime
+
+
 @login_required
 def new_event(request):
-    users = User.objects.filter(user_type__in=["Lecturer", "Organizer"])  # Fetch appropriate users
-
-    groups = Group.objects.all()
-    
     if request.method == "POST":
-        form = EventForm(request.POST)
-        if form.is_valid():
-            event = form.save(commit=False)
-            event.save()
+        # Pobranie danych wydarzenia z formularza
+        event_name = request.POST.get("name")
+        event_description = request.POST.get("description")
+        event_start_date = request.POST.get("start_date")
+        event_end_date = request.POST.get("end_date")
+        event_logo = request.FILES.get("logo")  # Obsługa opcjonalnego loga
+        selected_group_ids = request.POST.getlist("eventgroups[]")
+        selected_organizers_ids = request.POST.getlist("organizer[]")
 
-            # Associate the event with selected organizers/lecturers
-            selected_users = request.POST.getlist("organizer")
-            event.organizer.set(User.objects.filter(id__in=selected_users))
+        # Tworzenie obiektu wydarzenia
+        event = Event.objects.create(
+            name=event_name,
+            description=event_description,
+            start_date=event_start_date,
+            end_date=event_end_date,
+            logo=event_logo,
+            submitted_by=request.user,
+        )
 
-            return redirect("home")
+        # Dodanie organizatorów do wydarzenia
+        selected_organizers = User.objects.filter(
+            id__in=selected_organizers_ids, user_type__in=["Organizer", "Lecturer"]
+        )
+        event.organizer.set(selected_organizers)
+
+        # Przypisanie wydarzenia do wybranych grup
+        selected_groups = Group.objects.filter(id__in=selected_group_ids)
+        for group in selected_groups:
+            group.events.add(event)
+
+        # Wyświetlenie komunikatu o sukcesie
+        messages.success(request, "Wydarzenie zostało pomyślnie utworzone.")
+        return redirect("home")
     else:
-        form = EventForm()
-
-    return render(
-        request,
-        "pages/calendar/new_event.html",
-        {"form": form, "users": users, "groups": groups},
-    )
-
-    return render(
-        request,
-        "pages/calendar/new_event.html",
-        {
-            "form": form,
-            "lecturers": lecturers,
-            "groups": groups,
-            "users": users,
-        },
-    )
+        # Pobranie danych do formularza
+        groups = Group.objects.all()
+        users = User.objects.filter(user_type__in=["Organizer", "Lecturer"])
+        rooms = Room.objects.all()  # Opcjonalnie, jeśli potrzebne
+        return render(
+            request,
+            "pages/calendar/new_event.html",
+            {
+                "groups": groups,
+                "users": users,
+                "rooms": rooms,
+            },
+        )
 
 
 @login_required
