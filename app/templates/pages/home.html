@@ -26,6 +26,14 @@
 </div>
 
 <div id="calendar" class="monthly"></div>
+<script>
+    function filterMeetingsByUserEmail(meetings) {
+        return meetings.filter(meeting =>
+            Array.isArray(meeting.invited) && 
+            meeting.invited.some(invitedUser => invitedUser.email === meeting.user_email)
+        );
+    }
+</script>
 <script src="{% static 'js/fetch_meetings_api.js' %}"></script>
 <script src="{% static 'js/homepage_calendar.js' %}"></script>
 

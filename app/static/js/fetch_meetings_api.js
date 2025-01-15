@@ -31,17 +31,13 @@ function filterMeetingsByEvent(meetings) {
     return meetings.filter(meeting => meeting.event_name == eventName);
 }
 
-function filterMeetingsByUserEmail(meetings) {
-    return meetings.filter(meeting =>
-        Array.isArray(meeting.invited) && 
-        meeting.invited.some(invitedUser => invitedUser.email === meeting.user_email)
-    );
-}
-
 async function importMeetings() {
     let meetings = await fetchMeetings();
     meetings = filterMeetingsByRoom(meetings);
     meetings = filterMeetingsByEvent(meetings);
-    meetings = filterMeetingsByUserEmail(meetings);
+    if (window.filterMeetingsByUserEmail) {
+        meetings = filterMeetingsByUserEmail(meetings);
+    }
+    
     return meetings;
 }
