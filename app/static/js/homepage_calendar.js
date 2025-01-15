@@ -170,7 +170,7 @@ Prowadzący: ${meeting.lecturer || 'Brak prowadzacego'}`;
                         eventEl.style.backgroundRepeat = 'no-repeat';
                         eventEl.style.backgroundSize = 'cover';
 
-                        eventEl.style.backgroundColor = 'rgba(0, 0, 0, 0.3)';
+                        eventEl.style.backgroundColor = 'rgba(0, 0, 0, 0.6)';
                         eventEl.style.backgroundBlendMode = 'darken';
                     } else {
                         eventEl.style.backgroundColor = meeting.color;
@@ -268,7 +268,7 @@ Godziny: ${meeting.start.toLocaleTimeString([], {hour: '2-digit', minute:'2-digi
                     }
                     const position = timeToPosition(meeting.start, meeting.end);
                     eventEl.style.position = 'absolute';
-                    eventEl.style.top = position.top + 'px';
+                    eventEl.style.top = position.top + 60 +'px';
                     eventEl.style.height = position.height + 'px';
 
                     eventEl.style.width = `${100 / totalColumns}%`;
