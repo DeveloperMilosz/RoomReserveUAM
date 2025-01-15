@@ -9,6 +9,7 @@ from django.utils.timezone import now
 import json
 from django.conf import settings
 from django.db.models import Prefetch
+from django.db.models import Q
 
 
 def search_meetings(request):
@@ -171,3 +172,80 @@ class RoomPointsAPIView(APIView):
             return JsonResponse({"error": "Plik punkty.json nie został znaleziony."}, status=404)
         except json.JSONDecodeError:
             return JsonResponse({"error": "Błąd w odczycie pliku punkty.json."}, status=500)
+
+
+
+
+
+
+class FreeRoomsAPIView(APIView):
+    """
+    API endpoint zwracający wolne sale z numerem i wyposażeniem.
+    """
+
+    def get(self, request):
+        start_date = request.GET.get("start_date")
+        start_time = request.GET.get("start_time")
+        end_date = request.GET.get("end_date")
+        end_time = request.GET.get("end_time")
+        attribute = request.GET.get("attribute")
+
+        if not (start_date and start_time and end_date and end_time):
+            return Response(
+                {"error": "Wymagane są parametry start_date, start_time, end_date oraz end_time."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        start_datetime = f"{start_date}T{start_time}"
+        end_datetime = f"{end_date}T{end_time}"
+
+        # Pobieranie zajętych sal
+        busy_rooms = Meeting.objects.filter(
+            Q(start_time__lt=end_datetime) & Q(end_time__gt=start_datetime)
+        ).values_list("room_id", flat=True)
+
+        # Filtracja wolnych sal
+        rooms = Room.objects.exclude(id__in=busy_rooms)
+
+        if attribute:
+            rooms = rooms.filter(attributes__attribute_id=attribute)
+
+        free_rooms = [
+            {
+                "room_number": room.room_number,
+                "has_attribute": attribute in [attr.attribute_id for attr in room.attributes.all()]
+            }
+            for room in rooms.prefetch_related("attributes")
+        ]
+
+        return Response(free_rooms, status=status.HTTP_200_OK)
+
+
+
+
+    class RoomEquipmentAPIView(APIView):
+    """
+    API endpoint zwracający numer sali i informację o posiadaniu określonego wyposażenia.
+    """
+
+    def get(self, request):
+        attribute = request.GET.get("attribute")
+
+        if not attribute:
+            return Response(
+                {"error": "Parametr 'attribute' jest wymagany."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # Pobieranie wszystkich sal
+        rooms = Room.objects.prefetch_related("attributes").all()
+
+        room_list = [
+            {
+                "room_number": room.room_number,
+                "has_attribute": attribute in [attr.attribute_id for attr in room.attributes.all()]
+            }
+            for room in rooms
+        ]
+
+        return Response(room_list, status=status.HTTP_200_OK)
