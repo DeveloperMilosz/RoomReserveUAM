@@ -6,8 +6,9 @@
 <div class="form-container manual-container">
     <ul id="slides">
       <li class="slide showing">
-        <span>Rejestracja konta<br></span>
+        <span><h2>Rejestracja konta</h2><br></span>
         <img src="{% static 'img/manual_photos/1.png' %}" alt="Tworzenie konta" class="manual-photo">
+        <img src="{% static 'img/manual_photos/email.png' %}" alt="Tworzenie konta" class="manual-photo">
         <span><br>Po wejściu w podstronę rejestracyjną:
             <br>1) Wprowadź swój adres email
             <br>2) Wprowadź mocne hasło
@@ -17,7 +18,7 @@
             <br>6) Po użyciu linku z punktu 4 można się normalnie logować</span>
       </li>
       <li class="slide showing">
-        <span>Zmiana typu konta<br></span>
+        <span><h2>Zmiana typu konta</h2><br></span>
         <img src="{% static 'img/manual_photos/2.png' %}" alt="Tworzenie konta" class="manual-photo">
         <span><br>Po wejściu w podstronę rejestracyjną:
             <br>1) Wejdź w swój profil użytkownika - użytkownik musi mieć uzupełnione imie i nazwisko
@@ -25,9 +26,21 @@
             <br>3) Wyślij wniosek
             <br>4) Czekaj na odpowiedź</span>
       </li>
-      <li class="slide">
-        test 3
+      <li class="slide showing">
+        <span><h2>Profil</h2><br></span>
+        <img src="{% static 'img/manual_photos/3.png' %}" alt="Tworzenie konta" class="manual-photo">
+        <span><br>Po wejściu w podstronę rejestracyjną:
+            <br>1) Wejdź w swój profil użytkownika
+            <br>2) Wprowadź imię
+            <br>3) Wprowadź nazwisko
+            <br>4) Wgraj zdjęcie</span>
       </li>
+      <li class="slide showing"> <span><h2>Składanie wniosku o spotkanie</h2><br></span> <img src="{% static 'img/manual_photos/4_1.png' %}" alt="Tworzenie wniosku o spotkanie" class="manual-photo"> <img src="{% static 'img/manual_photos/4_2.png' %}" alt="Uzupełnianie szczegółów spotkania" class="manual-photo"> <span><br>Aby złożyć wniosek o spotkanie, wykonaj następujące kroki: <br>1) Wprowadź nazwę spotkania w języku polskim oraz angielskim <br>2) Ustaw datę rozpoczęcia i zakończenia spotkania <br>3) Wybierz typ spotkania z rozwijanej listy <br>4) Wskaż salę, w której odbędzie się spotkanie <br>5) Dodaj szczegółowy opis spotkania <br>6) Wybierz grupę z dostępnej listy (np. TI-2024) <br>7) Wprowadź liczbę uczestników <br>8) Jeśli dotyczy, wybierz powiązane wydarzenie z listy <br>9) Wskaż prowadzącego lub organizatora z dostępnych opcji <br>10) Określ kolor wizualizacji spotkania w systemie <br>11) Jeśli spotkanie ma być cykliczne, zaznacz odpowiednią opcję <br>12) Kliknij przycisk „Złóż wniosek”, aby przesłać formularz do administratora</span> </li>
+      <li class="slide showing"> <span><h2>Edycja istniejącego spotkania</h2><br></span> <img src="{% static 'img/manual_photos/5_1.png' %}" alt="Przegląd szczegółów spotkania" class="manual-photo"> <img src="{% static 'img/manual_photos/5_2.png' %}" alt="Edycja szczegółów spotkania" class="manual-photo"> <span><br>Aby edytować istniejące spotkanie w systemie, wykonaj następujące kroki: <br>1) Otwórz szczegóły wybranego spotkania. <br>2) Kliknij przycisk „Edytuj”, widoczny na dole strony. <br>3) W formularzu edycji: <br>&nbsp;&nbsp;&nbsp;a) Zaktualizuj nazwę spotkania w języku polskim i angielskim, jeśli jest to wymagane. <br>&nbsp;&nbsp;&nbsp;b) Ustaw nową datę i czas rozpoczęcia oraz zakończenia spotkania. <br>&nbsp;&nbsp;&nbsp;c) Wprowadź zmieniony opis spotkania, jeśli to konieczne. <br>&nbsp;&nbsp;&nbsp;d) Zmień salę, wybierając odpowiednią z listy. <br>&nbsp;&nbsp;&nbsp;e) Wybierz lub dodaj nowych prowadzących/organizatorów. <br>&nbsp;&nbsp;&nbsp;f) Powiąż spotkanie z wydarzeniem, jeśli dotyczy. <br>&nbsp;&nbsp;&nbsp;g) Wybierz grupę przypisaną do spotkania. <br>&nbsp;&nbsp;&nbsp;h) Zmień kolor wizualizacji, jeśli jest to potrzebne. <br>4) Kliknij przycisk „Edytuj spotkanie”, aby zapisać zmiany. <br>5) Jeśli chcesz anulować spotkanie, kliknij przycisk „Odwołaj spotkanie”.</span> </li>
+      <li class="slide showing"> <span><h2>Dodawanie nowego wydarzenia</h2><br></span> <img src="{% static 'img/manual_photos/6.png' %}" alt="Dodawanie nowego wydarzenia" class="manual-photo"> <span><br>Aby dodać nowe wydarzenie w systemie, wykonaj następujące kroki: <br>1) Wprowadź nazwę wydarzenia w odpowiednim polu. <br>2) Ustaw datę i godzinę rozpoczęcia oraz zakończenia wydarzenia. <br>3) Dodaj szczegółowy opis wydarzenia, jeśli jest to wymagane. <br>4) Wybierz grupy, które będą związane z wydarzeniem, z listy dostępnych grup. <br>5) Wskaż organizatorów lub wykładowców, wybierając ich z listy. <br>6) Wybierz kolor wizualizacji wydarzenia w systemie. <br>7) Kliknij przycisk „Dodaj wydarzenie”, aby zakończyć proces.</span> </li>
+      <li class="slide showing"> <span><h2>Edycja wydarzenia i powiązanych spotkań</h2><br></span> <img src="{% static 'img/manual_photos/7_1_1.png' %}" alt="Przegląd szczegółów wydarzenia" class="manual-photo"> <img src="{% static 'img/manual_photos/7_2.png' %}" alt="Edycja szczegółów wydarzenia i spotkań" class="manual-photo"> <span><br>Aby edytować istniejące wydarzenie oraz powiązane z nim spotkania, wykonaj następujące kroki: <br><b>Krok 1:</b> Otwórz szczegóły wybranego wydarzenia. <br><b>Krok 2:</b> Kliknij przycisk „Edytuj Wydarzenie”, aby przejść do formularza edycji. <br><b>Krok 3:</b> W formularzu edycji: <br>&nbsp;&nbsp;&nbsp;a) Zaktualizuj nazwę wydarzenia oraz opis, jeśli to konieczne. <br>&nbsp;&nbsp;&nbsp;b) Ustaw nową datę i czas rozpoczęcia oraz zakończenia wydarzenia. <br>&nbsp;&nbsp;&nbsp;c) Dodaj logo wydarzenia, jeśli jest wymagane. <br>&nbsp;&nbsp;&nbsp;d) Wskaż grupy oraz prelegentów/organizatorów, jeśli uległy zmianie. <br><b>Krok 4:</b> W sekcji powiązanych spotkań: <br>&nbsp;&nbsp;&nbsp;a) Dostosuj szczegóły każdego spotkania, takie jak nazwa, sala, czas rozpoczęcia i zakończenia, liczba uczestników oraz dodatkowe informacje. <br>&nbsp;&nbsp;&nbsp;b) Kliknij „Dodaj dodatkowe szczegóły spotkania”, jeśli chcesz wprowadzić nowe dane. <br><b>Krok 5:</b> Po zakończeniu edycji kliknij „Zapisz zmiany”, aby zatwierdzić aktualizacje. </span> </li>
+      <li class="slide showing"> <span><h2>Dodawanie nowego wydarzenia</h2><br></span> <img src="{% static 'img/manual_photos/8.png' %}" alt="Dodawanie nowego wydarzenia" class="manual-photo"> <span><br>Aby dodać nowe wydarzenie w systemie, wykonaj następujące kroki: <br><b>Krok 1:</b> Wprowadź nazwę wydarzenia w polu „Nazwa wydarzenia”. <br><b>Krok 2:</b> Dodaj szczegółowy opis wydarzenia w polu „Opis wydarzenia”. <br><b>Krok 3:</b> Ustaw datę rozpoczęcia i zakończenia wydarzenia, korzystając z dostępnego kalendarza. <br><b>Krok 4:</b> (Opcjonalnie) Dodaj logo wydarzenia, korzystając z opcji „Choose File”. <br><b>Krok 5:</b> Wybierz grupy uczestniczące w wydarzeniu z listy dostępnych grup. <br><b>Krok 6:</b> Wskaż prelegentów lub organizatorów, zaznaczając ich na liście. <br><b>Krok 7:</b> Kliknij „Dodaj wydarzenie”, aby zapisać szczegóły wydarzenia i dodać je do systemu. <br><b>Krok 8:</b> Jeśli chcesz zapisać zmiany bez finalizacji, kliknij „Zapisz zmiany”.<br>Funkcja dodaj spotkanie pozwala od razu stworz spotkanie w towrzonym wydarzeniu</span> </li>
+      <li class="slide showing"> <span><h2>Wysyłanie wiadomości</h2><br></span> <img src="{% static 'img/manual_photos/11.png' %}" alt="Wysyłanie wiadomości" class="manual-photo"> <span><br>Aby wysłać wiadomość do wybranych grup w systemie, wykonaj następujące kroki: <br><b>Krok 1:</b> Zaznacz grupy, do których chcesz wysłać wiadomość, wybierając je z listy „Grupy”. <br><b>Krok 2:</b> W polu „E-maile” wprowadź dodatkowe adresy e-mail (oddzielone przecinkami), jeśli wiadomość ma być wysłana również poza grupy. <br><b>Krok 3:</b> W polu „Treść” wpisz wiadomość, którą chcesz przesłać. <br><b>Krok 4:</b> Po uzupełnieniu wszystkich informacji kliknij przycisk „Wyślij”, aby wysłać wiadomość. </span> </li>
     </ul>
     <div class="buttons">
       <button class="controls" id="previous">&lt;</button>  
