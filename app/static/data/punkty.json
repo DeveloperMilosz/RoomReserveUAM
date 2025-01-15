@@ -1,0 +1,163 @@
+[
+  {
+    "room_number": "0.35",
+    "points": "1208,107 1250,342 1603,277 1560,45",
+    "label_x": 1400,
+    "label_y": 200,
+    "floor": "parter"
+  },
+  {
+      "room_number": "0.54",
+      "points": "1224,564 1289,943 1773,851 1704,479",
+      "label_x": 1500,
+      "label_y": 750,
+      "floor": "parter"
+  },
+  {
+      "room_number": "1.01",
+      "points": "227,193 53,193 55,107 69,101 69,52 227,52",
+      "label_x": 140,
+      "label_y": 120,
+      "floor": "pietro1"
+  },
+  {
+      "room_number": "1.02",
+      "points": "227,356 84,356 84,373 65,373 69,285 55,287 55,199 227,199",
+      "label_x": 140,
+      "label_y": 290,
+      "floor": "pietro1"
+  },
+  {
+      "room_number": "1.04",
+      "points": "229,514 84,514 84,502 69,502 69,584 57,586 57,637 227,637",
+      "label_x": 140,
+      "label_y": 570,
+      "floor": "pietro1"
+  },
+  {
+      "room_number": "1.05",
+      "points": "59,641 229,641 229,733 59,733",
+      "label_x": 145,
+      "label_y": 690,
+      "floor": "pietro1"
+  },
+  {
+      "room_number": "1.06",
+      "points": "59,739 229,739 229,829 59,829",
+      "label_x": 145,
+      "label_y": 780,
+      "floor": "pietro1"
+  },
+  {
+      "room_number": "1.07",
+      "points": "57,835 270,835 270,1003 57,1003",
+      "label_x": 165,
+      "label_y": 920,
+      "floor": "pietro1"
+  },
+  {
+      "room_number": "1.11",
+      "points": "274,835 485,835 485,1003 274,1003",
+      "label_x": 380,
+      "label_y": 920,
+      "floor": "pietro1"
+  },
+  {
+      "room_number": "1.12",
+      "points": "315,739 485,739 485,829 315,829",
+      "label_x": 400,
+      "label_y": 780,
+      "floor": "pietro1"
+  },
+  {
+      "room_number": "1.13",
+      "points": "315,643 485,643 485,735 315,735",
+      "label_x": 400,
+      "label_y": 690,
+      "floor": "pietro1"
+  },
+  {
+      "room_number": "1.34",
+      "points": "720,442 1008,442 1008,577 720,577",
+      "label_x": 840,
+      "label_y": 520,
+      "floor": "pietro1"
+  },
+  {
+      "room_number": "2.01",
+      "points": "42,124 202,124 202,267 42,267",
+      "label_x": 122,
+      "label_y": 200,
+      "floor": "pietro2"
+  },
+  {
+      "room_number": "2.02",
+      "points": "42,269 202,269 202,430 42,430",
+      "label_x": 122,
+      "label_y": 350,
+      "floor": "pietro2"
+  },
+  {
+      "room_number": "2.04",
+      "points": "42,586 202,586 202,854 42,854",
+      "label_x": 122,
+      "label_y": 720,
+      "floor": "pietro2"
+  },
+  {
+      "room_number": "2.05",
+      "points": "42,870 202,870 202,1129 42,1129",
+      "label_x": 122,
+      "label_y": 1000,
+      "floor": "pietro2"
+  },
+  {
+      "room_number": "2.07",
+      "points": "292,985 448,985 448,1127 292,1127",
+      "label_x": 370,
+      "label_y": 1060,
+      "floor": "pietro2"
+  },
+  {
+      "room_number": "2.08",
+      "points": "290,869 446,869 446,983 290,983",
+      "label_x": 368,
+      "label_y": 940,
+      "floor": "pietro2"
+  },
+  {
+      "room_number": "2.09",
+      "points": "290,750 446,750 446,865 290,865",
+      "label_x": 368,
+      "label_y": 820,
+      "floor": "pietro2"
+  },
+  {
+      "room_number": "2.10",
+      "points": "290,747 445,747 445,648 456,652 456,586 292,586",
+      "label_x": 368,
+      "label_y": 690,
+      "floor": "pietro2"
+  },
+  {
+      "room_number": "2.17",
+      "points": "290,124 450,124 450,265 290,265",
+      "label_x": 370,
+      "label_y": 200,
+      "floor": "pietro2"
+  },
+  {
+      "room_number": "2.19",
+      "points": "690,469 565,469 563,440 441,440 441,267 689,267",
+      "label_x": 565,
+      "label_y": 370,
+      "floor": "pietro2"
+  },
+  {
+      "room_number": "2.60",
+      "points": "1240,571 1375,547 1399,678 1264,704",
+      "label_x": 1310,
+      "label_y": 650,
+      "floor": "pietro2"
+  }
+]

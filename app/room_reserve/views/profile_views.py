@@ -107,8 +107,11 @@ def my_profile_view(request):
         type_request_form = UserTypeRequestForm(request.POST)
 
         if profile_form.is_valid():
+            # Zapisanie danych użytkownika
             profile_form.save()
             messages.success(request, "Profil został zaktualizowany.")
+        else:
+            messages.error(request, "Nie udało się zaktualizować profilu. Sprawdź poprawność danych.")
 
         if type_request_form.is_valid():
             requested_type = type_request_form.cleaned_data["requested_user_type"]

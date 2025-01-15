@@ -49,7 +49,7 @@ def send_notification_task(user_id=None, message="", submitted_by=None, user_typ
         notify_user(message=message, submitted_by=submitted_by, user_type=user_type)
 
 
-@periodic_task(crontab(hour="0", minute="0"))  # Uruchamiane codziennie o północy
+@periodic_task(crontab(hour="10", minute="0"))  # Uruchamiane codziennie o północy
 def send_daily_notification_email():
     users_with_notifications = User.objects.filter(notifications__is_read=False).distinct()
 
@@ -57,7 +57,7 @@ def send_daily_notification_email():
         unread_count = user.notifications.filter(is_read=False).count()
         send_mail(
             subject="Masz nowe powiadomienia w aplikacji Room Reserve",
-            message=f"Masz {unread_count} nowych powiadomień. Zaloguj się do aplikacji, aby je zobaczyć.",
+            message=f"Masz {unread_count} nowe powiadomienia. Zaloguj się do aplikacji, aby je zobaczyć.",
             from_email="powiadomienia@roomreserveuam.pl",
             recipient_list=[user.email],
         )
