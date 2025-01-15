@@ -36,9 +36,12 @@
             <!-- Group Selection -->
             <div class="input-box">
                 <label for="id_group">Grupy:</label>
-                <select name="groups[]" id="id_group" multiple>
+                <select id="event-groups" name="eventgroups[]" multiple>
                     {% for group in groups %}
-                    <option value="{{ group.id }}">{{ group.name }}</option>
+                    <option value="{{ group.id }}"
+                            {% if group in event.assigned_groups.all %}selected{% endif %}>
+                        {{ group.name }}
+                    </option>
                     {% endfor %}
                 </select>
             </div>

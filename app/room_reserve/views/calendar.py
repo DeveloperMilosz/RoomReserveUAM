@@ -380,6 +380,8 @@ def edit_meeting(request, meeting_id):
 def new_event(request):
     users = User.objects.filter(user_type__in=["Lecturer", "Organizer"])  # Fetch appropriate users
 
+    groups = Group.objects.all()
+    
     if request.method == "POST":
         form = EventForm(request.POST)
         if form.is_valid():
@@ -397,7 +399,7 @@ def new_event(request):
     return render(
         request,
         "pages/calendar/new_event.html",
-        {"form": form, "users": users},
+        {"form": form, "users": users, "groups": groups},
     )
 
     return render(
