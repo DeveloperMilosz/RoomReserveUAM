@@ -173,6 +173,7 @@ nav ul li:hover .submenu {
 }
 .form-container.terms-container {
   width: 1440px;
+  padding: 0 32px;
   text-align: left;
 }
 
