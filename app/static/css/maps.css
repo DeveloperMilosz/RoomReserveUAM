@@ -30,13 +30,20 @@
   fill: lightgray;
   stroke: black;
   stroke-width: 1;
+  transition: 0.3s;
+}
+.map-container .room:hover {
+  fill: #e7e7e7;
+}
+.map-container .room.occupied {
+  fill: lightgreen;
+}
+.map-container .room.occupied:hover {
+  fill: #a6f1a6;
 }
 .map-container .room-label {
   font-size: 16px;
   font-weight: bold;
   fill: black;
   text-anchor: middle;
-}
-.map-container .room.occupied {
-  fill: lightgreen;
 }/*# sourceMappingURL=maps.css.map */

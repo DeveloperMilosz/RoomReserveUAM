@@ -34,6 +34,19 @@
         fill: lightgray;
         stroke: black;
         stroke-width: 1;
+        transition: .3s;
+        
+        &:hover{
+            fill: lighten(lightgray, 8%);
+        }
+
+        &.occupied {
+            fill: lightgreen;
+
+            &:hover{
+                fill: lighten(lightgreen, 5%);
+            }
+        }
     }
 
     .room-label {
@@ -43,7 +56,5 @@
         text-anchor: middle;
     }
 
-    .room.occupied {
-        fill: lightgreen;
-    }
+    
 }
