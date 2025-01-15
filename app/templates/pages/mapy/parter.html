@@ -45,64 +45,7 @@
 </div>
 
 <div class="meeting-details">
-  <h2>Aktualne Spotkania</h2>
   <ul id="current-meetings"></ul>
 </div>
 
-<script>
-  // Pobierz statusy wszystkich sal z API
-  fetch('/api/room-statuses/')
-    .then(response => {
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      return response.json();
-    })
-    .then(data => {
-      const meetingsList = document.getElementById('current-meetings');
-
-      data.forEach(room => {
-        // Znajdź element SVG dla sali
-        const roomElement = document.getElementById(`room-${room.room_number}`);
-        if (roomElement) {
-          if (room.has_meeting_now) {
-            // Zmień kolor na zielony, jeśli sala jest zajęta
-            roomElement.classList.remove('gray');
-            roomElement.classList.add('occupied');
-
-            // Dodaj szczegóły spotkania do listy
-            const meetingItem = document.createElement('li');
-            meetingItem.innerHTML = `
-              <strong>Sala: ${room.room_number}</strong><br>
-              Spotkanie: ${room.meeting_details?.meeting_name || 'Brak nazwy'}<br>
-              Wykładowcy: ${room.meeting_details?.lecturers.join(', ') || 'Brak danych'}<br>
-              Czas: ${room.meeting_details?.start_time || ''} - ${room.meeting_details?.end_time || ''}
-            `;
-            meetingsList.appendChild(meetingItem);
-          }
-        }
-      });
-    })
-    .catch(error => console.error('Błąd przy pobieraniu statusów sal:', error));
-
-  // Mapowanie stron
-  const redirectMap = {
-    "{% url 'mapa_parter' %}": "{% url 'mapa_pietro1' %}",
-    "{% url 'mapa_pietro1' %}": "{% url 'mapa_pietro2' %}",
-    "{% url 'mapa_pietro2' %}": "{% url 'mapa_parter' %}",
-  };
-
-  // Funkcja do przekierowania
-  const redirectToNextPage = () => {
-    const currentUrl = window.location.pathname; // Pobierz aktualną ścieżkę URL
-    const nextUrl = redirectMap[currentUrl];
-    if (nextUrl) {
-      window.location.href = nextUrl;
-    } else {
-      console.error('Nie znaleziono URL do przekierowania:', currentUrl);
-    }
-  };
-
-  // Ustaw przekierowanie co 20 sekund (20000 ms)
-  setTimeout(redirectToNextPage, 20000); // 20 sekund
-</script>
+<script src="{% static 'js/maps.js' %}"></script>

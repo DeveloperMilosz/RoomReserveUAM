@@ -52,4 +52,39 @@
   font-weight: bold;
   fill: black;
   text-anchor: middle;
+}
+
+.meeting-details {
+  width: 100%;
+}
+.meeting-details #current-meetings {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+}
+.meeting-details #current-meetings li {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  max-width: 380px;
+  min-height: 180px;
+  width: 100%;
+  list-style-type: none;
+  border-radius: 24px;
+  box-shadow: 0px 0px 16px -5px rgb(66, 68, 90);
+  padding: 12px;
+  font-size: 32px;
+  transition: 0.3s;
+  text-align: center;
+}
+.meeting-details #current-meetings li:hover {
+  box-shadow: 0px 0px 24px -5px rgb(66, 68, 90);
+}
+.meeting-details #current-meetings li > * {
+  margin-bottom: 15px;
+}
+.meeting-details #current-meetings li span:last-child {
+  margin-bottom: 0px;
+  font-size: 24px;
+  text-align: right;
 }/*# sourceMappingURL=maps.css.map */
