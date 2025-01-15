@@ -1,7 +1,7 @@
 import pandas as pd
 import json
 from datetime import datetime
-from room_reserve.models import Meeting, Room, Event, Lecturers
+from room_reserve.models import Meeting, Room, Event, User, Group
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -15,10 +15,8 @@ def my_excel_import(request):
     data = []
     rooms = Room.objects.all()
     events = Event.objects.all()
-    lecturers = [
-        {"id": lecturer.id, "full_name": f"{lecturer.first_name} {lecturer.last_name}"}
-        for lecturer in Lecturers.objects.all()
-    ]
+    lecturers = User.objects.filter(user_type__in=["Organizer", "Lecturer"])
+    groups = Group.objects.all()  # Pobierz wszystkie grupy
 
     if request.method == "POST" and "excelfile" in request.FILES:
         excel_file = request.FILES["excelfile"]
@@ -63,6 +61,7 @@ def my_excel_import(request):
                         "room": row.get("room", ""),
                         "lecturers": row.get("lecturers", ""),
                         "color": row.get("color", ""),
+                        "groups": row.get("groups", ""),  # Dodane pole dla grup
                     }
                 )
 
@@ -98,8 +97,14 @@ def my_excel_import(request):
                 # Dodanie wykładowców (ManyToMany)
                 if meeting_data["lecturers"]:
                     lecturer_ids = map(int, meeting_data["lecturers"].split(","))
-                    lecturers = Lecturers.objects.filter(id__in=lecturer_ids)
+                    lecturers = User.objects.filter(id__in=lecturer_ids)
                     meeting.lecturers.set(lecturers)
+
+                # Dodanie grup (ManyToMany)
+                if meeting_data["groups"]:
+                    group_ids = map(int, meeting_data["groups"].split(","))
+                    groups = Group.objects.filter(id__in=group_ids)
+                    meeting.assigned_groups.set(groups)
 
                 meeting.save()
 
@@ -113,5 +118,5 @@ def my_excel_import(request):
     return render(
         request,
         "pages/calendar/import_excel.html",
-        {"data": data, "rooms": rooms, "events": events, "lecturers": lecturers},
+        {"data": data, "rooms": rooms, "events": events, "lecturers": lecturers, "groups": groups},
     )
