@@ -6,7 +6,7 @@ const monthNames = ["Styczeń", "Luty", "Marzec", "Kwiecień", "Maj", "Czerwiec"
 
 let dateObj = new Date();
 let month = monthNames[dateObj.getUTCMonth()];
-let day = dateObj.getUTCDate() - 1;
+let day = dateObj.getUTCDate();
 let year = dateObj.getUTCFullYear();
 
 let newdate = `${month} ${day}, ${year}`;

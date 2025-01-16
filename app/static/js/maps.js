@@ -30,9 +30,9 @@ fetch('/api/room-statuses/')
 .catch(error => console.error('Błąd przy pobieraniu statusów sal:', error));
 
 const redirectMap = {
-    "{% url 'mapa_parter' %}": "{% url 'mapa_pietro1' %}",
-    "{% url 'mapa_pietro1' %}": "{% url 'mapa_pietro2' %}",
-    "{% url 'mapa_pietro2' %}": "{% url 'mapa_parter' %}",
+    "/mapa/parter/": "/mapa/pietro1/",
+    "/mapa/pietro1/": "/mapa/pietro2/",
+    "/mapa/pietro2/": "/mapa/parter/",
 };
 
 const redirectToNextPage = () => {
