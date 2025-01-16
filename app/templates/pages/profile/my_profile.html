@@ -3,13 +3,13 @@
 <div class="form-container">
     <h1>Mój Profil</h1>
     <!-- Sekcja wyświetlania zdjęcia profilowego u góry strony -->
-    <div class="profile-picture">
+    {% comment %} <div class="profile-picture">
         {% if user.profile_picture %}
             <img src="{{ user.profile_picture.url }}" alt="Profile Picture" style="width: 492px; height: 633px;">
         {% else %}
             <p><em>Brak zdjęcia profilowego.</em></p>
         {% endif %}
-    </div>
+    </div> {% endcomment %}
 
     <!-- Formularz do aktualizacji danych i zdjęcia profilowego -->
     <form method="post" enctype="multipart/form-data" class="form-form">
@@ -26,11 +26,11 @@
                 <label for="id_last_name">Nazwisko:</label>
                 <input type="text" name="last_name" maxlength="50" id="id_last_name" value="{{ user.last_name }}">
             </div>
-
+{% comment %}
             <div class="input-box">
                 <label for="id_profile_picture">Zdjęcie Profilowe:</label>
                 <input type="file" name="profile_picture" accept="image/*" id="id_profile_picture">
-            </div>
+            </div> {% endcomment %}
         </div>
         <button type="submit" class="form-button">Zaktualizuj Profil</button>
     </form>
