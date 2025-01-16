@@ -82,6 +82,8 @@ urlpatterns = [
     path("search/rooms/", search_views.search_rooms, name="search_rooms"),
     path("search/free-rooms/", search_views.search_free_rooms, name="search_free_rooms"),
     path("search/groups/", search_views.search_groups, name="search_groups"),
+    path("api/free-rooms/", search_views.FreeRoomsAPIView.as_view(), name="free_rooms_api"),
+    path("api/room-equipment/", search_views.RoomEquipmentAPIView.as_view(), name="room_equipment_api"),
     path("api/search/meetings/", search_views.api_search_meetings, name="api_search_meetings"),
     path("meeting/<int:meeting_id>/cancel/", calendar_views.cancel_meeting, name="cancel_meeting"),
     # odwolanie spotkan
