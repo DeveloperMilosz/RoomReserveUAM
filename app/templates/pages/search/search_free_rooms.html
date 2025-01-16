@@ -1,16 +1,14 @@
 {% extends "base.html" %}
-
-{% block title %}
-Wyszukaj Wolne Sale
-{% endblock %}
-
+{% load static %}
 {% block content %}
+<link rel="stylesheet" href="{% static 'css/maps.css' %}">
+
 <div class="form-container">
     <h1>Wyszukaj Wolne Sale</h1>
     <form method="get" class="form-form">
         <div class="input-box">
             <label for="start_date">Data początkowa:</label>
-            <input type="date" name="start_date" id="start_date" required>
+            <input type="date" name="start_date" id="start_date">
         </div>
         <div class="input-box">
             <label for="start_time">Godzina początkowa:</label>
@@ -32,18 +30,378 @@ Wyszukaj Wolne Sale
                 {% endfor %}
             </select>
         </div>
+        <div class="input-box">
+            <label for="floor">Piętro:</label>
+            <select name="floor" id="floor">
+                <option value="parter">Parter</option>
+                <option value="pietro1">Piętro 1</option>
+                <option value="pietro2">Piętro 2</option>
+            </select>
+        </div>
         <button type="submit" class="form-button">Szukaj</button>
     </form>
 </div>
-{% if filter.qs %}
-<div class="tiles_container">
+
+<div class="map-container map0">
+    <!-- Obraz mapy -->
+        <img src="{% static 'building_plans/parter.png' %}" alt="Mapa - Parter" class="map-image">
+    
+        <!-- Nakładka SVG -->
+        <svg class="overlay-svg" viewBox="0 0 1802 1088" xmlns="http://www.w3.org/2000/svg">
+            <!-- Sala 0.01 -->
+            <polygon id="room-0.01" class="room" points="226,42 229,201 55,201 55,168 42,169 42,87 57,88 58,42 132,42 180,42" data-title="0.01"></polygon>
+            <text x="140" y="130" class="room-label">0.01</text>
+            <!-- Sala 0.02 -->
+            <polygon id="room-0.02" class="room" points="229,297 229,204 43,204 43,280 55,280 55,297" data-title="0.02"></polygon>
+            <text x="140" y="255" class="room-label">0.02</text>
+            <!-- Sala 0.03 -->
+            <polygon id="room-0.03" class="room" points="56,355 217,355 219,336 229,338 229,303 56,303" data-title="0.03"></polygon>
+            <text x="140" y="335" class="room-label">0.03</text>
+            <!-- Sala 0.04 -->
+            <rect id="room-0.04" class="room" x="56" y="361" width="174" height="124" data-title="0.04"></rect>
+            <text x="140" y="420" class="room-label">Schody</text>
+            <!-- Biuro obsługi Studenta -->
+            <polygon id="room-biuro" class="room" points="55,490 467,493 467,572 480,572 480,644 42,643 42,562 55,562 55,529" data-title="Biuro obsługi Studenta"></polygon>
+            <text x="250" y="580" class="room-label">Biuro obsługi Studenta</text>
+            <!-- Biblioteka -->
+            <rect id="room-biblioteka" class="room" x="42" y="647" width="438" height="395" data-title="Biblioteka"></rect>
+            <text x="250" y="850" class="room-label">Biblioteka</text>
+            <!-- Portiernia -->
+            <rect id="room-portiernia" class="room" x="465" y="183" width="78" height="134" data-title="Portiernia"></rect>
+            <text x="505" y="250" class="room-label">Portiernia</text>
+            <!-- Szatnia -->
+            <rect id="room-szatnia" class="room" x="281" y="183" width="183" height="134" data-title="Szatnia"></rect>
+            <text x="373" y="250" class="room-label">Szatnia</text>
+            <!-- Sala 0.35 -->
+            <a href="{% url 'room_details' '0.35' %}">
+            <polygon id="room-0.35" class="room" points="1208,107 1250,342 1603,277 1560,45" data-title="0.35"></polygon>
+            <text x="1410" y="200" class="room-label" transform="rotate(-10, 1400, 200)">0.35</text>
+            </a>
+    
+            <!-- Sala 0.54 -->
+            <a href="{% url 'room_details' '0.54' %}">
+            <polygon id="room-0.54" class="room" points="1224,564 1289,943 1773,851 1704,479" data-title="0.54"></polygon>
+            <text x="1500" y="725" class="room-label" transform="rotate(-10, 1500, 750)">0.54</text>
+            </a>
+        </svg>
+    </div>
+    
+    <div class="map-container map1">
+    <!-- Obraz mapy -->
+        <img src="{% static 'building_plans/pietro1.png' %}" alt="Mapa - Parter" class="map-image">
+    
+        <!-- Nakładka SVG -->
+        <svg class="overlay-svg" viewBox="0 0 1823 1110" xmlns="http://www.w3.org/2000/svg">
+    
+            <!-- Schody -->
+            <rect id="room-schody" class="room" x="69" y="375" width="170" height="121" data-title="Schody"></rect>
+            <text x="150" y="440" class="room-label">Schody</text>
+    
+            <!-- Sala 1.14 -->
+            <rect id="room-1.14" class="room" x="315" y="583" width="170" height="56" data-title="1.14"></rect>
+            <text x="400" y="615" class="room-label">1.14</text>
+    
+            <!-- Sala 1.15 -->
+            <rect id="room-1.15" class="room" x="315" y="516" width="161" height="63" data-title="1.15"></rect>
+            <text x="400" y="555" class="room-label">1.15</text>
+            <!-- WC (1) -->
+            <rect id="room-wc-1" class="room" x="315" y="254" width="149" height="113" data-title="WC"></rect>
+            <text x="390" y="310" class="room-label">WC</text>
+    
+            <!-- WC (2) -->
+            <rect id="room-wc-2" class="room" x="313" y="193" width="151" height="57" data-title="WC"></rect>
+            <text x="390" y="230" class="room-label">WC</text>
+    
+            <!-- Sala 1.22 -->
+            <polygon id="room-1.22" class="room" points="315,190 476,190 476,160 491,160 491,93 476,97 476,52 315,52" data-title="1.22"></polygon>
+            <text x="395" y="130" class="room-label">1.22</text>
+    
+            <!-- Sala 1.23 -->
+            <polygon id="room-1.23" class="room" points="468,336 587,336 587,369 683,369 683,189 589,189 589,197 468,197" data-title="1.23"></polygon>
+            <text x="570" y="280" class="room-label">1.23</text>
+    
+            <!-- Sala 1.26 -->
+            <rect id="room-1.26" class="room" x="757" y="191" width="89" height="147" data-title="1.26"></rect>
+            <text x="800" y="265" class="room-label">1.26</text>
+    
+            <!-- Sala 1.24 -->
+            <polygon id="room-1.24" class="room" points="687,369 716,371 716,336 755,336 753,191 687,191" data-title="1.24"></polygon>
+            <text x="720" y="265" class="room-label">1.24</text>
+    
+            <!-- Sala 1.27 -->
+            <rect id="room-1.27" class="room" x="849" y="191" width="120" height="147" data-title="1.27"></rect>
+            <text x="900" y="265" class="room-label">1.27</text>
+    
+            <!-- Sala 1.28 -->
+            <polygon id="room-1.28" class="room" points="1039,369 1008,369 1008,339 973,339 973,191 1038,191" data-title="1.28"></polygon>
+            <text x="1005" y="265" class="room-label">1.28</text>
+    
+            <!-- Sala 1.30 -->
+            <rect id="room-1.30" class="room" x="1043" y="192" width="94" height="108" data-title="1.30"></rect>
+            <text x="1085" y="250" class="room-label">1.30</text>
+    
+            <!-- WC (3) -->
+            <rect id="room-wc-3" class="room" x="1045" y="303" width="92" height="69" data-title="WC"></rect>
+            <text x="1090" y="340" class="room-label">WC</text>
+    
+            <!-- Sala 1.35 -->
+            <rect id="room-1.35" class="room" x="589" y="493" width="129" height="80" data-title="1.35"></rect>
+            <text x="650" y="540" class="room-label">1.35</text>
+    
+            <!-- Sala 1.33 -->
+            <rect id="room-1.33" class="room" x="1010" y="493" width="127" height="84" data-title="1.33"></rect>
+            <text x="1070" y="540" class="room-label">1.33</text>
+            <!-- Sala 0.35-1piętro -->
+            <polygon id="room-0.35-1pietro" class="room" points="1217,122 1260,356 1614,294 1573,59" data-title="0.35-1piętro"></polygon>
+            <text x="1416" y="213"  class="room-label" transform="rotate(-10, 1416, 233)">0.35-1piętro</text>
+            <!-- Sala 0.54-1piętro -->
+            <polygon id="room-0.54-1pietro" class="room" points="1235,575 1299,953 1778,865 1712,493" data-title="0.54-1piętro"></polygon>
+            <text x="1500" y="740" class="room-label" transform="rotate(-10, 1506, 740)">0.54-1piętro</text>
+                <!-- Sala 1.01 -->
+                <a href="{% url 'room_details' '1.01' %}">
+                <polygon id="room-1.01" class="room" points="227,193 53,193 55,107 69,101 69,52 227,52" data-title="1.01"></polygon>
+                <text x="145" y="120" class="room-label">1.01</text>
+            </a>
+    
+            <!-- Sala 1.02 -->
+            <a href="{% url 'room_details' '1.02' %}">
+                <polygon id="room-1.02" class="room" points="227,356 84,356 84,373 65,373 69,285 55,287 55,199 227,199" data-title="1.02"></polygon>
+                <text x="145" y="290" class="room-label">1.02</text>
+            </a>
+    
+            <!-- Sala 1.04 -->
+            <a href="{% url 'room_details' '1.04' %}">
+                <polygon id="room-1.04" class="room" points="229,514 84,514 84,502 69,502 69,584 57,586 57,637 227,637" data-title="1.04"></polygon>
+                <text x="145" y="580" class="room-label">1.04</text>
+            </a>
+    
+            <!-- Sala 1.05 -->
+            <a href="{% url 'room_details' '1.05' %}">
+                <rect id="room-1.05" class="room" x="59" y="641" width="170" height="92" data-title="1.05"></rect>
+                <text x="145" y="690" class="room-label">1.05</text>
+            </a>
+    
+            <!-- Sala 1.06 -->
+            <a href="{% url 'room_details' '1.06' %}">
+                <rect id="room-1.06" class="room" x="59" y="739" width="170" height="90" data-title="1.06"></rect>
+                <text x="145" y="790" class="room-label">1.06</text>
+            </a>
+    
+            <!-- Sala 1.07 -->
+            <a href="{% url 'room_details' '1.07' %}">
+                <rect id="room-1.07" class="room" x="57" y="835" width="213" height="168" data-title="1.07"></rect>
+                <text x="165" y="920" class="room-label">1.07</text>
+            </a>
+    
+            <!-- Sala 1.11 -->
+            <a href="{% url 'room_details' '1.11' %}">
+                <rect id="room-1.11" class="room" x="274" y="835" width="211" height="168" data-title="1.11"></rect>
+                <text x="380" y="920" class="room-label">1.11</text>
+            </a>
+    
+            <!-- Sala 1.12 -->
+            <a href="{% url 'room_details' '1.12' %}">
+                <rect id="room-1.12" class="room" x="315" y="739" width="170" height="90" data-title="1.12"></rect>
+                <text x="400" y="790" class="room-label">1.12</text>
+            </a>
+    
+            <!-- Sala 1.13 -->
+            <a href="{% url 'room_details' '1.13' %}">
+                <rect id="room-1.13" class="room" x="315" y="643" width="170" height="92" data-title="1.13"></rect>
+                <text x="400" y="690" class="room-label">1.13</text>
+            </a>
+    
+            <!-- Sala 1.34 -->
+            <a href="{% url 'room_details' '1.34' %}">
+                <rect id="room-1.34" class="room" x="720" y="442" width="288" height="135" data-title="1.34"></rect>
+                <text x="865" y="520" class="room-label">1.34</text>
+            </a>
+        </svg>
+    </div>
+    
+    <div class="map-container map2">
+        <!-- Obraz mapy -->
+        <img src="{% static 'building_plans/pietro2.png' %}" alt="Mapa - piętro 2" class="map-image">
+        
+        <!-- Nakładka SVG -->
+        <svg class="overlay-svg" viewBox="0 0 1697 1175" xmlns="http://www.w3.org/2000/svg">
+            <!-- Sala 2.01 -->
+            <rect id="room-2.01" class="room" x="42" y="124" width="160" height="143" data-title="2.01"></rect>
+            <text x="122" y="200" class="room-label">2.01</text>
+        
+            <!-- Sala 2.02 -->
+            <rect id="room-2.02" class="room" x="42" y="269" width="160" height="161" data-title="2.02"></rect>
+            <text x="122" y="350" class="room-label">2.02</text>
+        
+            <!-- Schody -->
+            <rect id="room-schody" class="room" x="42" y="446" width="171" height="124" data-title="Schody"></rect>
+            <text x="127" y="520" class="room-label">Schody</text>
+        
+            <!-- Sala 2.04 -->
+            <rect id="room-2.04" class="room" x="42" y="586" width="160" height="268" data-title="2.04"></rect>
+            <text x="122" y="720" class="room-label">2.04</text>
+        
+            <!-- Sala 2.05 -->
+            <rect id="room-2.05" class="room" x="42" y="870" width="160" height="259" data-title="2.05"></rect>
+            <text x="122" y="1000" class="room-label">2.05</text>
+        
+            <!-- Sala 2.07 -->
+            <rect id="room-2.07" class="room" x="292" y="985" width="156" height="142" data-title="2.07"></rect>
+            <text x="370" y="1060" class="room-label">2.07</text>
+        
+            <!-- Sala 2.08 -->
+            <rect id="room-2.08" class="room" x="290" y="869" width="156" height="114" data-title="2.08"></rect>
+            <text x="368" y="940" class="room-label">2.08</text>
+        
+            <!-- Sala 2.09 -->
+            <rect id="room-2.09" class="room" x="290" y="750" width="156" height="115" data-title="2.09"></rect>
+            <text x="368" y="820" class="room-label">2.09</text>
+        
+            <!-- Sala 2.10 -->
+            <polygon id="room-2.10" class="room" points="290,747 445,747 445,648 456,652 456,586 292,586" data-title="2.10"></polygon>
+            <text x="368" y="690" class="room-label">2.10</text>
+        
+            <!-- WC (1) -->
+            <rect id="room-wc-1" class="room" x="290" y="326" width="149" height="117" data-title="WC"></rect>
+            <text x="365" y="390" class="room-label" >WC</text>
+        
+            <!-- WC (2) -->
+            <rect id="room-wc-2" class="room" x="290" y="267" width="149" height="57" data-title="WC"></rect>
+            <text x="365" y="300" class="room-label">WC</text>
+        
+            <!-- Sala 2.17 -->
+            <rect id="room-2.17" class="room" x="290" y="124" width="160" height="141" data-title="2.17"></rect>
+            <text x="370" y="200" class="room-label">2.17</text>
+        
+            <polygon id="room-2.19" class="room" points="690,469 565,469 563,440 441,440 441,267 689,267" data-title="2.19"></polygon>
+            <text x="565" y="370" class="room-label">2.19</text>
+        
+            <!-- Sala 2.23 -->
+            <rect id="room-2.23" class="room" x="698" y="267" width="207" height="202" data-title="2.23"></rect>
+            <text x="802" y="370" class="room-label">2.23</text>
+            <!-- Sala 2.26 -->
+            <rect id="room-2.26" class="room" x="911" y="268" width="191" height="200" data-title="2.26"></rect>
+            <text x="1006" y="370" class="room-label">2.26</text>
+            <!-- WC -->
+        <polygon id="room-wc-1" class="room" points="1350,402 1224,426 1206,329 1253,322 1260,358 1339,345" data-title="WC"></polygon>
+        <text x="1280" y="380" class="room-label" transform="rotate(-10, 1280, 380)">WC</text>
+        
+        <polygon id="room-wc-2" class="room" points="1204,328 1253,321 1248,291 1328,277 1318,226 1191,250" data-title="WC"></polygon>
+        <text x="1260" y="270" class="room-label" transform="rotate(-10, 1260, 270)">WC</text>
+        
+        <!-- Sala 2.34 -->
+        <polygon id="room-2.34" class="room" points="1263,356 1338,341 1328,283 1250,295" data-title="2.34"></polygon>
+        <text x="1295" y="320" class="room-label" transform="rotate(-10, 1295, 320)">2.34</text>
+        
+        <!-- Sala 2.37 -->
+        <polygon id="room-2.37" class="room" points="1189,244 1317,220 1308,164 1178,187" data-title="2.37"></polygon>
+        <text x="1250" y="210" class="room-label" transform="rotate(-10, 1250, 210)">2.37</text>
+        
+        <!-- Sala 2.38 -->
+        <polygon id="room-2.38" class="room" points="1178,183 1335,154 1320,75 1164,103" data-title="2.38"></polygon>
+        <text x="1250" y="130" class="room-label" transform="rotate(-10, 1250, 130)">2.38</text>
+        
+        <!-- Sala 2.39 -->
+        <polygon id="room-2.39" class="room" points="1339,152 1501,123 1481,19 1402,32 1408,61 1326,74" data-title="2.39"></polygon>
+        <text x="1415" y="100" class="room-label" transform="rotate(-10, 1415, 100)">2.39</text>
+        
+        <!-- Sala 2.40 -->
+        <polygon id="room-2.40" class="room" points="1379,209 1513,186 1503,129 1366,151" data-title="2.40"></polygon>
+        <text x="1430" y="170" class="room-label" transform="rotate(-10, 1430, 170)">2.40</text>
+        
+        <!-- Sala 2.41 -->
+        <polygon id="room-2.41" class="room" points="1379,214 1391,273 1524,252 1513,191" data-title="2.41"></polygon>
+        <text x="1445" y="240" class="room-label" transform="rotate(-10, 1445, 240)">2.41</text>
+        
+        <!-- Sala 2.42 -->
+        <polygon id="room-2.42" class="room" points="1391,278 1402,338 1537,316 1526,254" data-title="2.42"></polygon>
+        <text x="1455" y="300" class="room-label" transform="rotate(-10, 1455, 300)">2.42</text>
+        
+        <!-- Sala 2.43 -->
+        <polygon id="room-2.43" class="room" points="1402,341 1413,400 1550,378 1539,318" data-title="2.43"></polygon>
+        <text x="1465" y="365" class="room-label" transform="rotate(-10, 1465, 365)">2.43</text>
+        
+        <!-- Sala 2.44 -->
+        <polygon id="room-2.44" class="room" points="1411,404 1424,464 1561,442 1550,380" data-title="2.44"></polygon>
+        <text x="1480" y="430" class="room-label" transform="rotate(-10, 1480, 430)">2.44</text>
+        
+        <!-- Sala 2.45 -->
+        <polygon id="room-2.45" class="room" points="1439,530 1570,506 1561,446 1426,468" data-title="2.45"></polygon>
+        <text x="1490" y="490" class="room-label" transform="rotate(-10, 1490, 490)">2.45</text>
+        
+        <!-- Sala 2.46 -->
+        <polygon id="room-2.46" class="room" points="1448,599 1581,573 1570,511 1437,537" data-title="2.46"></polygon>
+        <text x="1500" y="560" class="room-label" transform="rotate(-10, 1500, 560)">2.46</text>
+        
+        <!-- Sala 2.47 -->
+        <polygon id="room-2.47" class="room" points="1459,669 1595,644 1583,580 1446,604" data-title="2.47"></polygon>
+        <text x="1515" y="630" class="room-label" transform="rotate(-10, 1515, 630)">2.47</text>
+        
+        <!-- Sala 2.48 -->
+        <polygon id="room-2.48" class="room" points="1459,674 1472,734 1606,709 1595,650" data-title="2.48"></polygon>
+        <text x="1527" y="700" class="room-label" transform="rotate(-10, 1527, 700)">2.48</text>
+        
+        <!-- Sala 2.49 -->
+        <polygon id="room-2.49" class="room" points="1470,737 1481,796 1617,772 1606,712" data-title="2.49"></polygon>
+        <text x="1540" y="760" class="room-label" transform="rotate(-10, 1540, 760)">2.49</text>
+        
+        <!-- Sala 2.50 -->
+        <polygon id="room-2.50" class="room" points="1483,799 1495,859 1628,834 1617,775" data-title="2.50"></polygon>
+        <text x="1550" y="820" class="room-label" transform="rotate(-10, 1550, 820)">2.50</text>
+        
+        <!-- Sala 2.51 -->
+        <polygon id="room-2.51" class="room" points="1495,864 1628,839 1639,899 1506,923" data-title="2.51"></polygon>
+        <text x="1560" y="885" class="room-label" transform="rotate(-10, 1560, 885)">2.51</text>
+        
+        <!-- Sala 2.52 -->
+        <polygon id="room-2.52" class="room" points="1641,906 1506,929 1517,986 1650,962" data-title="2.52"></polygon>
+        <text x="1570" y="950" class="room-label" transform="rotate(-10, 1570, 950)">2.52</text>
+        
+        <!-- Sala 2.53 -->
+        <polygon id="room-2.53" class="room" points="1488,996 1650,968 1668,1074 1590,1090 1584,1061 1503,1074" data-title="2.53"></polygon>
+        <text x="1580" y="1020" class="room-label" transform="rotate(-10, 1580, 1020)">2.53</text>
+        
+        <!-- Sala 2.54 -->
+        <polygon id="room-2.54" class="room" points="1333,1104 1497,1073 1483,999 1319,1028" data-title="2.54"></polygon>
+        <text x="1400" y="1050" class="room-label" transform="rotate(-10, 1400, 1050)">2.54</text>
+        
+        <!-- Sala 2.55 -->
+        <polygon id="room-2.55" class="room" points="1319,1021 1455,996 1444,939 1308,963" data-title="2.55"></polygon>
+        <text x="1385" y="980" class="room-label" transform="rotate(-10, 1385, 980)">2.55</text>
+        
+        <!-- Sala 2.56 -->
+        <polygon id="room-2.56" class="room" points="1306,959 1444,932 1433,872 1295,899" data-title="2.56"></polygon>
+        <text x="1375" y="920" class="room-label" transform="rotate(-10, 1375, 920)">2.56</text>
+        
+        <!-- Sala 2.57 -->
+        <polygon id="room-2.57" class="room" points="1295,892 1430,869 1421,810 1284,836" data-title="2.57"></polygon>
+        <text x="1362" y="860" class="room-label" transform="rotate(-10, 1362, 860)">2.57</text>
+        
+        <!-- Sala 2.58 -->
+        <polygon id="room-2.58" class="room" points="1284,831 1421,807 1408,747 1273,771" data-title="2.58"></polygon>
+        <text x="1347" y="790" class="room-label" transform="rotate(-10, 1347, 790)">2.58</text>
+        
+        <!-- Sala 2.59 -->
+        <polygon id="room-2.59" class="room" points="1273,766 1408,744 1399,684 1262,709" data-title="2.59"></polygon>
+        <text x="1337" y="730" class="room-label" transform="rotate(-10, 1337, 730)">2.59</text>
+        
+        <!-- Sala 2.60 -->
+        <polygon id="room-2.60" class="room" points="1240,571 1375,547 1399,678 1264,704" data-title="2.60"></polygon>
+        <text x="1320" y="635" class="room-label" transform="rotate(-10, 1320, 635)" >2.60</text>
+        </svg>
+    </div>
+    
+    {% if filter.qs %}
+    <span id="rooms_table"style="display:none;">
+    [
     {% for room in filter.qs %}
-    <a href="{% url 'room_details' room.room_number %}">
-        {{ room.room_number }}
-    </a>
+        "{{ room.room_number }}"{% if not forloop.last %}, {% endif %}
     {% endfor %}
-</div>
-{% else %}
-<p class="no-results">Nie znaleziono sal pasujących do kryteriów wyszukiwania.</p>
-{% endif %}
-{% endblock %}
+    ]
+    </span>
+    {% else %}
+    <span id="rooms_table" style="display:none;">[]</span>
+    {% endif %}
+    
+    <script src="{% static 'js/map_search.js' %}"></script>
+    {% endblock %}
