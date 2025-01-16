@@ -374,8 +374,7 @@
 </div>
 
 {% if filter.qs %}
-{% comment %} <span id="rooms_table"style="display:none;"> {% endcomment %}
-    <span id="rooms_table">
+<span id="rooms_table"style="display:none;">
 [
 {% for room in filter.qs %}
     "{{ room.room_number }}"{% if not forloop.last %}, {% endif %}
