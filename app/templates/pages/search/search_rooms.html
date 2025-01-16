@@ -14,14 +14,6 @@ Szukaj Sal
             <input type="text" name="room_number" id="room_number" placeholder="Wprowadź nazwę sali">
         </div>
         <div class="input-box">
-            <label for="attribute">Wyposażenie:</label>
-            <select name="attribute" id="attribute" multiple>
-                {% for choice in filter.form.fields.attribute.choices %}
-                <option value="{{ choice.0 }}">{{ choice.1 }}</option>
-                {% endfor %}
-            </select>
-        </div>
-        <div class="input-box">
             <label for="floor">Piętro:</label>
             <select name="floor" id="floor">
                 <option value="parter">Parter</option>
