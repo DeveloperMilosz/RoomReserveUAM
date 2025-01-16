@@ -3,6 +3,7 @@
 <html lang="pl">
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="refresh" content="60">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{% static 'css/rasp.css' %}">
     <script src="{% static 'js/main.js' %}"></script>
@@ -25,11 +26,11 @@
                             <p><strong>Opis:</strong> {{ current_meeting.description|default:"Brak opisu" }}</p>
 
 
-                            <p><strong>Czas spotkaia:</strong><br> 
+                            <p><strong>Czas spotkaia:</strong><br>
                                 <span class="meeting-time meeting-time-current">{{ current_meeting.start_time|date:"d.m.Y H:i" }} - {{ current_meeting.end_time|date:"d.m.Y H:i" }}</span></p>
 
 
-                            <p><strong>Wykładowcy:</strong> 
+                            <p><strong>Wykładowcy:</strong>
                                 {% for lecturer in current_meeting.lecturers.all %}
                                     {{ lecturer.first_name }} {{ lecturer.last_name }}{% if not forloop.last %}, {% endif %}
                                 {% endfor %}
@@ -55,7 +56,7 @@
 
                             <p><strong>Czas spotkania:</strong><br><span class="meeting-time meeting-time-next">{{ next_meeting.start_time|date:"d.m.Y H:i" }} - {{ next_meeting.end_time|date:"d.m.Y H:i" }}</span></p>
 
-                            <p><strong>Wykładowcy:</strong> 
+                            <p><strong>Wykładowcy:</strong>
                                 {% for lecturer in next_meeting.lecturers.all %}
                                     {{ lecturer.first_name }} {{ lecturer.last_name }}{% if not forloop.last %}, {% endif %}
                                 {% endfor %}
