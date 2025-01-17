@@ -9,78 +9,56 @@
     <script src="{% static 'js/main.js' %}"></script>
 </head>
 <body>
-
-    <!-- Clock -->
-
     <h1>Harmonogram Sali {{ room.room_number }}</h1>
+
     <div class="container">
         <div class="weather"></div>
-                <!-- Current Meeting -->
-                {% if current_meeting %}
-                {% comment %} <div class="meeting current" style="background:linear-gradient(0deg, {{ current_meeting.color }} 0%, #fff 100%);"> {% endcomment %}
-                    <div class="meeting current" style="background:{{ current_meeting.color }};">
-                        <div class="meeting-header">Obecne Spotkanie</div>
-                        <div class="meeting-content">
-                            <h2>{{ current_meeting.name_pl|default:"Brak tytułu" }}</h2>
-                            <div id="countdown-current"></div>
-                            <p><strong>Opis:</strong> {{ current_meeting.description|default:"Brak opisu" }}</p>
 
-
-                            <p><strong>Czas spotkaia:</strong><br>
-                                <span class="meeting-time meeting-time-current">{{ current_meeting.start_time|date:"d.m.Y H:i" }} - {{ current_meeting.end_time|date:"d.m.Y H:i" }}</span></p>
-
-
-                            <p><strong>Wykładowcy:</strong>
-                                {% for lecturer in current_meeting.lecturers.all %}
-                                    {{ lecturer.first_name }} {{ lecturer.last_name }}{% if not forloop.last %}, {% endif %}
-                                {% endfor %}
-                            </p>
-                        </div>
-                        {% if current_meeting.event %}
-                            <div class="meeting-event">
-                                <h3>Spotkanie w ramach wydarzenia {{ current_meeting.event.name }}</h3>
-                            </div>
-                        {% endif %}
+        <!-- 2 spotkania z najbliższą datą zakończenia -->
+        {% if soonest_ending_meetings %}
+            {% for meeting in soonest_ending_meetings %}
+                <div class="meeting" style="background: {{ meeting.color }};">
+                    <div class="meeting-name">
+                        {{ meeting.name_pl|default:"Brak tytułu" }}
                     </div>
-                {% endif %}
 
-                <!-- Next Meeting -->
-                {% if next_meeting %}
-                {% comment %} <div class="meeting next" style="background:linear-gradient(0deg, {{ next_meeting.color }} 0%, #fff 100%);"> {% endcomment %}
-                    <div class="meeting next" style="background:{{ next_meeting.color }}">
-                        <div class="meeting-header">Następne Spotkanie</div>
-                        <div class="meeting-content">
-                            <h2>{{ next_meeting.name_pl|default:"Brak tytułu" }}</h2>
-                            <div id="countdown-next"></div>
-                            <p><strong>Opis:</strong> {{ next_meeting.description|default:"Brak opisu" }}</p>
-
-                            <p><strong>Czas spotkania:</strong><br><span class="meeting-time meeting-time-next">{{ next_meeting.start_time|date:"d.m.Y H:i" }} - {{ next_meeting.end_time|date:"d.m.Y H:i" }}</span></p>
-
-                            <p><strong>Wykładowcy:</strong>
-                                {% for lecturer in next_meeting.lecturers.all %}
-                                    {{ lecturer.first_name }} {{ lecturer.last_name }}{% if not forloop.last %}, {% endif %}
-                                {% endfor %}
-                            </p>
-                        </div>
-                        {% if next_meeting.event %}
-                            <div class="meeting-event">
-                                <h3>Szczegóły Wydarzenia</h3>
-                                <p><strong>Nazwa:</strong> {{ next_meeting.event.name }}</p>
-                                <p><strong>Opis:</strong> {{ next_meeting.event.description }}</p>
-                            </div>
-                        {% else %}
-                        <div class="meeting-event">
-                            <h3>Spotkanie nie jest podpięte do żadnego wydarzenia</h3>
-                        </div>
-                        {% endif %}
+                    <div class="temperature"
+                         style="background-image: url('{% if meeting.event and meeting.event.logo %}{{ meeting.event.logo.url }}{% else %}{% static 'img/logo.png' %}{% endif %}');
+                                background-size: cover;
+                                background-position: center;
+                                background-repeat: no-repeat;">
                     </div>
-                {% endif %}
-            </div>
 
-            <!-- No Meetings -->
-            {% if not current_meeting and not next_meeting %}
-                <p class="no-meeting">Brak spotkań dla tej sali.</p>
-            {% endif %}
-            <script src="{% static 'js/rasp.js' %}"></script>
-    </body>
+                    <div class="meeting-footer">
+                        <p>Prowadzący:<strong>
+                            {% for lecturer in meeting.lecturers.all %}
+                                {{ lecturer.first_name }} {{ lecturer.last_name }}{% if not forloop.last %}, {% endif %}
+                            {% endfor %}</strong>
+                        </p>
+                    </div>
+
+                    <p class="description">
+                        {{ meeting.description|default:"Brak opisu" }}
+                    </p>
+
+                    <div class="extra">
+                        <div class="info">
+                            <h5>Rozpoczęcie</h5>
+                            <p>{{ meeting.start_time|date:"d.m.Y H:i" }}</p>
+                        </div>
+                        <div class="info">
+                            <h5>Zakończenie</h5>
+                            <p>{{ meeting.end_time|date:"d.m.Y H:i" }}</p>
+                        </div>
+                    </div>
+
+                </div>
+            {% endfor %}
+        {% else %}
+            <p class="no-meeting">Brak spotkań w najbliższym czasie.</p>
+        {% endif %}
+    </div>
+
+    <script src="{% static 'js/rasp.js' %}"></script>
+</body>
 </html>

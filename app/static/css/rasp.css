@@ -1,95 +1,28 @@
 body {
   font-family: Arial, sans-serif;
+  background-color: #222;
+  text-align: center;
+  color: white;
   margin: 0;
-  padding: 20px;
-  background-color: #f4f4f4;
-  color: #333;
 }
 
 h1 {
   text-align: center;
-  margin-bottom: 20px;
+  height: 50px;
+  align-content: center;
+  margin: 0 auto;
 }
 
 .container {
-  width: 1240px;
+  width: 1024px;
   display: flex;
   margin: 0 auto;
 }
 
-.clock {
-  font-size: 48px;
-  font-weight: bold;
-  padding: 10px;
-  border-radius: 5px;
-  margin-bottom: 32px;
-}
-
-.meeting {
-  flex: 1;
-  border-radius: 0 50px 50px 0;
-  padding: 20px;
-  background-color: #eafaf1;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  padding-left: 70px;
-  position: relative;
-}
-.meeting.current {
-  z-index: 2;
-  left: -50px;
-}
-.meeting.next {
-  z-index: 1;
-  left: -100px;
-}
-.meeting .meeting-event {
-  text-align: center;
-}
-
-.meeting-header {
-  font-size: 24px;
-  font-weight: bold;
-  margin-bottom: 10px;
-  text-align: center;
-  padding: 10px;
-  border-radius: 5px;
-}
-
-.meeting-content {
-  font-size: 18px;
-  margin: 10px 0;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  text-align: center;
-}
-.meeting-content h2 {
-  height: 50px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.meeting-content p {
-  height: 30px;
-}
-.meeting-content > div {
-  font-weight: 700;
-  height: 50px;
-}
-
-.meeting-time {
-  font-weight: bold;
-  color: #555;
-}
-
-.no-meeting {
-  color: #888;
-  text-align: center;
-}
-
+/* KAFEL POGODY */
 .weather {
-  width: 420px;
-  height: 480px;
+  min-width: 284px;
+  height: 550px;
   display: block;
   margin: auto;
   text-align: center;
@@ -98,6 +31,7 @@ h1 {
   border-radius: 50px;
   background-image: linear-gradient(#30A2C5, rgba(15, 45, 102, 0.9803921569));
   z-index: 3;
+  box-sizing: border-box;
 }
 .weather .titlebar {
   line-height: 0.5rem;
@@ -112,6 +46,13 @@ h1 {
 .weather .titlebar .description {
   text-transform: uppercase;
 }
+.weather .clock {
+  font-size: 48px;
+  font-weight: bold;
+  padding: 10px;
+  border-radius: 5px;
+  margin-bottom: 32px;
+}
 .weather .temperature {
   background: rgb(206, 206, 206);
   border-radius: 500px;
@@ -121,7 +62,6 @@ h1 {
   display: block;
   margin: auto;
   box-shadow: 0 30px 20px rgba(29, 29, 29, 0.2117647059);
-  margin: auto;
   margin-top: 30px;
   margin-bottom: 30px;
 }
@@ -143,5 +83,71 @@ h1 {
   padding-bottom: 30px;
 }
 .weather .extra .col .info {
+  padding-bottom: 10px;
+}
+
+.meeting {
+  min-width: 420px;
+  max-width: 420px;
+  width: 420px;
+  flex: 1;
+  border-radius: 0 50px 50px 0;
+  color: white;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  padding-top: 20px;
+  padding-right: 20px;
+  padding-left: 70px;
+  position: relative;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  align-items: center;
+  height: 550px;
+  box-sizing: border-box;
+}
+.meeting:nth-of-type(2) {
+  z-index: 2;
+  left: -50px;
+}
+.meeting:nth-of-type(3) {
+  z-index: 1;
+  left: -100px;
+}
+.meeting .meeting-name {
+  font-size: 32px;
+  height: 120px;
+  align-content: center;
+}
+.meeting .temperature {
+  background: rgb(206, 206, 206);
+  border-radius: 500px;
+  width: 200px;
+  height: 200px;
+  text-align: center;
+  display: block;
+  margin: auto;
+  box-shadow: 0 30px 20px rgba(29, 29, 29, 0.2117647059);
+  margin-top: 10px;
+}
+.meeting .temperature img {
+  margin-bottom: -20px;
+}
+.meeting .temperature p {
+  font-size: 14px;
+}
+.meeting .temperature h2 {
+  margin: 0;
+  font-size: 60px;
+  font-weight: 300;
+}
+.meeting .extra {
+  display: flex;
+  justify-content: space-around;
+  color: #fff;
+  padding-bottom: 30px;
+  width: 360px;
+}
+.meeting .extra .col .info {
   padding-bottom: 10px;
 }/*# sourceMappingURL=rasp.css.map */
