@@ -42,73 +42,64 @@ fetch('https://api.openweathermap.org/data/2.5/weather?id=3089033&APPID=2d48b1d7
 
 // zegar na pogodzie
 function updateClock() {
-    const clockElement = document.getElementById('clock');
-    const now = new Date();
-    const hours = String(now.getHours()).padStart(2, '0');
-    const minutes = String(now.getMinutes()).padStart(2, '0');
-    const seconds = String(now.getSeconds()).padStart(2, '0');
-    clockElement.textContent = `${hours}:${minutes}:${seconds}`;
+  const clockElement = document.getElementById('clock');
+  const now = new Date();
+  const hours = String(now.getHours()).padStart(2, '0');
+  const minutes = String(now.getMinutes()).padStart(2, '0');
+  const seconds = String(now.getSeconds()).padStart(2, '0');
+  clockElement.textContent = `${hours}:${minutes}:${seconds}`;
 }
 setInterval(updateClock, 1000);
 window.onload = updateClock;
 
-//czas do spotkania
-function parseDateTime(dateString) {
-    const [datePart, timePart] = dateString.split(' ');
-    const [day, month, year] = datePart.split('.');
-    const [hour, minute] = timePart.split(':');
-    return new Date(parseInt(year), parseInt(month) - 1, parseInt(day), parseInt(hour), parseInt(minute));
+document.addEventListener('DOMContentLoaded', function() {
+  function parseDateString(dateString) {
+      const [datePart, timePart] = dateString.trim().split(' ');
+      const [day, month, year] = datePart.split('.');
+      const [hour, minute] = timePart.split(':');
+      return new Date(year, month - 1, day, hour, minute);
   }
-  
-  function pad(num) {
-    return num < 10 ? '0' + num : num;
+  function msToDHMS(ms) {
+      ms = Math.floor(ms / 1000);
+      let d = Math.floor(ms / 86400);
+      ms %= 86400;
+      let h = Math.floor(ms / 3600);
+      ms %= 3600;
+      const m = Math.floor(ms / 60);
+      const s = ms % 60;
+      if (d > 0) {
+          h += d * 24;
+          d = 0;
+      }
+      let parts = [];
+      if (h) parts.push(h + "g");
+      if (m) parts.push(m + "m");
+      parts.push(s + "s");
+      return parts.join(" ");
   }
-  
-  function updateCountdown(start, end, elementId) {
-    const now = new Date();
-    let text = '';
-    if (now >= start && now < end) {
-      const diff = end - now;
-      const totalHours = Math.floor(diff / (1000 * 60 * 60));
-      const minutes = Math.floor((diff / (1000 * 60)) % 60);
-      const seconds = Math.floor((diff / 1000) % 60);
-      text = `Czas do końca spotkania:<br>${pad(totalHours)}h ${pad(minutes)}m ${pad(seconds)}s`;
-    } else if (now < start) {
-      const diff = start - now;
-      const totalHours = Math.floor(diff / (1000 * 60 * 60));
-      const minutes = Math.floor((diff / (1000 * 60)) % 60);
-      const seconds = Math.floor((diff / 1000) % 60);
-      text = `Spotkanie rozpocznie się za:<br>${pad(totalHours)}h ${pad(minutes)}m ${pad(seconds)}s`;
-    } else {
-      text = 'Spotkanie się zakończyło';
-    }
-    const countdownElement = document.getElementById(elementId);
-    if (countdownElement) {
-      countdownElement.innerHTML = text;
-    }
+  function updateTimers() {
+      const meetings = document.querySelectorAll('.meeting');
+      const now = new Date();
+      meetings.forEach(meeting => {
+          const startTimeP = meeting.querySelector('.extra .info:nth-of-type(1) p');
+          const endTimeP = meeting.querySelector('.extra .info:nth-of-type(2) p');
+          const timer = meeting.querySelector('.timer');
+          if (!startTimeP || !endTimeP || !timer) return;
+          const startTime = parseDateString(startTimeP.textContent);
+          const endTime = parseDateString(endTimeP.textContent);
+          const timeToStart = startTime - now;
+          const timeToEnd = endTime - now;
+          let message = '';
+          if (now >= startTime && now < endTime) {
+              message = 'Spotkanie skończy się za: <strong>' + msToDHMS(timeToEnd) + '</strong>';
+          } else if (now < startTime) {
+              message = 'Spotkanie zacznie się za: <strong>' + msToDHMS(timeToStart) + '</strong>';
+          } else {
+              message = 'Spotkanie już się zakończyło.';
+          }
+          timer.innerHTML = message;
+      });
   }
-  
-  function initCountdown() {
-    const currentEl = document.querySelector('.meeting-time-current');
-    const nextEl = document.querySelector('.meeting-time-next');
-    if (currentEl) {
-      const text = currentEl.textContent.trim();
-      const [startStr, endStr] = text.split(' - ');
-      const start = parseDateTime(startStr);
-      const end = parseDateTime(endStr);
-      setInterval(() => {
-        updateCountdown(start, end, 'countdown-current');
-      }, 1000);
-    }
-    if (nextEl) {
-      const text = nextEl.textContent.trim();
-      const [startStr, endStr] = text.split(' - ');
-      const start = parseDateTime(startStr);
-      const end = parseDateTime(endStr);
-      setInterval(() => {
-        updateCountdown(start, end, 'countdown-next');
-      }, 1000);
-    }
-  }
-  
-  document.addEventListener('DOMContentLoaded', initCountdown);
+  updateTimers();
+  setInterval(updateTimers, 1000);
+});

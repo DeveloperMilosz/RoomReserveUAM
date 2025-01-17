@@ -90,9 +90,16 @@ body {
       color: #fff;
       padding-bottom: 30px;
   
-      .col {
-        .info {
-          padding-bottom: 10px;
+      .info {
+        margin-top: 6px;
+
+        h5 {
+            margin-bottom: 16px;
+        }
+
+        p {
+            margin-top: 0px;
+            margin-bottom: 14px;
         }
       }
     }
@@ -106,7 +113,7 @@ body {
     border-radius: 0 50px 50px 0;
     color: white;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    padding-top: 20px;
+    padding-top: 10px;
     padding-right: 20px;
     padding-left: 70px;
     position: relative;
@@ -159,22 +166,39 @@ body {
             font-weight: 300;
         }
     }
+    .meeting-footer p{
+        margin: 6px 0px;
+    }
 
-    
+    .description{
+        margin-top: 0;
+        height: 40px;
+        max-height: 40px;
+        overflow: hidden;
+        font-size: 12px;
+    }
 
+    .timer {
+        margin-bottom: -6px;
+    }
 
     .extra {
         display: flex;
         justify-content: space-around;
         color: #fff;
-        padding-bottom: 30px;
+        padding-bottom: 10px;
         width: 360px;
-    
-        .col {
+        
           .info {
-            padding-bottom: 10px;
+            h5 {
+                margin-bottom: 16px;
+            }
+
+            p {
+                margin-top: 0px;
+                margin-bottom: 14px;
+            }
           }
-        }
       }
   }
   
